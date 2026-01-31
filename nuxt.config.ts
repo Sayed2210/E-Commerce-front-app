@@ -8,6 +8,15 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/scripts',
     '@nuxt/test-utils',
-    '@nuxt/ui'
-  ]
+    '@nuxt/ui',
+    '@pinia/nuxt'
+  ],
+
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3000'
+    }
+  },
+
+  css: ['~/styles/main.css'],
 })
