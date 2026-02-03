@@ -1,4 +1,4 @@
-import type { LoginCredentials, RegisterData, AuthResponse, User } from '~/types/auth'
+import { type LoginCredentials, type RegisterData, type AuthResponse, type User, UserRole } from '~/types/auth'
 import { setTokens, clearTokens } from '~/utils/token'
 import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
 
@@ -29,7 +29,7 @@ export function useAuth() {
       }
 
       // Check if user has required role
-      if (isAdmin && !data.value.user.roles.includes('ADMIN')) {
+      if (isAdmin && data.value.user.role !== UserRole.ADMIN) {
         showErrorToast({ message: 'Access denied. Admin privileges required.' })
         return false
       }
@@ -128,7 +128,7 @@ export function useAuth() {
         return null
       }
 
-      authStore.setUser(data.value)
+      authStore.setUser(data.value!)
       return data.value
     } catch (err) {
       console.error('Fetch user error:', err)

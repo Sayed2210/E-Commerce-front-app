@@ -122,7 +122,7 @@
 
         <UButton
           to="/admin/categories"
-          color="gray"
+          color="secondary"
           size="lg"
           icon="i-heroicons-tag"
           block
@@ -132,7 +132,7 @@
 
         <UButton
           to="/admin/users"
-          color="gray"
+          color="success"
           size="lg"
           icon="i-heroicons-users"
           block

@@ -1,6 +1,7 @@
 export enum UserRole {
-  ADMIN = 'ADMIN',
-  CUSTOMER = 'CUSTOMER'
+  CUSTOMER = 'customer',
+    STAFF = 'staff',
+    ADMIN = 'admin',
 }
 
 export interface User {
@@ -8,7 +9,7 @@ export interface User {
   email: string
   firstName?: string
   lastName?: string
-  roles: UserRole[]
+  role: UserRole
   createdAt: string
   updatedAt: string
 }

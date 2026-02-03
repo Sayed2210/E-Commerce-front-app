@@ -1,4 +1,3 @@
-import type { UseFetchOptions } from 'nuxt/app'
 import { getAccessToken, getRefreshToken, setTokens, clearTokens } from './token'
 
 /**
@@ -9,59 +8,54 @@ export function useApiClient() {
   const baseURL = config.public.apiBaseUrl as string
 
   /**
+   * Private $fetch instance with interceptors
+   */
+  const client = $fetch.create({
+    baseURL,
+    onRequest({ options }) {
+      const accessToken = getAccessToken()
+      if (accessToken) {
+        // Use Headers helper to ensure compatibility
+        const headers = new Headers(options.headers)
+        headers.set('Authorization', `Bearer ${accessToken}`)
+        options.headers = headers
+      }
+    },
+    async onResponseError({ request, response, options }) {
+      if (response.status === 401) {
+        const refreshToken = getRefreshToken()
+        if (refreshToken) {
+          try {
+            const refreshed = await refreshAccessToken()
+            if (refreshed) {
+              // Retry the original request
+              // @ts-expect-error - options mismatch between Resolved and Nitro types
+              return $fetch(request, options)
+            }
+          } catch (error) {
+            console.error('Refresh token failed:', error)
+            clearTokens()
+            await navigateTo('/login')
+          }
+        } else {
+          clearTokens()
+          await navigateTo('/login')
+        }
+      }
+    }
+  })
+
+  /**
    * Make an authenticated API request
    */
   async function apiCall<T>(
     url: string,
-    options: UseFetchOptions<T> = {}
+    options: Parameters<typeof client>[1] = {}
   ) {
-    const accessToken = getAccessToken()
-
-    // Add authorization header if token exists
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string> || {})
-    }
-
-    if (accessToken) {
-      headers.Authorization = `Bearer ${accessToken}`
-    }
-
-    const { data, error, status } = await useFetch<T>(`${baseURL}${url}`, {
-      ...options,
-      headers
-    })
-
-    // Handle 401 Unauthorized - token expired
-    if (status.value === 'error' && error.value?.statusCode === 401) {
-      const refreshToken = getRefreshToken()
-      
-      if (refreshToken) {
-        try {
-          // Attempt to refresh the token
-          const refreshed = await refreshAccessToken()
-          
-          if (refreshed) {
-            // Retry the original request with new token
-            const newAccessToken = getAccessToken()
-            headers.Authorization = `Bearer ${newAccessToken}`
-            
-            return await useFetch<T>(`${baseURL}${url}`, {
-              ...options,
-              headers
-            })
-          }
-        } catch (refreshError) {
-          // Refresh failed, clear tokens and redirect to login
-          clearTokens()
-          await navigateTo('/login')
-        }
-      } else {
-        // No refresh token, redirect to login
-        clearTokens()
-        await navigateTo('/login')
-      }
-    }
+    const { data, error, status } = await useAsyncData<T>(
+      url,
+      () => client<T>(url, options)
+    )
 
     return { data, error, status }
   }
@@ -77,7 +71,8 @@ export function useApiClient() {
     }
 
     try {
-      const { data, error } = await useFetch<{ accessToken: string; refreshToken: string }>(
+      // Use raw $fetch for refresh to avoid infinite loops
+      const data = await $fetch<{ accessToken: string; refreshToken: string }>(
         `${baseURL}/auth/refresh`,
         {
           method: 'POST',
@@ -85,11 +80,11 @@ export function useApiClient() {
         }
       )
 
-      if (error.value || !data.value) {
+      if (!data) {
         return false
       }
 
-      setTokens(data.value.accessToken, data.value.refreshToken)
+      setTokens(data.accessToken, data.refreshToken)
       return true
     } catch {
       return false
@@ -98,6 +93,7 @@ export function useApiClient() {
 
   return {
     apiCall,
-    refreshAccessToken
+    refreshAccessToken,
+    client
   }
 }
