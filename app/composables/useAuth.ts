@@ -18,25 +18,27 @@ export function useAuth() {
     authStore.setLoading(true)
 
     try {
-      const { data, error } = await useFetch<AuthResponse>(`${baseURL}/auth/login`, {
+      const data = await $fetch<AuthResponse>(`${baseURL}/auth/login`, {
         method: 'POST',
         body: credentials
       })
 
-      if (error.value || !data.value) {
-        showErrorToast(error.value)
+      if (!data) {
+        showErrorToast({ message: 'Login failed. Please try again.' })
         return false
       }
 
       // Check if user has required role
-      if (isAdmin && data.value.user.role !== UserRole.ADMIN) {
+      if (isAdmin && data.user.role !== UserRole.ADMIN) {
         showErrorToast({ message: 'Access denied. Admin privileges required.' })
         return false
       }
 
+      console.log(data)
+
       // Store tokens and user data
-      setTokens(data.value.accessToken, data.value.refreshToken)
-      authStore.setUser(data.value.user)
+      setTokens(data.tokens?.accessToken, data.tokens?.refreshToken)
+      authStore.setUser(data.user)
 
       showSuccessToast('Login successful!')
 
@@ -59,26 +61,26 @@ export function useAuth() {
   /**
    * Register new user
    */
-  async function register(data: RegisterData) {
+  async function register(userData: RegisterData) {
     authStore.setLoading(true)
 
     try {
-      const { data: responseData, error } = await useFetch<AuthResponse>(
+      const responseData = await $fetch<AuthResponse>(
         `${baseURL}/auth/register`,
         {
           method: 'POST',
-          body: data
+          body: userData
         }
       )
 
-      if (error.value || !responseData.value) {
-        showErrorToast(error.value)
+      if (!responseData) {
+        showErrorToast({ message: 'Registration failed. Please try again.' })
         return false
       }
 
       // Auto-login after registration
-      setTokens(responseData.value.accessToken, responseData.value.refreshToken)
-      authStore.setUser(responseData.value.user)
+      setTokens(responseData.accessToken, responseData.refreshToken)
+      authStore.setUser(responseData.user)
 
       showSuccessToast('Registration successful! Welcome!')
       await router.push('/')
@@ -98,7 +100,7 @@ export function useAuth() {
   async function logout() {
     try {
       // Call logout endpoint
-      await useFetch(`${baseURL}/auth/logout`, {
+      await $fetch(`${baseURL}/auth/logout`, {
         method: 'POST'
       })
     } catch (err) {

@@ -11,10 +11,15 @@
             Discover amazing products at unbeatable prices
           </p>
           <div class="mt-8 flex justify-center gap-4">
-            <UButton to="/products" size="xl" color="white" variant="solid">
+            <UButton to="/products" size="xl" color="primary" variant="solid">
               Shop Now
             </UButton>
-            <UButton to="/categories" size="xl" color="white" variant="outline">
+            <UButton
+              to="/categories"
+              size="xl"
+              color="primary"
+              variant="outline"
+            >
               Browse Categories
             </UButton>
           </div>
