@@ -1,115 +1,85 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <!-- Admin Sidebar -->
-    <aside
-      class="fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
-    >
-      <div class="flex h-full flex-col">
-        <!-- Logo -->
-        <div class="border-b border-gray-200 p-6 dark:border-gray-700">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-            Admin Panel
-          </h1>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="flex-1 space-y-1 p-4">
-          <NuxtLink
-            to="/admin"
-            class="flex items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-            active-class="bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-          >
-            <UIcon name="i-heroicons-home" class="h-5 w-5" />
-            <span>Dashboard</span>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/admin/products"
-            class="flex items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-            active-class="bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-          >
-            <UIcon name="i-heroicons-cube" class="h-5 w-5" />
-            <span>Products</span>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/admin/orders"
-            class="flex items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-            active-class="bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-          >
-            <UIcon name="i-heroicons-shopping-bag" class="h-5 w-5" />
-            <span>Orders</span>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/admin/users"
-            class="flex items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-            active-class="bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-          >
-            <UIcon name="i-heroicons-users" class="h-5 w-5" />
-            <span>Users</span>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/admin/categories"
-            class="flex items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-            active-class="bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-          >
-            <UIcon name="i-heroicons-tag" class="h-5 w-5" />
-            <span>Categories</span>
-          </NuxtLink>
-        </nav>
-
-        <!-- User Menu -->
-        <div class="border-t border-gray-200 p-4 dark:border-gray-700">
-          <UDropdown :items="userMenuItems" :popper="{ placement: 'top' }">
-            <button
-              class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <UAvatar size="sm" :alt="user?.email" />
-              <div class="flex-1">
-                <div class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ user?.email }}
-                </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400">
-                  Administrator
-                </div>
-              </div>
-              <UIcon
-                name="i-heroicons-chevron-up"
-                class="h-5 w-5 text-gray-400"
-              />
-            </button>
-          </UDropdown>
-        </div>
+  <div class="min-h-screen bg-surface text-on-surface flex">
+    <!-- Sidebar -->
+    <nav class="fixed left-0 top-0 h-screen w-60 bg-surface-container-lowest border-r border-outline-variant/15 z-40 flex flex-col">
+      <!-- Brand -->
+      <div class="px-6 py-8 border-b border-outline-variant/10">
+        <h1 class="text-lg font-black text-on-surface tracking-tight font-headline">Admin Panel</h1>
+        <p class="text-xs text-secondary mt-0.5">ArchitectMarket</p>
       </div>
-    </aside>
 
-    <!-- Main Content -->
-    <div class="ml-64">
-      <!-- Top Header -->
-      <header
-        class="sticky top-0 z-30 border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
-      >
-        <div class="flex h-16 items-center justify-between px-6">
-          <div>
-            <!-- Page title can be injected via slot -->
-          </div>
+      <!-- Nav links -->
+      <div class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        <NuxtLink
+          v-for="link in navLinks"
+          :key="link.to"
+          :to="link.to"
+          class="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-secondary hover:text-on-surface hover:bg-surface-container-low transition-all"
+          active-class="!text-primary !bg-surface-container-low border-r-2 border-primary-container font-semibold"
+          exact-active-class="!text-primary !bg-surface-container-low border-r-2 border-primary-container font-semibold"
+        >
+          <span class="material-symbols-outlined text-xl">{{ link.icon }}</span>
+          <span class="font-label">{{ link.label }}</span>
+        </NuxtLink>
+      </div>
 
-          <div class="flex items-center gap-4">
-            <!-- Color Mode Toggle -->
-            <UButton
-              icon="i-heroicons-moon"
-              color="gray"
-              variant="ghost"
-              @click="toggleColorMode"
+      <!-- Bottom: new product + logout -->
+      <div class="p-4 border-t border-outline-variant/10 space-y-3">
+        <NuxtLink
+          to="/admin/products/create"
+          class="w-full flex items-center justify-center gap-2 bg-primary-container text-on-primary-container py-2.5 rounded text-sm font-semibold hover:brightness-95 transition-all"
+        >
+          <span class="material-symbols-outlined text-sm">add</span>
+          New Product
+        </NuxtLink>
+        <button
+          @click="logout"
+          class="w-full flex items-center gap-3 px-3 py-2 text-sm text-secondary hover:text-on-surface transition-colors"
+        >
+          <span class="material-symbols-outlined text-xl">logout</span>
+          <span class="font-label">Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="ml-60 flex-1 flex flex-col min-h-screen">
+      <!-- Top header -->
+      <header class="sticky top-0 z-30 glass flex items-center justify-between px-8 py-3 shadow-sm">
+        <!-- Breadcrumb -->
+        <div class="text-xs text-secondary font-label">
+          Admin / <span class="text-on-surface font-medium">{{ pageTitle }}</span>
+        </div>
+
+        <!-- Search + user -->
+        <div class="flex items-center gap-6">
+          <div class="relative hidden md:block">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-sm">search</span>
+            <input
+              type="text"
+              placeholder="Search…"
+              class="bg-surface-container-low border-none rounded pl-9 pr-4 py-1.5 text-sm w-56 focus:ring-1 focus:ring-primary outline-none"
             />
+          </div>
+          <div class="flex items-center gap-3">
+            <button class="text-secondary hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <div class="flex items-center gap-2 pl-4 border-l border-outline-variant/20">
+              <div class="text-right hidden sm:block">
+                <p class="text-xs font-bold text-on-surface">{{ user?.firstName ?? user?.email }}</p>
+                <p class="text-[10px] text-secondary">Administrator</p>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold">
+                {{ userInitial }}
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
-      <!-- Page Content -->
-      <main class="p-6">
+      <!-- Page slot -->
+      <main class="flex-1 p-8">
         <slot />
       </main>
     </div>
@@ -117,27 +87,30 @@
 </template>
 
 <script setup lang="ts">
-const { logout, user } = useAuth();
-const colorMode = useColorMode();
+const { logout, user } = useAuth()
+const route = useRoute()
 
-const userMenuItems = [
-  [
-    {
-      label: "Settings",
-      icon: "i-heroicons-cog-6-tooth",
-      click: () => navigateTo("/admin/settings"),
-    },
-  ],
-  [
-    {
-      label: "Logout",
-      icon: "i-heroicons-arrow-right-on-rectangle",
-      click: () => logout(),
-    },
-  ],
-];
+const navLinks = [
+  { to: '/admin',          icon: 'dashboard',   label: 'Dashboard'  },
+  { to: '/admin/products', icon: 'inventory_2', label: 'Inventory'  },
+  { to: '/admin/orders',   icon: 'shopping_bag',label: 'Orders'     },
+  { to: '/admin/users',    icon: 'group',       label: 'Customers'  },
+  { to: '/admin/analytics',icon: 'leaderboard', label: 'Analytics'  },
+  { to: '/admin/coupons',  icon: 'local_offer', label: 'Coupons'    },
+]
 
-function toggleColorMode() {
-  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
+const pageTitles: Record<string, string> = {
+  '/admin':            'Dashboard',
+  '/admin/products':   'Inventory',
+  '/admin/orders':     'Orders',
+  '/admin/users':      'Customers',
+  '/admin/analytics':  'Analytics',
+  '/admin/coupons':    'Coupons',
 }
+
+const pageTitle = computed(() => pageTitles[route.path] ?? 'Admin')
+const userInitial = computed(() => {
+  const name = user.value?.firstName ?? user.value?.email ?? 'A'
+  return name.charAt(0).toUpperCase()
+})
 </script>

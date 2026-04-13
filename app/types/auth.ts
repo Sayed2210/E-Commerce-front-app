@@ -1,6 +1,7 @@
 export enum UserRole {
-  ADMIN = 'ADMIN',
-  CUSTOMER = 'CUSTOMER'
+  CUSTOMER = 'customer',
+    STAFF = 'staff',
+    ADMIN = 'admin',
 }
 
 export interface User {
@@ -9,6 +10,8 @@ export interface User {
   firstName?: string
   lastName?: string
   roles: UserRole[]
+  phone?: string
+  avatar?: string
   createdAt: string
   updatedAt: string
 }
@@ -32,6 +35,5 @@ export interface AuthTokens {
 
 export interface AuthResponse {
   user: User
-  accessToken: string
-  refreshToken: string
+  tokens: AuthTokens
 }

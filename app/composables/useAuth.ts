@@ -1,52 +1,32 @@
 import type { LoginCredentials, RegisterData, AuthResponse, User } from '~/types/auth'
+import { UserRole } from '~/types/auth'
 import { setTokens, clearTokens } from '~/utils/token'
 import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
 
-/**
- * Main authentication composable
- */
 export function useAuth() {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
   const authStore = useAuthStore()
   const router = useRouter()
 
-  /**
-   * Login user or admin
-   */
   async function login(credentials: LoginCredentials, isAdmin = false) {
     authStore.setLoading(true)
-
     try {
-      const { data, error } = await useFetch<AuthResponse>(`${baseURL}/auth/login`, {
+      const response = await $fetch<AuthResponse>(`${baseURL}/auth/login`, {
         method: 'POST',
         body: credentials
       })
 
-      if (error.value || !data.value) {
-        showErrorToast(error.value)
-        return false
-      }
-
-      // Check if user has required role
-      if (isAdmin && !data.value.user.roles.includes('ADMIN')) {
+      if (isAdmin && !response.user.roles.includes(UserRole.ADMIN)) {
         showErrorToast({ message: 'Access denied. Admin privileges required.' })
         return false
       }
 
-      // Store tokens and user data
-      setTokens(data.value.accessToken, data.value.refreshToken)
-      authStore.setUser(data.value.user)
-
+      setTokens(response.accessToken, response.refreshToken)
+      authStore.setUser(response.user)
       showSuccessToast('Login successful!')
 
-      // Redirect based on role
-      if (isAdmin) {
-        await router.push('/admin')
-      } else {
-        await router.push('/')
-      }
-
+      await router.push(isAdmin ? '/admin' : '/')
       return true
     } catch (err) {
       showErrorToast(err)
@@ -56,33 +36,18 @@ export function useAuth() {
     }
   }
 
-  /**
-   * Register new user
-   */
   async function register(data: RegisterData) {
     authStore.setLoading(true)
-
     try {
-      const { data: responseData, error } = await useFetch<AuthResponse>(
-        `${baseURL}/auth/register`,
-        {
-          method: 'POST',
-          body: data
-        }
-      )
+      const response = await $fetch<AuthResponse>(`${baseURL}/auth/register`, {
+        method: 'POST',
+        body: data
+      })
 
-      if (error.value || !responseData.value) {
-        showErrorToast(error.value)
-        return false
-      }
-
-      // Auto-login after registration
-      setTokens(responseData.value.accessToken, responseData.value.refreshToken)
-      authStore.setUser(responseData.value.user)
-
+      setTokens(response.accessToken, response.refreshToken)
+      authStore.setUser(response.user)
       showSuccessToast('Registration successful! Welcome!')
       await router.push('/')
-
       return true
     } catch (err) {
       showErrorToast(err)
@@ -92,46 +57,26 @@ export function useAuth() {
     }
   }
 
-  /**
-   * Logout user
-   */
   async function logout() {
     try {
-      // Call logout endpoint
-      await useFetch(`${baseURL}/auth/logout`, {
-        method: 'POST'
-      })
-    } catch (err) {
-      console.error('Logout error:', err)
+      await $fetch(`${baseURL}/auth/logout`, { method: 'POST' })
+    } catch {
+      // ignore
     } finally {
-      // Clear tokens and user data
       clearTokens()
       authStore.clearUser()
-
-      // Redirect to login
       await router.push('/login')
     }
   }
 
-  /**
-   * Fetch current user data
-   */
-  async function fetchUser() {
+  async function fetchUser(): Promise<User | null> {
     const { apiCall } = useApiClient()
-
     try {
-      const { data, error } = await apiCall<User>('/users/me', {
-        method: 'GET'
-      })
-
-      if (error.value || !data.value) {
-        return null
-      }
-
-      authStore.setUser(data.value)
-      return data.value
-    } catch (err) {
-      console.error('Fetch user error:', err)
+      const { data, error } = await apiCall<User>('/users/me', { method: 'GET' })
+      if (error || !data) return null
+      authStore.setUser(data)
+      return data
+    } catch {
       return null
     }
   }

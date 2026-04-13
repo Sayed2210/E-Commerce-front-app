@@ -1,126 +1,181 @@
 <template>
   <div>
-    <!-- Hero Section -->
-    <section
-      class="bg-gradient-to-r from-primary-600 to-primary-800 py-20 text-white"
-    >
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h1 class="text-5xl font-bold">Welcome to E-Commerce</h1>
-          <p class="mt-4 text-xl text-primary-100">
-            Discover amazing products at unbeatable prices
+    <!-- Hero Banner -->
+    <section class="relative overflow-hidden bg-on-surface" style="aspect-ratio: 25/8; min-height: 200px;">
+      <div class="absolute inset-0 bg-gradient-to-r from-on-surface via-on-surface/60 to-transparent z-10 flex items-center">
+        <div class="pl-12 md:pl-20 max-w-2xl">
+          <span class="inline-block bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+            Seasonal Event
+          </span>
+          <h1 class="text-5xl md:text-7xl font-extrabold text-surface-container-lowest leading-none tracking-tighter mb-6 uppercase italic font-headline">
+            Summer Sale
+          </h1>
+          <p class="text-surface-container-high text-lg mb-8 font-light max-w-md">
+            Precision-engineered essentials for the modern lifestyle. Save up to 40% on select items.
           </p>
-          <div class="mt-8 flex justify-center gap-4">
-            <UButton to="/products" size="xl" color="white" variant="solid">
-              Shop Now
-            </UButton>
-            <UButton to="/categories" size="xl" color="white" variant="outline">
-              Browse Categories
-            </UButton>
-          </div>
+          <NuxtLink
+            to="/products"
+            class="inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-8 py-3 rounded font-bold text-sm hover:bg-primary hover:text-on-primary transition-all group"
+          >
+            Shop Now
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          </NuxtLink>
         </div>
       </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="py-16">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="grid gap-8 md:grid-cols-3">
-          <div class="text-center">
-            <div
-              class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900"
-            >
-              <UIcon
-                name="i-heroicons-truck"
-                class="h-6 w-6 text-primary-600 dark:text-primary-400"
-              />
+    <div class="max-w-7xl mx-auto px-6">
+      <!-- Categories grid -->
+      <section class="py-12">
+        <div class="flex items-end justify-between mb-8">
+          <h2 class="text-3xl font-bold tracking-tight text-on-surface font-headline">Shop by Category</h2>
+          <NuxtLink to="/products" class="text-primary text-sm font-semibold hover:underline flex items-center gap-1">
+            View all <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </NuxtLink>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+          <NuxtLink
+            v-for="cat in categories"
+            :key="cat.slug"
+            :to="`/products?category=${cat.slug}`"
+            class="group cursor-pointer"
+          >
+            <div class="aspect-square bg-surface-container-lowest rounded flex flex-col items-center justify-center p-4 transition-all group-hover:shadow-ambient group-hover:-translate-y-0.5">
+              <span class="material-symbols-outlined text-4xl text-primary mb-3">{{ cat.icon }}</span>
+              <span class="text-xs font-bold text-on-surface text-center group-hover:text-primary transition-colors">{{ cat.label }}</span>
             </div>
-            <h3
-              class="mt-4 text-lg font-semibold text-gray-900 dark:text-white"
-            >
-              Free Shipping
-            </h3>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
-              On orders over $50
-            </p>
-          </div>
+          </NuxtLink>
+        </div>
+      </section>
 
-          <div class="text-center">
-            <div
-              class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900"
-            >
-              <UIcon
-                name="i-heroicons-shield-check"
-                class="h-6 w-6 text-primary-600 dark:text-primary-400"
-              />
-            </div>
-            <h3
-              class="mt-4 text-lg font-semibold text-gray-900 dark:text-white"
-            >
-              Secure Payment
-            </h3>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
-              100% secure transactions
-            </p>
-          </div>
+      <!-- Featured products -->
+      <section class="pb-12">
+        <div class="flex items-end justify-between mb-8">
+          <h2 class="text-3xl font-bold tracking-tight text-on-surface font-headline">Featured Products</h2>
+          <NuxtLink to="/products" class="text-primary text-sm font-semibold hover:underline flex items-center gap-1">
+            View all <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </NuxtLink>
+        </div>
 
-          <div class="text-center">
-            <div
-              class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900"
-            >
-              <UIcon
-                name="i-heroicons-arrow-path"
-                class="h-6 w-6 text-primary-600 dark:text-primary-400"
-              />
+        <!-- Skeleton -->
+        <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div v-for="i in 8" :key="i" class="bg-surface-container-lowest rounded animate-pulse">
+            <div class="aspect-square bg-surface-container-low rounded mb-4"></div>
+            <div class="p-4 space-y-2">
+              <div class="h-3 bg-surface-container-low rounded w-3/4"></div>
+              <div class="h-4 bg-surface-container-low rounded w-1/2"></div>
             </div>
-            <h3
-              class="mt-4 text-lg font-semibold text-gray-900 dark:text-white"
-            >
-              Easy Returns
-            </h3>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
-              30-day return policy
-            </p>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Featured Products Section -->
-    <section class="bg-gray-50 py-16 dark:bg-gray-800">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
-            Featured Products
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <NuxtLink
+            v-for="product in products"
+            :key="product.id"
+            :to="`/products/${product.id}`"
+            class="bg-surface-container-lowest rounded p-3 group relative hover:shadow-ambient transition-all border border-transparent hover:border-outline-variant/10 flex flex-col"
+          >
+            <span
+              v-if="product.inventoryQuantity < 10"
+              class="absolute top-4 left-4 z-10 bg-error-container text-on-error-container text-[10px] font-black px-2 py-0.5 rounded-full uppercase"
+            >Low Stock</span>
+            <div class="aspect-square bg-surface-container-low rounded overflow-hidden mb-4">
+              <img
+                v-if="product.images?.[0]"
+                :src="product.images[0]"
+                :alt="productName(product)"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div v-else class="w-full h-full flex items-center justify-center">
+                <span class="material-symbols-outlined text-5xl text-secondary/30">image</span>
+              </div>
+            </div>
+            <div class="mt-auto">
+              <p class="text-secondary text-xs mb-1">{{ product.brand?.name ?? '' }}</p>
+              <h3 class="font-bold text-sm text-on-surface leading-tight mb-2 line-clamp-2">{{ productName(product) }}</h3>
+              <div class="flex items-center gap-1 mb-2">
+                <span
+                  v-for="s in 5" :key="s"
+                  class="material-symbols-outlined text-[10px]"
+                  :class="s <= Math.round(product.averageRating ?? 0) ? 'text-primary-container' : 'text-outline-variant'"
+                  :style="s <= Math.round(product.averageRating ?? 0) ? `font-variation-settings: 'FILL' 1` : ''"
+                >star</span>
+                <span class="text-[10px] text-secondary font-bold ml-1">{{ product.reviewCount ?? 0 }}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-primary font-bold text-lg">${{ product.basePrice.toFixed(2) }}</span>
+                <button
+                  @click.prevent="quickAddToCart(product.id)"
+                  class="bg-surface-container-low text-primary p-2 rounded hover:bg-primary-container hover:text-on-primary-container transition-all"
+                  title="Add to cart"
+                >
+                  <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
+                </button>
+              </div>
+            </div>
+          </NuxtLink>
+        </div>
+      </section>
+
+      <!-- Newsletter banner -->
+      <section class="bg-on-surface rounded-xl p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+        <div class="absolute inset-0 opacity-10 bg-gradient-to-r from-primary-container to-transparent pointer-events-none"></div>
+        <div class="relative z-10 max-w-lg">
+          <h2 class="text-3xl font-extrabold text-surface-container-lowest mb-2 uppercase italic tracking-tight font-headline">
+            Free Shipping Over $99
           </h2>
-          <p class="mt-2 text-gray-600 dark:text-gray-400">
-            Check out our latest and greatest items
-          </p>
+          <p class="text-surface-container-high text-sm">Use code <span class="font-bold text-primary-container">FREESHIP</span> at checkout.</p>
         </div>
-
-        <div class="mt-12">
-          <UCard>
-            <div class="text-center py-12">
-              <UIcon
-                name="i-heroicons-cube"
-                class="mx-auto h-12 w-12 text-gray-400"
-              />
-              <h3
-                class="mt-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                No products yet
-              </h3>
-              <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Products will be displayed here once added
-              </p>
-            </div>
-          </UCard>
+        <div class="relative z-10 w-full md:w-auto flex flex-col sm:flex-row gap-3">
+          <input
+            v-model="email"
+            type="email"
+            placeholder="Enter your email for deals"
+            class="bg-transparent border border-surface-container/20 text-surface-container-lowest text-sm px-6 py-3 rounded min-w-[280px] focus:ring-1 focus:ring-primary-container outline-none placeholder:text-surface-container-high"
+          />
+          <button class="bg-primary text-on-primary font-bold px-8 py-3 rounded text-sm hover:bg-primary-container hover:text-on-primary-container transition-all whitespace-nowrap">
+            Subscribe
+          </button>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Homepage - no authentication required
+import type { Product } from '~/types/api'
+
+definePageMeta({ layout: 'default' })
+
+const { listProducts } = useProducts()
+const { addItem } = useCart()
+const email = ref('')
+
+const { data, pending } = await listProducts({ limit: 8 })
+const products = computed<Product[]>(() => {
+  const d = data.value as any
+  return d?.data ?? d ?? []
+})
+
+const categories = [
+  { slug: 'electronics', label: 'Electronics', icon: 'laptop_mac'    },
+  { slug: 'home',        label: 'Home',        icon: 'home'          },
+  { slug: 'fashion',     label: 'Fashion',     icon: 'checkroom'     },
+  { slug: 'industrial',  label: 'Industrial',  icon: 'construction'  },
+  { slug: 'books',       label: 'Books',       icon: 'auto_stories'  },
+  { slug: 'sports',      label: 'Sports',      icon: 'fitness_center'},
+  { slug: 'toys',        label: 'Toys',        icon: 'toys'          },
+  { slug: 'health',      label: 'Health',      icon: 'local_pharmacy'},
+]
+
+function productName(product: Product): string {
+  const n = product.name
+  return typeof n === 'string' ? n : (n?.en ?? '')
+}
+
+async function quickAddToCart(productId: string) {
+  await addItem({ productId, quantity: 1 })
+}
+
+useSeoMeta({ title: 'ArchitectMarket — Precision Tools Marketplace' })
 </script>

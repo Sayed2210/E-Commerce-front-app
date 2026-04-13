@@ -17,35 +17,36 @@
       <UForm
         :schema="loginSchema"
         :state="formData"
-        @submit="handleSubmit"
         class="space-y-4"
+        @submit="handleSubmit"
       >
         <!-- Email Field -->
-        <UFormGroup label="Email" name="email" required>
-          <UInput
-            v-model="formData.email"
-            type="email"
-            placeholder="admin@example.com"
-            icon="i-heroicons-envelope"
-            size="lg"
-          />
-        </UFormGroup>
+        <UInput
+          v-model="formData.email"
+          type="email"
+          placeholder="admin@example.com"
+          icon="i-heroicons-envelope"
+          size="lg"
+          required
+          class="w-full"
+          autofocus
+        />
 
         <!-- Password Field -->
-        <UFormGroup label="Password" name="password" required>
-          <UInput
-            v-model="formData.password"
-            type="password"
-            placeholder="Enter your password"
-            icon="i-heroicons-lock-closed"
-            size="lg"
-          />
-        </UFormGroup>
+        <UInput
+          v-model="formData.password"
+          type="password"
+          placeholder="Enter your password"
+          icon="i-heroicons-lock-closed"
+          size="lg"
+          required
+          class="w-full"
+        />
 
         <!-- Error Message -->
         <UAlert
           v-if="errorMessage"
-          color="red"
+          color="error"
           variant="soft"
           :title="errorMessage"
           icon="i-heroicons-exclamation-triangle"
