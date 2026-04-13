@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { UserRole } from '~/types/auth'
 import type { User } from '~/types/auth'
 
 export const useAuthStore = defineStore('auth', {
@@ -9,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     isAuthenticated: (state) => !!state.user,
-    isAdmin: (state) => state.user?.role === 'admin',
+    isAdmin: (state) => state.user?.roles.includes(UserRole.ADMIN) || false,
     currentUser: (state) => state.user
   },
 

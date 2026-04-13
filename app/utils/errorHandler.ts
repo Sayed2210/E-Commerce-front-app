@@ -43,7 +43,8 @@ export function showErrorToast(error: unknown) {
   toast.add({
     title: 'Error',
     description: message,
-    color: 'error',
+    color: 'error' as const,
+    duration: 5000
   })
 }
 
@@ -56,6 +57,7 @@ export function showSuccessToast(message: string) {
   toast.add({
     title: 'Success',
     description: message,
-    color: 'success',
+    color: 'success' as const,
+    duration: 3000
   })
 }

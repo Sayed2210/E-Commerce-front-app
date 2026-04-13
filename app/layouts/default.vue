@@ -1,216 +1,148 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <!-- Navigation Header -->
-    <header
-      class="sticky top-0 z-50 border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
-    >
-      <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex h-16 items-center justify-between">
-          <!-- Logo -->
-          <NuxtLink
-            to="/"
-            class="text-2xl font-bold text-primary-600 dark:text-primary-400"
-          >
-            E-Commerce
+  <div class="min-h-screen bg-surface text-on-surface">
+    <!-- Top nav -->
+    <header class="sticky top-0 z-50 glass shadow-sm">
+      <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+        <!-- Logo + nav links -->
+        <div class="flex items-center gap-8">
+          <NuxtLink to="/" class="text-xl font-bold tracking-tight text-on-surface font-headline">
+            ArchitectMarket
           </NuxtLink>
+          <nav class="hidden md:flex items-center gap-6">
+            <NuxtLink to="/products"  class="text-secondary hover:text-primary transition-colors text-sm">Categories</NuxtLink>
+            <NuxtLink to="/products?deals=1" class="text-secondary hover:text-primary transition-colors text-sm">Deals</NuxtLink>
+            <NuxtLink to="/wishlist"  class="text-secondary hover:text-primary transition-colors text-sm">Wishlist</NuxtLink>
+          </nav>
+        </div>
 
-          <!-- Navigation Links -->
-          <div class="hidden items-center gap-6 md:flex">
-            <NuxtLink
-              to="/"
-              class="text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400"
+        <!-- Search + actions -->
+        <div class="flex items-center gap-4 flex-1 justify-end max-w-xl ml-8">
+          <div class="relative w-full hidden sm:block group">
+            <input
+              v-model="searchQuery"
+              @keyup.enter="doSearch"
+              type="text"
+              placeholder="Search precision tools…"
+              class="w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/20 text-sm py-2 pl-4 pr-12 rounded-lg outline-none"
+            />
+            <button
+              @click="doSearch"
+              class="absolute right-1 top-1 bottom-1 bg-primary-container text-on-primary-container px-3 rounded flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all"
             >
-              Home
-            </NuxtLink>
-            <NuxtLink
-              to="/products"
-              class="text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400"
-            >
-              Products
-            </NuxtLink>
-            <NuxtLink
-              to="/categories"
-              class="text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400"
-            >
-              Categories
-            </NuxtLink>
+              <span class="material-symbols-outlined text-lg">search</span>
+            </button>
           </div>
 
-          <!-- Right Side Actions -->
-          <div class="flex items-center gap-4">
-            <!-- Shopping Cart -->
-            <NuxtLink to="/cart" class="relative">
-              <UButton
-                icon="i-heroicons-shopping-cart"
-                color="gray"
-                variant="ghost"
-              />
-              <span
-                v-if="cartItemsCount > 0"
-                class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white"
-              >
-                {{ cartItemsCount }}
-              </span>
-            </NuxtLink>
-
-            <!-- User Menu or Login -->
+          <div class="flex items-center gap-2">
+            <!-- Profile -->
             <template v-if="isAuthenticated">
-              <UDropdown :items="userMenuItems">
-                <UButton
-                  icon="i-heroicons-user-circle"
-                  color="gray"
-                  variant="ghost"
-                  :label="user?.email"
-                  trailing-icon="i-heroicons-chevron-down"
-                />
-              </UDropdown>
+              <NuxtLink to="/account" class="p-2 text-secondary hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">person</span>
+              </NuxtLink>
             </template>
             <template v-else>
-              <UButton to="/login" color="primary" variant="soft">
-                Login
-              </UButton>
-              <UButton to="/register" color="primary"> Sign Up </UButton>
+              <NuxtLink to="/login" class="text-sm font-semibold text-primary hover:underline">
+                Sign in
+              </NuxtLink>
             </template>
 
-            <!-- Color Mode Toggle -->
-            <UButton
-              icon="i-heroicons-moon"
-              color="gray"
-              variant="ghost"
-              @click="toggleColorMode"
-            />
+            <!-- Cart -->
+            <NuxtLink to="/cart" class="relative p-2 text-secondary hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">shopping_cart</span>
+              <span
+                v-if="itemCount > 0"
+                class="absolute top-0 right-0 bg-primary-container text-on-primary-container text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none"
+              >{{ itemCount }}</span>
+            </NuxtLink>
           </div>
         </div>
-      </nav>
+      </div>
+
+      <!-- Category nav strip -->
+      <div class="bg-surface-container-low border-t border-outline-variant/10">
+        <div class="max-w-7xl mx-auto px-6 py-2 overflow-x-auto scrollbar-hide">
+          <div class="flex items-center gap-8 text-xs font-medium uppercase tracking-wider text-secondary whitespace-nowrap">
+            <NuxtLink v-for="cat in categories" :key="cat.slug" :to="`/products?category=${cat.slug}`"
+              class="hover:text-primary transition-colors flex items-center gap-1 shrink-0">
+              <span class="material-symbols-outlined text-sm">{{ cat.icon }}</span>
+              {{ cat.label }}
+            </NuxtLink>
+          </div>
+        </div>
+      </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Page content -->
     <main>
       <slot />
     </main>
 
     <!-- Footer -->
-    <footer
-      class="border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
-    >
-      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">
-              E-Commerce
-            </h3>
-            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Your trusted online shopping destination.
-            </p>
-          </div>
-
-          <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white">Shop</h4>
-            <ul class="mt-2 space-y-2">
-              <li>
-                <NuxtLink
-                  to="/products"
-                  class="text-sm text-gray-600 hover:text-primary-600 dark:text-gray-400"
-                >
-                  All Products
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink
-                  to="/categories"
-                  class="text-sm text-gray-600 hover:text-primary-600 dark:text-gray-400"
-                >
-                  Categories
-                </NuxtLink>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white">Account</h4>
-            <ul class="mt-2 space-y-2">
-              <li>
-                <NuxtLink
-                  to="/account"
-                  class="text-sm text-gray-600 hover:text-primary-600 dark:text-gray-400"
-                >
-                  My Account
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink
-                  to="/orders"
-                  class="text-sm text-gray-600 hover:text-primary-600 dark:text-gray-400"
-                >
-                  Orders
-                </NuxtLink>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white">Support</h4>
-            <ul class="mt-2 space-y-2">
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-600 hover:text-primary-600 dark:text-gray-400"
-                >
-                  Contact Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-600 hover:text-primary-600 dark:text-gray-400"
-                >
-                  FAQs
-                </a>
-              </li>
-            </ul>
-          </div>
+    <footer class="bg-on-surface text-inverse-on-surface mt-16">
+      <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-bold font-headline text-surface-container-lowest mb-3">ArchitectMarket</h3>
+          <p class="text-sm text-surface-container-high">High-density marketplace for precision tools and technical goods.</p>
         </div>
-
-        <div class="mt-8 border-t border-gray-200 pt-8 dark:border-gray-700">
-          <p class="text-center text-sm text-gray-600 dark:text-gray-400">
-            © {{ new Date().getFullYear() }} E-Commerce. All rights reserved.
-          </p>
+        <div>
+          <h4 class="font-semibold text-surface-container-lowest mb-3 text-sm uppercase tracking-wider">Shop</h4>
+          <ul class="space-y-2">
+            <li><NuxtLink to="/products" class="text-sm text-surface-container-high hover:text-primary-fixed transition-colors">All Products</NuxtLink></li>
+            <li><NuxtLink to="/products?deals=1" class="text-sm text-surface-container-high hover:text-primary-fixed transition-colors">Deals</NuxtLink></li>
+          </ul>
         </div>
+        <div>
+          <h4 class="font-semibold text-surface-container-lowest mb-3 text-sm uppercase tracking-wider">Account</h4>
+          <ul class="space-y-2">
+            <li><NuxtLink to="/account" class="text-sm text-surface-container-high hover:text-primary-fixed transition-colors">My Profile</NuxtLink></li>
+            <li><NuxtLink to="/orders"  class="text-sm text-surface-container-high hover:text-primary-fixed transition-colors">Orders</NuxtLink></li>
+            <li><NuxtLink to="/wishlist" class="text-sm text-surface-container-high hover:text-primary-fixed transition-colors">Wishlist</NuxtLink></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-surface-container-lowest mb-3 text-sm uppercase tracking-wider">Support</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-sm text-surface-container-high hover:text-primary-fixed transition-colors">Help Center</a></li>
+            <li><a href="#" class="text-sm text-surface-container-high hover:text-primary-fixed transition-colors">Contact Us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-surface-container-high/20 px-6 py-4 text-center text-xs text-surface-container-high max-w-7xl mx-auto">
+        © {{ new Date().getFullYear() }} ArchitectMarket. All rights reserved.
       </div>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-const { user, isAuthenticated, logout } = useAuth();
-const colorMode = useColorMode();
+const { isAuthenticated } = useAuth()
+const cartStore = useCartStore()
+const itemCount = computed(() => cartStore.itemCount)
+const searchQuery = ref('')
+const router = useRouter()
 
-// Mock cart count (replace with actual cart store)
-const cartItemsCount = ref(0);
+const categories = [
+  { slug: 'electronics',  label: 'Electronics',  icon: 'laptop_mac'      },
+  { slug: 'home',         label: 'Home',          icon: 'home'            },
+  { slug: 'fashion',      label: 'Fashion',       icon: 'checkroom'       },
+  { slug: 'industrial',   label: 'Industrial',    icon: 'construction'    },
+  { slug: 'books',        label: 'Books',         icon: 'auto_stories'    },
+  { slug: 'sports',       label: 'Sports',        icon: 'fitness_center'  },
+  { slug: 'toys',         label: 'Toys',          icon: 'toys'            },
+  { slug: 'health',       label: 'Health',        icon: 'local_pharmacy'  },
+]
 
-const userMenuItems = [
-  [
-    {
-      label: "My Account",
-      icon: "i-heroicons-user",
-      click: () => navigateTo("/account"),
-    },
-    {
-      label: "Orders",
-      icon: "i-heroicons-shopping-bag",
-      click: () => navigateTo("/orders"),
-    },
-  ],
-  [
-    {
-      label: "Logout",
-      icon: "i-heroicons-arrow-right-on-rectangle",
-      click: () => logout(),
-    },
-  ],
-];
-
-function toggleColorMode() {
-  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
+function doSearch() {
+  if (searchQuery.value.trim()) {
+    router.push(`/products?q=${encodeURIComponent(searchQuery.value.trim())}`)
+  }
 }
+
+// Hydrate cart if logged in
+const { fetchCart } = useCart()
+onMounted(async () => {
+  if (isAuthenticated.value) {
+    await fetchCart()
+  }
+})
 </script>

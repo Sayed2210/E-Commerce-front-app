@@ -56,7 +56,7 @@
         <!-- Error Message -->
         <UAlert
           v-if="errorMessage"
-          color="red"
+          color="error"
           variant="soft"
           :title="errorMessage"
           icon="i-heroicons-exclamation-triangle"

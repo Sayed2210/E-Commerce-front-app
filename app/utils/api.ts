@@ -50,14 +50,55 @@ export function useApiClient() {
    */
   async function apiCall<T>(
     url: string,
-    options: Parameters<typeof client>[1] = {}
-  ) {
-    const { data, error, status } = await useAsyncData<T>(
-      url,
-      () => client<T>(url, options)
-    )
+    options: Parameters<typeof $fetch>[1] & { method?: string } = {}
+  ): Promise<{ data: T | null; error: Error | null }> {
+    const accessToken = getAccessToken()
 
-    return { data, error, status }
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...((options.headers as Record<string, string>) || {})
+    }
+
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`
+    }
+
+    try {
+      const data = await $fetch<T>(`${baseURL}${url}`, {
+        ...options,
+        headers
+      })
+      return { data, error: null }
+    } catch (err: any) {
+      // Handle 401 Unauthorized - token expired
+      if (err?.response?.status === 401) {
+        const refreshToken = getRefreshToken()
+
+        if (refreshToken) {
+          const refreshed = await refreshAccessToken()
+
+          if (refreshed) {
+            const newAccessToken = getAccessToken()
+            headers.Authorization = `Bearer ${newAccessToken}`
+
+            try {
+              const data = await $fetch<T>(`${baseURL}${url}`, {
+                ...options,
+                headers
+              })
+              return { data, error: null }
+            } catch (retryErr: any) {
+              return { data: null, error: retryErr }
+            }
+          }
+        }
+
+        clearTokens()
+        await navigateTo('/login')
+      }
+
+      return { data: null, error: err }
+    }
   }
 
   /**
@@ -65,24 +106,18 @@ export function useApiClient() {
    */
   async function refreshAccessToken(): Promise<boolean> {
     const refreshToken = getRefreshToken()
-    
+
     if (!refreshToken) {
       return false
     }
 
     try {
-      // Use raw $fetch for refresh to avoid infinite loops
       const data = await $fetch<{ accessToken: string; refreshToken: string }>(
         `${baseURL}/auth/refresh`,
-        {
-          method: 'POST',
-          body: { refreshToken }
-        }
+        { method: 'POST', body: { refreshToken } }
       )
 
-      if (!data) {
-        return false
-      }
+      if (!data) return false
 
       setTokens(data.accessToken, data.refreshToken)
       return true

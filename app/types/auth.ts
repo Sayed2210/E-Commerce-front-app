@@ -9,7 +9,9 @@ export interface User {
   email: string
   firstName?: string
   lastName?: string
-  role: UserRole
+  roles: UserRole[]
+  phone?: string
+  avatar?: string
   createdAt: string
   updatedAt: string
 }
