@@ -121,7 +121,7 @@ export interface CreateVariantDto {
   isActive?: boolean
 }
 
-export interface UpdateProductDto extends Partial<CreateProductDto> {}
+export type UpdateProductDto = Partial<CreateProductDto>
 
 // ── Category & Brand ──────────────────────────────────────────────────────
 
@@ -283,7 +283,7 @@ export interface CreateReviewDto {
   images?: string[]
 }
 
-export interface UpdateReviewDto extends Partial<CreateReviewDto> {}
+export type UpdateReviewDto = Partial<CreateReviewDto>
 
 // ── Notifications ─────────────────────────────────────────────────────────
 
@@ -338,7 +338,7 @@ export interface CreateCouponDto {
   isActive?: boolean
 }
 
-export interface UpdateCouponDto extends Partial<CreateCouponDto> {}
+export type UpdateCouponDto = Partial<CreateCouponDto>
 
 // ── Returns ───────────────────────────────────────────────────────────────
 

@@ -14,7 +14,7 @@ export function useAuth() {
     try {
       const response = await $fetch<AuthResponse>(`${baseURL}/auth/login`, {
         method: 'POST',
-        body: credentials
+        body: credentials,
       })
 
       if (isAdmin && !response.user.roles.includes(UserRole.ADMIN)) {
@@ -41,7 +41,7 @@ export function useAuth() {
     try {
       const response = await $fetch<AuthResponse>(`${baseURL}/auth/register`, {
         method: 'POST',
-        body: data
+        body: data,
       })
 
       setTokens(response.accessToken, response.refreshToken)
@@ -89,6 +89,6 @@ export function useAuth() {
     user: computed(() => authStore.currentUser),
     isAuthenticated: computed(() => authStore.isAuthenticated),
     isAdmin: computed(() => authStore.isAdmin),
-    loading: computed(() => authStore.loading)
+    loading: computed(() => authStore.loading),
   }
 }

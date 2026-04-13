@@ -9,8 +9,8 @@ function authH(): Record<string, string> {
 }
 
 export function useCart() {
-  const config    = useRuntimeConfig()
-  const baseURL   = config.public.apiBaseUrl as string
+  const config = useRuntimeConfig()
+  const baseURL = config.public.apiBaseUrl as string
   const cartStore = useCartStore()
 
   async function fetchCart() {
@@ -22,7 +22,9 @@ export function useCart() {
   async function addItem(dto: AddCartItemDto) {
     try {
       const data = await $fetch<Cart>(`${baseURL}/cart/items`, {
-        method: 'POST', body: dto, headers: authH()
+        method: 'POST',
+        body: dto,
+        headers: authH(),
       })
       if (data) cartStore.setCart(data as Cart)
       return { data, error: null }
@@ -34,7 +36,9 @@ export function useCart() {
   async function updateItem(itemId: string, dto: UpdateCartItemDto) {
     try {
       const data = await $fetch<Cart>(`${baseURL}/cart/items/${itemId}`, {
-        method: 'PATCH', body: dto, headers: authH()
+        method: 'PATCH',
+        body: dto,
+        headers: authH(),
       })
       if (data) cartStore.setCart(data as Cart)
       return { data, error: null }
@@ -46,7 +50,8 @@ export function useCart() {
   async function removeItem(itemId: string) {
     try {
       const data = await $fetch<Cart>(`${baseURL}/cart/items/${itemId}`, {
-        method: 'DELETE', headers: authH()
+        method: 'DELETE',
+        headers: authH(),
       })
       if (data) cartStore.setCart(data as Cart)
       return { data, error: null }
@@ -57,7 +62,7 @@ export function useCart() {
 
   async function clearCart() {
     try {
-      await $fetch<void>(`${baseURL}/cart`, { method: 'DELETE', headers: authH() })
+      await $fetch<undefined>(`${baseURL}/cart`, { method: 'DELETE', headers: authH() })
       cartStore.clearCart()
       return { error: null }
     } catch (err) {
@@ -67,4 +72,3 @@ export function useCart() {
 
   return { fetchCart, addItem, updateItem, removeItem, clearCart }
 }
-

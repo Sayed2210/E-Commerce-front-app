@@ -5,13 +5,13 @@ import type { User } from '~/types/auth'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null as User | null,
-    loading: false
+    loading: false,
   }),
 
   getters: {
     isAuthenticated: (state) => !!state.user,
     isAdmin: (state) => state.user?.roles.includes(UserRole.ADMIN) || false,
-    currentUser: (state) => state.user
+    currentUser: (state) => state.user,
   },
 
   actions: {
@@ -25,6 +25,6 @@ export const useAuthStore = defineStore('auth', {
 
     clearUser() {
       this.user = null
-    }
-  }
+    },
+  },
 })

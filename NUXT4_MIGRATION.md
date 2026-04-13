@@ -51,6 +51,7 @@ app/
 ## Verification
 
 All 10 Vue files found in `app/`:
+
 - ✅ app.vue
 - ✅ layouts/admin.vue
 - ✅ layouts/default.vue
@@ -63,6 +64,7 @@ All 10 Vue files found in `app/`:
 - ✅ pages/register.vue
 
 All 10 TypeScript files found in `app/`:
+
 - ✅ composables/useAuth.ts
 - ✅ middleware/admin.ts
 - ✅ middleware/auth.ts
@@ -87,4 +89,3 @@ npm test
 ```
 
 All imports with `~/` will automatically resolve to the `app/` directory - no code changes needed!
-

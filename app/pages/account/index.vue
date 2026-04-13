@@ -1,3 +1,81 @@
+<script setup lang="ts">
+import { UserRole } from '~/types/auth'
+
+definePageMeta({ layout: 'default', middleware: 'auth' })
+
+const { user, fetchUser } = useAuth()
+const { apiCall } = useApiClient()
+
+const saving = ref(false)
+const saved = ref(false)
+
+const form = reactive({
+  firstName: user.value?.firstName ?? '',
+  lastName: user.value?.lastName ?? '',
+  phone: user.value?.phone ?? '',
+})
+
+const pwForm = reactive({ current: '', newPw: '', confirm: '' })
+
+watch(
+  user,
+  (u) => {
+    if (u) {
+      form.firstName = u.firstName ?? ''
+      form.lastName = u.lastName ?? ''
+    }
+  },
+  { immediate: true }
+)
+
+const userInitial = computed(() => {
+  const n = user.value?.firstName ?? user.value?.email ?? 'U'
+  return n.charAt(0).toUpperCase()
+})
+const fullName = computed(() => {
+  const f = user.value?.firstName ?? ''
+  const l = user.value?.lastName ?? ''
+  return f || l ? `${f} ${l}`.trim() : (user.value?.email ?? '')
+})
+const memberSince = computed(() => {
+  if (!user.value?.createdAt) return ''
+  return new Date(user.value.createdAt).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  })
+})
+
+const accountLinks = [
+  { to: '/orders', icon: 'shopping_bag', label: 'My Orders' },
+  { to: '/wishlist', icon: 'favorite_border', label: 'Wishlist' },
+  { to: '/cart', icon: 'shopping_cart', label: 'Cart' },
+]
+
+async function saveProfile() {
+  saving.value = true
+  await apiCall('/users/me', {
+    method: 'PATCH',
+    body: { firstName: form.firstName, lastName: form.lastName, phone: form.phone },
+  })
+  await fetchUser()
+  saving.value = false
+  saved.value = true
+  setTimeout(() => {
+    saved.value = false
+  }, 3000)
+}
+
+function changePassword() {
+  if (pwForm.newPw !== pwForm.confirm) {
+    alert('Passwords do not match')
+    return
+  }
+  // POST /auth/reset-password (needs current password flow)
+}
+
+useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
+</script>
+
 <template>
   <div class="max-w-7xl mx-auto px-6 py-8">
     <div class="flex items-end justify-between mb-8">
@@ -12,7 +90,9 @@
       <div class="lg:col-span-4 space-y-4">
         <!-- Avatar card -->
         <div class="bg-surface-container-lowest rounded p-8 flex flex-col items-center text-center">
-          <div class="w-20 h-20 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-3xl font-bold font-headline mb-4">
+          <div
+            class="w-20 h-20 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-3xl font-bold font-headline mb-4"
+          >
             {{ userInitial }}
           </div>
           <h2 class="font-bold text-lg text-on-surface font-headline">{{ fullName }}</h2>
@@ -33,7 +113,9 @@
           >
             <span class="material-symbols-outlined text-xl">{{ link.icon }}</span>
             {{ link.label }}
-            <span class="material-symbols-outlined text-sm ml-auto text-outline-variant">chevron_right</span>
+            <span class="material-symbols-outlined text-sm ml-auto text-outline-variant"
+              >chevron_right</span
+            >
           </NuxtLink>
         </div>
       </div>
@@ -43,10 +125,12 @@
         <!-- Personal info -->
         <div class="bg-surface-container-lowest rounded p-8">
           <h2 class="font-bold text-on-surface font-headline mb-6">Personal Information</h2>
-          <form @submit.prevent="saveProfile" class="space-y-5">
+          <form class="space-y-5" @submit.prevent="saveProfile">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">First Name</label>
+                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                  >First Name</label
+                >
                 <input
                   v-model="form.firstName"
                   type="text"
@@ -55,7 +139,9 @@
                 />
               </div>
               <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">Last Name</label>
+                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                  >Last Name</label
+                >
                 <input
                   v-model="form.lastName"
                   type="text"
@@ -65,7 +151,9 @@
               </div>
             </div>
             <div>
-              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">Email Address</label>
+              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                >Email Address</label
+              >
               <input
                 :value="user?.email"
                 type="email"
@@ -75,7 +163,9 @@
               <p class="text-xs text-secondary mt-1">Email cannot be changed</p>
             </div>
             <div>
-              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">Phone Number</label>
+              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                >Phone Number</label
+              >
               <input
                 v-model="form.phone"
                 type="tel"
@@ -93,7 +183,11 @@
                 {{ saving ? 'Saving…' : 'Save Changes' }}
               </button>
               <p v-if="saved" class="text-green-600 text-xs flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">check_circle</span>
+                <span
+                  class="material-symbols-outlined text-sm"
+                  style="font-variation-settings: 'FILL' 1"
+                  >check_circle</span
+                >
                 Profile updated!
               </p>
             </div>
@@ -103,9 +197,11 @@
         <!-- Password change -->
         <div class="bg-surface-container-lowest rounded p-8">
           <h2 class="font-bold text-on-surface font-headline mb-6">Change Password</h2>
-          <form @submit.prevent="changePassword" class="space-y-5">
+          <form class="space-y-5" @submit.prevent="changePassword">
             <div>
-              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">Current Password</label>
+              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                >Current Password</label
+              >
               <input
                 v-model="pwForm.current"
                 type="password"
@@ -114,7 +210,9 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">New Password</label>
+                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                  >New Password</label
+                >
                 <input
                   v-model="pwForm.newPw"
                   type="password"
@@ -122,7 +220,9 @@
                 />
               </div>
               <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">Confirm New Password</label>
+                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                  >Confirm New Password</label
+                >
                 <input
                   v-model="pwForm.confirm"
                   type="password"
@@ -142,72 +242,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { UserRole } from '~/types/auth'
-
-definePageMeta({ layout: 'default', middleware: 'auth' })
-
-const { user, fetchUser } = useAuth()
-const { apiCall } = useApiClient()
-
-const saving = ref(false)
-const saved  = ref(false)
-
-const form = reactive({
-  firstName: user.value?.firstName ?? '',
-  lastName:  user.value?.lastName  ?? '',
-  phone:     user.value?.phone     ?? '',
-})
-
-const pwForm = reactive({ current: '', newPw: '', confirm: '' })
-
-watch(user, (u) => {
-  if (u) {
-    form.firstName = u.firstName ?? ''
-    form.lastName  = u.lastName  ?? ''
-  }
-}, { immediate: true })
-
-const userInitial = computed(() => {
-  const n = user.value?.firstName ?? user.value?.email ?? 'U'
-  return n.charAt(0).toUpperCase()
-})
-const fullName = computed(() => {
-  const f = user.value?.firstName ?? ''
-  const l = user.value?.lastName  ?? ''
-  return f || l ? `${f} ${l}`.trim() : user.value?.email ?? ''
-})
-const memberSince = computed(() => {
-  if (!user.value?.createdAt) return ''
-  return new Date(user.value.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-})
-
-const accountLinks = [
-  { to: '/orders',   icon: 'shopping_bag',  label: 'My Orders'    },
-  { to: '/wishlist', icon: 'favorite_border',label: 'Wishlist'     },
-  { to: '/cart',     icon: 'shopping_cart', label: 'Cart'         },
-]
-
-async function saveProfile() {
-  saving.value = true
-  await apiCall('/users/me', {
-    method: 'PATCH',
-    body: { firstName: form.firstName, lastName: form.lastName, phone: form.phone }
-  })
-  await fetchUser()
-  saving.value = false
-  saved.value  = true
-  setTimeout(() => { saved.value = false }, 3000)
-}
-
-function changePassword() {
-  if (pwForm.newPw !== pwForm.confirm) {
-    alert('Passwords do not match')
-    return
-  }
-  // POST /auth/reset-password (needs current password flow)
-}
-
-useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
-</script>

@@ -1,4 +1,3 @@
-
 /**
  * Parse API error response
  */
@@ -39,12 +38,12 @@ export function parseApiError(error: unknown): string {
 export function showErrorToast(error: unknown) {
   const toast = useToast()
   const message = parseApiError(error)
-  
+
   toast.add({
     title: 'Error',
     description: message,
     color: 'error' as const,
-    duration: 5000
+    duration: 5000,
   })
 }
 
@@ -53,11 +52,11 @@ export function showErrorToast(error: unknown) {
  */
 export function showSuccessToast(message: string) {
   const toast = useToast()
-  
+
   toast.add({
     title: 'Success',
     description: message,
     color: 'success' as const,
-    duration: 3000
+    duration: 3000,
   })
 }

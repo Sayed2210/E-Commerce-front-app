@@ -190,7 +190,7 @@ function handleLogout() {
 <script setup>
 // pages/some-page.vue
 definePageMeta({
-  middleware: 'auth' // Requires authentication
+  middleware: 'auth', // Requires authentication
 })
 </script>
 ```
@@ -199,7 +199,7 @@ definePageMeta({
 <script setup>
 // pages/admin/some-page.vue
 definePageMeta({
-  middleware: 'admin' // Requires admin role
+  middleware: 'admin', // Requires admin role
 })
 </script>
 ```
@@ -272,6 +272,7 @@ NUXT_PUBLIC_API_BASE_URL=http://localhost:3000
 ## Support
 
 For issues or questions:
+
 1. Check the implementation plan for technical details
 2. Review the walkthrough for component overview
 3. Check the testing guide for test examples

@@ -9,14 +9,14 @@ function authH(): Record<string, string> {
 }
 
 export function useOrders() {
-  const config  = useRuntimeConfig()
+  const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
   function listOrders(params?: { page?: number; limit?: number }) {
     return useFetch<PaginatedResponse<Order>>('/orders', {
       baseURL,
       query: { page: params?.page ?? 1, limit: params?.limit ?? 10 },
-      headers: authH()
+      headers: authH(),
     })
   }
 
@@ -27,7 +27,9 @@ export function useOrders() {
   async function updateOrderStatus(id: string, status: string) {
     try {
       const data = await $fetch<Order>(`${baseURL}/orders/${id}/status`, {
-        method: 'PATCH', body: { status }, headers: authH()
+        method: 'PATCH',
+        body: { status },
+        headers: authH(),
       })
       return { data, error: null }
     } catch (err) {

@@ -4,15 +4,15 @@ import { parseApiError, showErrorToast, showSuccessToast } from '~/utils/errorHa
 // Mock useToast
 vi.mock('#app', () => ({
   useToast: vi.fn(() => ({
-    add: vi.fn()
-  }))
+    add: vi.fn(),
+  })),
 }))
 
 describe('Error Handler', () => {
   describe('parseApiError', () => {
     it('should parse string error message from data', () => {
       const error = {
-        data: 'Something went wrong'
+        data: 'Something went wrong',
       }
 
       const message = parseApiError(error)
@@ -22,8 +22,8 @@ describe('Error Handler', () => {
     it('should parse error message from data.message', () => {
       const error = {
         data: {
-          message: 'Invalid credentials'
-        }
+          message: 'Invalid credentials',
+        },
       }
 
       const message = parseApiError(error)
@@ -35,9 +35,9 @@ describe('Error Handler', () => {
         data: {
           errors: {
             email: ['Invalid email'],
-            password: ['Too short']
-          }
-        }
+            password: ['Too short'],
+          },
+        },
       }
 
       const message = parseApiError(error)
@@ -64,8 +64,8 @@ describe('Error Handler', () => {
     it('should display error toast with parsed message', () => {
       const error = {
         data: {
-          message: 'Test error'
-        }
+          message: 'Test error',
+        },
       }
 
       // This will use the mocked useToast

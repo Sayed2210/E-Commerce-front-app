@@ -1,181 +1,698 @@
-<template>
-  <div>
-    <!-- Hero Banner -->
-    <section class="relative overflow-hidden bg-on-surface" style="aspect-ratio: 25/8; min-height: 200px;">
-      <div class="absolute inset-0 bg-gradient-to-r from-on-surface via-on-surface/60 to-transparent z-10 flex items-center">
-        <div class="pl-12 md:pl-20 max-w-2xl">
-          <span class="inline-block bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-            Seasonal Event
-          </span>
-          <h1 class="text-5xl md:text-7xl font-extrabold text-surface-container-lowest leading-none tracking-tighter mb-6 uppercase italic font-headline">
-            Summer Sale
-          </h1>
-          <p class="text-surface-container-high text-lg mb-8 font-light max-w-md">
-            Precision-engineered essentials for the modern lifestyle. Save up to 40% on select items.
-          </p>
-          <NuxtLink
-            to="/products"
-            class="inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-8 py-3 rounded font-bold text-sm hover:bg-primary hover:text-on-primary transition-all group"
-          >
-            Shop Now
-            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-          </NuxtLink>
-        </div>
-      </div>
-    </section>
-
-    <div class="max-w-7xl mx-auto px-6">
-      <!-- Categories grid -->
-      <section class="py-12">
-        <div class="flex items-end justify-between mb-8">
-          <h2 class="text-3xl font-bold tracking-tight text-on-surface font-headline">Shop by Category</h2>
-          <NuxtLink to="/products" class="text-primary text-sm font-semibold hover:underline flex items-center gap-1">
-            View all <span class="material-symbols-outlined text-sm">arrow_forward</span>
-          </NuxtLink>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-          <NuxtLink
-            v-for="cat in categories"
-            :key="cat.slug"
-            :to="`/products?category=${cat.slug}`"
-            class="group cursor-pointer"
-          >
-            <div class="aspect-square bg-surface-container-lowest rounded flex flex-col items-center justify-center p-4 transition-all group-hover:shadow-ambient group-hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-4xl text-primary mb-3">{{ cat.icon }}</span>
-              <span class="text-xs font-bold text-on-surface text-center group-hover:text-primary transition-colors">{{ cat.label }}</span>
-            </div>
-          </NuxtLink>
-        </div>
-      </section>
-
-      <!-- Featured products -->
-      <section class="pb-12">
-        <div class="flex items-end justify-between mb-8">
-          <h2 class="text-3xl font-bold tracking-tight text-on-surface font-headline">Featured Products</h2>
-          <NuxtLink to="/products" class="text-primary text-sm font-semibold hover:underline flex items-center gap-1">
-            View all <span class="material-symbols-outlined text-sm">arrow_forward</span>
-          </NuxtLink>
-        </div>
-
-        <!-- Skeleton -->
-        <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="i in 8" :key="i" class="bg-surface-container-lowest rounded animate-pulse">
-            <div class="aspect-square bg-surface-container-low rounded mb-4"></div>
-            <div class="p-4 space-y-2">
-              <div class="h-3 bg-surface-container-low rounded w-3/4"></div>
-              <div class="h-4 bg-surface-container-low rounded w-1/2"></div>
-            </div>
-          </div>
-        </div>
-
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <NuxtLink
-            v-for="product in products"
-            :key="product.id"
-            :to="`/products/${product.id}`"
-            class="bg-surface-container-lowest rounded p-3 group relative hover:shadow-ambient transition-all border border-transparent hover:border-outline-variant/10 flex flex-col"
-          >
-            <span
-              v-if="product.inventoryQuantity < 10"
-              class="absolute top-4 left-4 z-10 bg-error-container text-on-error-container text-[10px] font-black px-2 py-0.5 rounded-full uppercase"
-            >Low Stock</span>
-            <div class="aspect-square bg-surface-container-low rounded overflow-hidden mb-4">
-              <img
-                v-if="product.images?.[0]"
-                :src="product.images[0]"
-                :alt="productName(product)"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div v-else class="w-full h-full flex items-center justify-center">
-                <span class="material-symbols-outlined text-5xl text-secondary/30">image</span>
-              </div>
-            </div>
-            <div class="mt-auto">
-              <p class="text-secondary text-xs mb-1">{{ product.brand?.name ?? '' }}</p>
-              <h3 class="font-bold text-sm text-on-surface leading-tight mb-2 line-clamp-2">{{ productName(product) }}</h3>
-              <div class="flex items-center gap-1 mb-2">
-                <span
-                  v-for="s in 5" :key="s"
-                  class="material-symbols-outlined text-[10px]"
-                  :class="s <= Math.round(product.averageRating ?? 0) ? 'text-primary-container' : 'text-outline-variant'"
-                  :style="s <= Math.round(product.averageRating ?? 0) ? `font-variation-settings: 'FILL' 1` : ''"
-                >star</span>
-                <span class="text-[10px] text-secondary font-bold ml-1">{{ product.reviewCount ?? 0 }}</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-primary font-bold text-lg">${{ product.basePrice.toFixed(2) }}</span>
-                <button
-                  @click.prevent="quickAddToCart(product.id)"
-                  class="bg-surface-container-low text-primary p-2 rounded hover:bg-primary-container hover:text-on-primary-container transition-all"
-                  title="Add to cart"
-                >
-                  <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
-                </button>
-              </div>
-            </div>
-          </NuxtLink>
-        </div>
-      </section>
-
-      <!-- Newsletter banner -->
-      <section class="bg-on-surface rounded-xl p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
-        <div class="absolute inset-0 opacity-10 bg-gradient-to-r from-primary-container to-transparent pointer-events-none"></div>
-        <div class="relative z-10 max-w-lg">
-          <h2 class="text-3xl font-extrabold text-surface-container-lowest mb-2 uppercase italic tracking-tight font-headline">
-            Free Shipping Over $99
-          </h2>
-          <p class="text-surface-container-high text-sm">Use code <span class="font-bold text-primary-container">FREESHIP</span> at checkout.</p>
-        </div>
-        <div class="relative z-10 w-full md:w-auto flex flex-col sm:flex-row gap-3">
-          <input
-            v-model="email"
-            type="email"
-            placeholder="Enter your email for deals"
-            class="bg-transparent border border-surface-container/20 text-surface-container-lowest text-sm px-6 py-3 rounded min-w-[280px] focus:ring-1 focus:ring-primary-container outline-none placeholder:text-surface-container-high"
-          />
-          <button class="bg-primary text-on-primary font-bold px-8 py-3 rounded text-sm hover:bg-primary-container hover:text-on-primary-container transition-all whitespace-nowrap">
-            Subscribe
-          </button>
-        </div>
-      </section>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import type { Product } from '~/types/api'
+import type { Product, Category } from '~/types/api'
 
 definePageMeta({ layout: 'default' })
+useSeoMeta({ title: 'ArchitectMarket — Precision Tools Marketplace' })
 
 const { listProducts } = useProducts()
+const { listCategories, categoryIcon } = useCategories()
 const { addItem } = useCart()
-const email = ref('')
 
-const { data, pending } = await listProducts({ limit: 8 })
+const newsletter = ref('')
+const newsletterSent = ref(false)
+
+const [{ data: productsData, pending }, { data: rawCategories }] = await Promise.all([
+  listProducts({ limit: 8 }),
+  listCategories({ limit: 8 }),
+])
+
 const products = computed<Product[]>(() => {
-  const d = data.value as any
+  const d = productsData.value as any
   return d?.data ?? d ?? []
 })
 
-const categories = [
-  { slug: 'electronics', label: 'Electronics', icon: 'laptop_mac'    },
-  { slug: 'home',        label: 'Home',        icon: 'home'          },
-  { slug: 'fashion',     label: 'Fashion',     icon: 'checkroom'     },
-  { slug: 'industrial',  label: 'Industrial',  icon: 'construction'  },
-  { slug: 'books',       label: 'Books',       icon: 'auto_stories'  },
-  { slug: 'sports',      label: 'Sports',      icon: 'fitness_center'},
-  { slug: 'toys',        label: 'Toys',        icon: 'toys'          },
-  { slug: 'health',      label: 'Health',      icon: 'local_pharmacy'},
-]
-
-function productName(product: Product): string {
-  const n = product.name
-  return typeof n === 'string' ? n : (n?.en ?? '')
-}
+const categories = computed<Category[]>(() => rawCategories.value ?? [])
 
 async function quickAddToCart(productId: string) {
   await addItem({ productId, quantity: 1 })
 }
 
-useSeoMeta({ title: 'ArchitectMarket — Precision Tools Marketplace' })
+function submitNewsletter() {
+  if (newsletter.value.trim()) newsletterSent.value = true
+}
 </script>
+
+<template>
+  <div>
+    <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+    <section class="hero" aria-label="Hero banner">
+      <div class="hero__bg" aria-hidden="true" />
+
+      <div class="hero__content">
+        <span class="hero__eyebrow">Seasonal Event</span>
+        <h1 class="hero__title">Curated for<br />the Discerning</h1>
+        <p class="hero__body">
+          Precision-engineered essentials for the modern lifestyle. Save up to 40% on select items
+          this season.
+        </p>
+        <div class="hero__ctas">
+          <NuxtLink to="/products" class="hero__btn-primary">
+            Shop Now
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+          </NuxtLink>
+          <NuxtLink to="/products?deals=1" class="hero__btn-secondary"> See Deals </NuxtLink>
+        </div>
+      </div>
+
+      <!-- Decorative amber radiance -->
+      <div class="hero__radiance" aria-hidden="true" />
+    </section>
+
+    <!-- ── Categories ────────────────────────────────────────────────────── -->
+    <section class="section" aria-labelledby="cats-heading">
+      <SectionHeader
+        id="cats-heading"
+        title="Shop by Category"
+        subtitle="Explore our curated collections"
+        link="/products"
+      />
+
+      <ul class="cats-grid" role="list" aria-label="Product categories">
+        <li v-for="cat in categories" :key="cat.slug">
+          <NuxtLink :to="`/products?category=${cat.slug}`" class="cat-card">
+            <span class="cat-card__icon material-symbols-outlined" aria-hidden="true">
+              {{ categoryIcon(cat.slug) }}
+            </span>
+            <span class="cat-card__name">{{ cat.name }}</span>
+          </NuxtLink>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ── Featured Products ─────────────────────────────────────────────── -->
+    <section class="section section--tinted" aria-labelledby="featured-heading">
+      <SectionHeader
+        id="featured-heading"
+        title="Featured Products"
+        subtitle="Editor's picks for the season"
+        link="/products"
+      />
+
+      <ul class="product-grid" role="list" aria-label="Featured products">
+        <template v-if="pending">
+          <li v-for="i in 8" :key="i">
+            <ProductSkeleton />
+          </li>
+        </template>
+        <template v-else>
+          <li v-for="product in products" :key="product.id">
+            <ProductCard :product="product" :wishlist="true" @add-to-cart="quickAddToCart" />
+          </li>
+        </template>
+      </ul>
+
+      <div v-if="!pending" class="section__cta">
+        <NuxtLink to="/products" class="section__see-all">
+          View all products
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+        </NuxtLink>
+      </div>
+    </section>
+
+    <!-- ── Value proposition strip ───────────────────────────────────────── -->
+    <section class="perks" aria-label="Shopping benefits">
+      <div class="perks__inner">
+        <div
+          v-for="perk in [
+            { icon: 'local_shipping', title: 'Free Shipping', body: 'On all orders over $99' },
+            {
+              icon: 'verified',
+              title: 'Authenticity Guaranteed',
+              body: 'Every item curated and verified',
+            },
+            { icon: 'replay', title: '30-Day Returns', body: 'Hassle-free return policy' },
+            {
+              icon: 'headset_mic',
+              title: '24/7 Support',
+              body: 'Expert help whenever you need it',
+            },
+          ]"
+          :key="perk.icon"
+          class="perk"
+        >
+          <span class="perk__icon material-symbols-outlined" aria-hidden="true">{{
+            perk.icon
+          }}</span>
+          <div>
+            <p class="perk__title">{{ perk.title }}</p>
+            <p class="perk__body">{{ perk.body }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Newsletter ─────────────────────────────────────────────────────── -->
+    <section class="newsletter" aria-labelledby="newsletter-heading">
+      <div class="newsletter__inner">
+        <div class="newsletter__glow" aria-hidden="true" />
+
+        <div class="newsletter__text">
+          <h2 id="newsletter-heading" class="newsletter__title">Join the Inner Circle</h2>
+          <p class="newsletter__sub">
+            Receive exclusive drops, editorial picks, and early access deals.
+          </p>
+        </div>
+
+        <div class="newsletter__form-wrap">
+          <template v-if="!newsletterSent">
+            <form
+              class="newsletter__form"
+              aria-label="Newsletter sign up"
+              @submit.prevent="submitNewsletter"
+            >
+              <label for="newsletter-email" class="sr-only">Email address</label>
+              <input
+                id="newsletter-email"
+                v-model="newsletter"
+                type="email"
+                class="newsletter__input"
+                placeholder="Enter your email address"
+                autocomplete="email"
+                :required="true"
+              />
+              <button type="submit" class="newsletter__btn" aria-label="Subscribe to newsletter">
+                Subscribe
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+              </button>
+            </form>
+          </template>
+          <div v-else class="newsletter__thanks" role="status" aria-live="polite">
+            <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+            You're on the list — thank you!
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</template>
+
+<style scoped>
+/* ── Section base ────────────────────────────────────────────────────────── */
+.section {
+  max-width: 88rem;
+  margin-inline: auto;
+  padding: 4rem 1.5rem;
+}
+
+.section--tinted {
+  max-width: 100%;
+  background: var(--color-surface-container-low);
+  padding-inline: 0;
+}
+
+.section--tinted > * {
+  max-width: 88rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.section__cta {
+  display: flex;
+  justify-content: center;
+  padding-top: 2.5rem;
+}
+
+.section__see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-DEFAULT);
+  border: 1px solid color-mix(in srgb, var(--color-outline) 25%, transparent);
+  transition: all 200ms ease;
+}
+
+.section__see-all:hover {
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  border-color: color-mix(in srgb, var(--color-outline) 50%, transparent);
+  gap: 0.625rem;
+}
+
+.section__see-all:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 60vh;
+  background: var(--color-inverse-surface);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Subtle warm gradient overlay */
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-on-surface) 95%, transparent) 0%,
+    color-mix(in srgb, var(--color-on-surface) 60%, transparent) 50%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+
+/* Amber radiance blob */
+.hero__radiance {
+  position: absolute;
+  right: -5%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 55%;
+  height: 140%;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-primary-container) 20%, transparent) 0%,
+    transparent 65%
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin-inline: auto;
+  padding: 5rem 1.5rem;
+  max-width: 36rem;
+  padding-left: clamp(1.5rem, 6vw, 6rem);
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  font-family: var(--font-label);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-primary-container);
+  background: color-mix(in srgb, var(--color-primary-container) 15%, transparent);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  border: 1px solid color-mix(in srgb, var(--color-primary-container) 30%, transparent);
+  margin-bottom: 1.25rem;
+}
+
+.hero__title {
+  font-family: var(--font-headline);
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--color-surface-container-lowest);
+  margin: 0 0 1.25rem;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.hero__body {
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--color-surface-container-high);
+  margin: 0 0 2rem;
+  max-width: 26rem;
+}
+
+.hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+  align-items: center;
+}
+
+.hero__btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+  color: var(--color-on-primary);
+  font-family: var(--font-label);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--radius-DEFAULT);
+  text-decoration: none;
+  transition:
+    box-shadow 200ms ease,
+    gap 200ms ease;
+}
+
+.hero__btn-primary:hover {
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--color-primary) 35%, transparent);
+  gap: 0.75rem;
+}
+
+.hero__btn-primary:focus-visible {
+  outline: 2px solid var(--color-primary-fixed);
+  outline-offset: 3px;
+}
+
+.hero__btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-label);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-surface-container-lowest);
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--radius-DEFAULT);
+  border: 1px solid color-mix(in srgb, var(--color-surface-container-lowest) 25%, transparent);
+  text-decoration: none;
+  transition:
+    background 200ms ease,
+    border-color 200ms ease;
+}
+
+.hero__btn-secondary:hover {
+  background: color-mix(in srgb, var(--color-surface-container-lowest) 10%, transparent);
+  border-color: color-mix(in srgb, var(--color-surface-container-lowest) 50%, transparent);
+}
+
+.hero__btn-secondary:focus-visible {
+  outline: 2px solid var(--color-primary-fixed);
+  outline-offset: 3px;
+}
+
+/* ── Category grid ───────────────────────────────────────────────────────── */
+.cats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (width >= 480px) {
+  .cats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (width >= 768px) {
+  .cats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (width >= 1024px) {
+  .cats-grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
+}
+
+.cat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.25rem 0.5rem;
+  background: var(--color-surface-container-lowest);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition:
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+.cat-card:hover {
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-on-surface) 6%, transparent);
+  transform: translateY(-2px);
+}
+
+.cat-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.cat-card__icon {
+  font-size: 1.75rem;
+  color: var(--color-primary);
+  transition: transform 200ms ease;
+}
+
+.cat-card:hover .cat-card__icon {
+  transform: scale(1.1);
+}
+
+.cat-card__name {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-on-surface);
+  text-align: center;
+  transition: color 200ms ease;
+}
+
+.cat-card:hover .cat-card__name {
+  color: var(--color-primary);
+}
+
+/* ── Product grid ────────────────────────────────────────────────────────── */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (width >= 480px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 768px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (width >= 1280px) {
+  .product-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ── Perks strip ─────────────────────────────────────────────────────────── */
+.perks {
+  background: var(--color-surface-container);
+}
+
+.perks__inner {
+  max-width: 88rem;
+  margin-inline: auto;
+  padding: 2.5rem 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (width >= 1024px) {
+  .perks__inner {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.perk {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.perk__icon {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 0.0625rem;
+}
+
+.perk__title {
+  font-family: var(--font-headline);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  margin: 0 0 0.25rem;
+}
+
+.perk__body {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--color-on-surface-variant);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Newsletter ──────────────────────────────────────────────────────────── */
+.newsletter {
+  background: var(--color-inverse-surface);
+  margin-top: 0;
+}
+
+.newsletter__inner {
+  position: relative;
+  overflow: hidden;
+  max-width: 88rem;
+  margin-inline: auto;
+  padding: 4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  text-align: center;
+}
+
+@media (width >= 768px) {
+  .newsletter__inner {
+    flex-direction: row;
+    text-align: left;
+    justify-content: space-between;
+  }
+}
+
+/* Amber glow accent behind newsletter */
+.newsletter__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 200%;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-primary-container) 8%, transparent) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.newsletter__text {
+  flex: 1;
+  max-width: 30rem;
+}
+
+.newsletter__title {
+  font-family: var(--font-headline);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-surface-container-lowest);
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.newsletter__sub {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-surface-container-high);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.newsletter__form-wrap {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 22rem;
+}
+
+.newsletter__form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.newsletter__input {
+  flex: 1;
+  min-width: 14rem;
+  background: color-mix(in srgb, var(--color-surface-container-lowest) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-surface-container-lowest) 20%, transparent);
+  border-radius: var(--radius-DEFAULT);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-surface-container-lowest);
+  outline: none;
+  transition:
+    border-color 200ms ease,
+    background 200ms ease;
+}
+
+.newsletter__input::placeholder {
+  color: var(--color-surface-container-high);
+}
+
+.newsletter__input:focus {
+  border-color: var(--color-primary-container);
+  background: color-mix(in srgb, var(--color-surface-container-lowest) 15%, transparent);
+}
+
+.newsletter__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+  color: var(--color-on-primary);
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.75rem 1.375rem;
+  border: none;
+  border-radius: var(--radius-DEFAULT);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: box-shadow 200ms ease;
+}
+
+.newsletter__btn:hover {
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.newsletter__btn:focus-visible {
+  outline: 2px solid var(--color-primary-fixed);
+  outline-offset: 3px;
+}
+
+.newsletter__thanks {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-label);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-fixed);
+}
+
+.newsletter__thanks .material-symbols-outlined {
+  font-size: 1.375rem;
+  color: var(--color-primary-container);
+}
+
+/* ── Utility ─────────────────────────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 0;
+}
+</style>

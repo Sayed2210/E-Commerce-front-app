@@ -8,9 +8,9 @@
 
 Once the backend is running:
 
-| URL | Description |
-|-----|-------------|
-| **http://localhost:3000/api** | Swagger UI — browse and test all endpoints |
+| URL                                | Description                                  |
+| ---------------------------------- | -------------------------------------------- |
+| **http://localhost:3000/api**      | Swagger UI — browse and test all endpoints   |
 | **http://localhost:3000/api-json** | Raw OpenAPI JSON (for code generation tools) |
 
 ### Using Swagger UI
@@ -49,6 +49,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIs...",
@@ -66,10 +67,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
 
 ## 🌐 CORS & Base URL
 
-| Environment | URL |
-|-------------|-----|
-| Development | `http://localhost:3000` |
-| Production | Configure via `FRONTEND_URL` env var |
+| Environment | URL                                  |
+| ----------- | ------------------------------------ |
+| Development | `http://localhost:3000`              |
+| Production  | Configure via `FRONTEND_URL` env var |
 
 CORS allows credentials and the following methods: `GET, POST, PUT, PATCH, DELETE, OPTIONS`
 
@@ -85,6 +86,7 @@ Register → Login → [accessToken + refreshToken]
 ```
 
 **Token storage:**
+
 - `accessToken` — short-lived (1 day), use for API calls
 - `refreshToken` — longer-lived (7 days), use to refresh access tokens
 
@@ -103,33 +105,34 @@ Send `Accept-Language: en` or `Accept-Language: ar` header to get the localized 
 
 ## 📋 API Sections (by Tag)
 
-| Tag | Base Path | Auth Required | Description |
-|-----|-----------|:-------------:|-------------|
-| **Authentication** | `/auth/*` | Partial | Register, login, password reset |
-| **Products** | `/products/*` | Partial (browse = public, write = admin) | Product CRUD |
-| **Categories** | `/categories/*` | Partial | Category management |
-| **Brands** | `/brands/*` | Partial | Brand management |
-| **Cart** | `/cart/*` | ✅ | Shopping cart operations |
-| **Checkout** | `/checkout/*` | ✅ | Validate cart, create orders |
-| **Orders** | `/orders/*` | ✅ | Order management |
-| **Users** | `/users/*` | ✅ | User profile |
-| **Wishlist** | `/wishlist/*` | ✅ | Wishlist management |
-| **Reviews** | `/reviews/*` | Partial | Product reviews |
-| **Search** | `/search` | ❌ | Full-text search |
-| **Notifications** | `/notifications/*` | ✅ | Real-time notifications |
-| **Newsletter** | `/newsletter/*` | Partial | Subscribe/unsubscribe |
-| **Returns** | `/returns/*` | ✅ | Return/refund requests |
-| **Coupons** | `/coupons/*` | Partial (write = admin) | Discount coupons |
-| **Admin Staff** | `/admin/staff/*` | ✅ (admin) | Staff management |
-| **Admin Analytics** | `/admin/analytics/*` | ✅ (admin) | Analytics & audit logs |
-| **Admin Dashboard** | `/admin/dashboard/*` | ✅ (admin) | Dashboard stats |
-| **Health** | `/health` | ❌ | Health check |
+| Tag                 | Base Path            |              Auth Required               | Description                     |
+| ------------------- | -------------------- | :--------------------------------------: | ------------------------------- |
+| **Authentication**  | `/auth/*`            |                 Partial                  | Register, login, password reset |
+| **Products**        | `/products/*`        | Partial (browse = public, write = admin) | Product CRUD                    |
+| **Categories**      | `/categories/*`      |                 Partial                  | Category management             |
+| **Brands**          | `/brands/*`          |                 Partial                  | Brand management                |
+| **Cart**            | `/cart/*`            |                    ✅                    | Shopping cart operations        |
+| **Checkout**        | `/checkout/*`        |                    ✅                    | Validate cart, create orders    |
+| **Orders**          | `/orders/*`          |                    ✅                    | Order management                |
+| **Users**           | `/users/*`           |                    ✅                    | User profile                    |
+| **Wishlist**        | `/wishlist/*`        |                    ✅                    | Wishlist management             |
+| **Reviews**         | `/reviews/*`         |                 Partial                  | Product reviews                 |
+| **Search**          | `/search`            |                    ❌                    | Full-text search                |
+| **Notifications**   | `/notifications/*`   |                    ✅                    | Real-time notifications         |
+| **Newsletter**      | `/newsletter/*`      |                 Partial                  | Subscribe/unsubscribe           |
+| **Returns**         | `/returns/*`         |                    ✅                    | Return/refund requests          |
+| **Coupons**         | `/coupons/*`         |         Partial (write = admin)          | Discount coupons                |
+| **Admin Staff**     | `/admin/staff/*`     |                ✅ (admin)                | Staff management                |
+| **Admin Analytics** | `/admin/analytics/*` |                ✅ (admin)                | Analytics & audit logs          |
+| **Admin Dashboard** | `/admin/dashboard/*` |                ✅ (admin)                | Dashboard stats                 |
+| **Health**          | `/health`            |                    ❌                    | Health check                    |
 
 ## 🎯 Key Response Patterns
 
 ### Pagination
 
 List endpoints return:
+
 ```json
 {
   "data": [...],
@@ -169,15 +172,15 @@ npx openapi-typescript-codegen --input openapi.json --output ./src/api
 Connect via Socket.io at `http://localhost:3000`:
 
 ```typescript
-import io from 'socket.io-client';
+import io from 'socket.io-client'
 
 const socket = io('http://localhost:3000', {
-  auth: { token: 'your_jwt_token' }
-});
+  auth: { token: 'your_jwt_token' },
+})
 
 socket.on('notification', (data) => {
-  console.log('New notification:', data);
-});
+  console.log('New notification:', data)
+})
 ```
 
 ## ❓ Need More Details?

@@ -9,7 +9,7 @@ function authH(): Record<string, string> {
 }
 
 export function useWishlist() {
-  const config  = useRuntimeConfig()
+  const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
   function getWishlist() {
@@ -19,7 +19,9 @@ export function useWishlist() {
   async function addToWishlist(productId: string) {
     try {
       const data = await $fetch<WishlistItem>(`${baseURL}/wishlist`, {
-        method: 'POST', body: { productId }, headers: authH()
+        method: 'POST',
+        body: { productId },
+        headers: authH(),
       })
       return { data, error: null }
     } catch (err) {
@@ -29,7 +31,10 @@ export function useWishlist() {
 
   async function removeFromWishlist(productId: string) {
     try {
-      await $fetch<void>(`${baseURL}/wishlist/${productId}`, { method: 'DELETE', headers: authH() })
+      await $fetch<undefined>(`${baseURL}/wishlist/${productId}`, {
+        method: 'DELETE',
+        headers: authH(),
+      })
       return { error: null }
     } catch (err) {
       return { error: err }
@@ -38,7 +43,7 @@ export function useWishlist() {
 
   async function clearWishlist() {
     try {
-      await $fetch<void>(`${baseURL}/wishlist`, { method: 'DELETE', headers: authH() })
+      await $fetch<undefined>(`${baseURL}/wishlist`, { method: 'DELETE', headers: authH() })
       return { error: null }
     } catch (err) {
       return { error: err }
@@ -47,4 +52,3 @@ export function useWishlist() {
 
   return { getWishlist, addToWishlist, removeFromWishlist, clearWishlist }
 }
-

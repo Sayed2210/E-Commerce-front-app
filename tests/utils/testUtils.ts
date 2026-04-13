@@ -1,4 +1,3 @@
-import { mount } from '@vue/test-utils'
 import { vi } from 'vitest'
 import type { Router } from 'vue-router'
 
@@ -22,9 +21,9 @@ export function createMockRouter(): Partial<Router> {
         name: undefined,
         matched: [],
         redirectedFrom: undefined,
-        meta: {}
-      }
-    } as any
+        meta: {},
+      },
+    } as any,
   }
 }
 
@@ -35,7 +34,7 @@ export function createMockApiResponse<T>(data: T, error: any = null) {
   return {
     data: { value: error ? null : data },
     error: { value: error },
-    status: { value: error ? 'error' : 'success' }
+    status: { value: error ? 'error' : 'success' },
   }
 }
 
@@ -49,7 +48,7 @@ export const mockUser = {
   lastName: 'User',
   roles: ['CUSTOMER' as const],
   createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-01-01T00:00:00Z'
+  updatedAt: '2024-01-01T00:00:00Z',
 }
 
 /**
@@ -58,7 +57,7 @@ export const mockUser = {
 export const mockAdminUser = {
   ...mockUser,
   email: 'admin@example.com',
-  roles: ['ADMIN' as const]
+  roles: ['ADMIN' as const],
 }
 
 /**
@@ -67,7 +66,7 @@ export const mockAdminUser = {
 export const mockAuthResponse = {
   user: mockUser,
   accessToken: 'mock-access-token',
-  refreshToken: 'mock-refresh-token'
+  refreshToken: 'mock-refresh-token',
 }
 
 /**
@@ -76,5 +75,5 @@ export const mockAuthResponse = {
 export const mockAdminAuthResponse = {
   user: mockAdminUser,
   accessToken: 'mock-admin-access-token',
-  refreshToken: 'mock-admin-refresh-token'
+  refreshToken: 'mock-admin-refresh-token',
 }

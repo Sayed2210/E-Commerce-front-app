@@ -1,5 +1,12 @@
 import { getAccessToken } from '~/utils/token'
-import type { DashboardStats, StaffMember, CreateStaffDto, AuditLog, PaginatedResponse, User } from '~/types/api'
+import type {
+  DashboardStats,
+  StaffMember,
+  CreateStaffDto,
+  AuditLog,
+  PaginatedResponse,
+  User,
+} from '~/types/api'
 
 function authH(): Record<string, string> {
   const t = getAccessToken()
@@ -9,24 +16,27 @@ function authH(): Record<string, string> {
 }
 
 export function useAdmin() {
-  const config  = useRuntimeConfig()
+  const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
   function getDashboardStats() {
-    return useFetch<DashboardStats>('/admin/analytics/dashboard-stats', { baseURL, headers: authH() })
+    return useFetch<DashboardStats>('/admin/analytics/dashboard-stats', {
+      baseURL,
+      headers: authH(),
+    })
   }
 
   function listUsers(params?: { page?: number; limit?: number }) {
     return useFetch<PaginatedResponse<User>>('/users', {
       baseURL,
       query: { page: params?.page ?? 1, limit: params?.limit ?? 10 },
-      headers: authH()
+      headers: authH(),
     })
   }
 
   async function deleteUser(id: string) {
     try {
-      await $fetch<void>(`${baseURL}/users/${id}`, { method: 'DELETE', headers: authH() })
+      await $fetch<undefined>(`${baseURL}/users/${id}`, { method: 'DELETE', headers: authH() })
       return { error: null }
     } catch (err) {
       return { error: err }
@@ -40,7 +50,9 @@ export function useAdmin() {
   async function createStaff(dto: CreateStaffDto) {
     try {
       const data = await $fetch<StaffMember>(`${baseURL}/admin/staff`, {
-        method: 'POST', body: dto, headers: authH()
+        method: 'POST',
+        body: dto,
+        headers: authH(),
       })
       return { data, error: null }
     } catch (err) {
@@ -50,7 +62,10 @@ export function useAdmin() {
 
   async function deleteStaff(id: string) {
     try {
-      await $fetch<void>(`${baseURL}/admin/staff/${id}`, { method: 'DELETE', headers: authH() })
+      await $fetch<undefined>(`${baseURL}/admin/staff/${id}`, {
+        method: 'DELETE',
+        headers: authH(),
+      })
       return { error: null }
     } catch (err) {
       return { error: err }
@@ -61,10 +76,17 @@ export function useAdmin() {
     return useFetch<PaginatedResponse<AuditLog>>('/admin/analytics/audit-logs', {
       baseURL,
       query: { page: params?.page ?? 1, limit: params?.limit ?? 20 },
-      headers: authH()
+      headers: authH(),
     })
   }
 
-  return { getDashboardStats, listUsers, deleteUser, listStaff, createStaff, deleteStaff, getAuditLogs }
+  return {
+    getDashboardStats,
+    listUsers,
+    deleteUser,
+    listStaff,
+    createStaff,
+    deleteStaff,
+    getAuditLogs,
+  }
 }
-

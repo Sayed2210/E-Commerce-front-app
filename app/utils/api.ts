@@ -42,7 +42,7 @@ export function useApiClient() {
           await navigateTo('/login')
         }
       }
-    }
+    },
   })
 
   /**
@@ -56,7 +56,7 @@ export function useApiClient() {
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...((options.headers as Record<string, string>) || {})
+      ...((options.headers as Record<string, string>) || {}),
     }
 
     if (accessToken) {
@@ -66,7 +66,7 @@ export function useApiClient() {
     try {
       const data = await $fetch<T>(`${baseURL}${url}`, {
         ...options,
-        headers
+        headers,
       })
       return { data, error: null }
     } catch (err: any) {
@@ -84,7 +84,7 @@ export function useApiClient() {
             try {
               const data = await $fetch<T>(`${baseURL}${url}`, {
                 ...options,
-                headers
+                headers,
               })
               return { data, error: null }
             } catch (retryErr: any) {
@@ -129,6 +129,6 @@ export function useApiClient() {
   return {
     apiCall,
     refreshAccessToken,
-    client
+    client,
   }
 }

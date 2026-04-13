@@ -1,0 +1,96 @@
+// ── SCSS design tokens (mirror the CSS custom properties) ──────────────────
+$primary: #8a5100;
+$primary-container: #ff9900;
+$on-primary: #ffffff;
+$on-primary-container: #653a00;
+
+$secondary: #595f68;
+$surface: #f9f9f9;
+$on-surface: #1a1c1c;
+$surface-container-lowest: #ffffff;
+$surface-container-low: #f3f3f3;
+$surface-container: #eeeeee;
+$surface-container-high: #e8e8e8;
+$outline-variant: #dbc2ad;
+$error-container: #ffdad6;
+
+// ── Mixins ─────────────────────────────────────────────────────────────────
+@mixin glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin ambient-shadow {
+  box-shadow: 0 12px 32px rgba(26, 28, 28, 0.05);
+}
+
+@mixin micro-chip {
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// ── Base ───────────────────────────────────────────────────────────────────
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-headline);
+}
+
+// ── Material Symbols ───────────────────────────────────────────────────────
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  font-size: inherit;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+// ── Utility classes ────────────────────────────────────────────────────────
+.glass {
+  @include glass;
+}
+
+.primary-gradient {
+  /* Use CSS custom properties so the gradient always tracks token updates */
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+}
+
+.shadow-ambient {
+  @include ambient-shadow;
+}
+
+.micro-chip {
+  @include micro-chip;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

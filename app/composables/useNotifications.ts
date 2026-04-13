@@ -9,7 +9,7 @@ function authH(): Record<string, string> {
 }
 
 export function useNotifications() {
-  const config  = useRuntimeConfig()
+  const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
   function listNotifications() {
@@ -19,7 +19,9 @@ export function useNotifications() {
   async function createNotification(dto: CreateNotificationDto) {
     try {
       const data = await $fetch<Notification>(`${baseURL}/notifications`, {
-        method: 'POST', body: dto, headers: authH()
+        method: 'POST',
+        body: dto,
+        headers: authH(),
       })
       return { data, error: null }
     } catch (err) {
@@ -30,7 +32,8 @@ export function useNotifications() {
   async function markAsRead(id: string) {
     try {
       const data = await $fetch<Notification>(`${baseURL}/notifications/${id}/read`, {
-        method: 'PATCH', headers: authH()
+        method: 'PATCH',
+        headers: authH(),
       })
       return { data, error: null }
     } catch (err) {
@@ -40,7 +43,10 @@ export function useNotifications() {
 
   async function markAllAsRead() {
     try {
-      await $fetch<void>(`${baseURL}/notifications/read-all`, { method: 'PATCH', headers: authH() })
+      await $fetch<undefined>(`${baseURL}/notifications/read-all`, {
+        method: 'PATCH',
+        headers: authH(),
+      })
       return { error: null }
     } catch (err) {
       return { error: err }
@@ -49,7 +55,10 @@ export function useNotifications() {
 
   async function deleteNotification(id: string) {
     try {
-      await $fetch<void>(`${baseURL}/notifications/${id}`, { method: 'DELETE', headers: authH() })
+      await $fetch<undefined>(`${baseURL}/notifications/${id}`, {
+        method: 'DELETE',
+        headers: authH(),
+      })
       return { error: null }
     } catch (err) {
       return { error: err }
@@ -58,4 +67,3 @@ export function useNotifications() {
 
   return { listNotifications, createNotification, markAsRead, markAllAsRead, deleteNotification }
 }
-
