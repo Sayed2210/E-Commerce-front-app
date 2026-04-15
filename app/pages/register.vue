@@ -1,166 +1,125 @@
-<template>
-  <div
-    class="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 px-4"
-  >
-    <UCard class="w-full max-w-md">
-      <template #header>
-        <div class="text-center">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-            Create Account
-          </h1>
-          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Join us today and start shopping
-          </p>
-        </div>
-      </template>
-
-      <UForm
-        :schema="registerSchema"
-        :state="formData"
-        @submit="handleSubmit"
-        class="space-y-4"
-      >
-        <!-- First Name Field -->
-        <UFormGroup label="First Name" name="firstName">
-          <UInput
-            v-model="formData.firstName"
-            type="text"
-            placeholder="John"
-            icon="i-heroicons-user"
-            size="lg"
-          />
-        </UFormGroup>
-
-        <!-- Last Name Field -->
-        <UFormGroup label="Last Name" name="lastName">
-          <UInput
-            v-model="formData.lastName"
-            type="text"
-            placeholder="Doe"
-            icon="i-heroicons-user"
-            size="lg"
-          />
-        </UFormGroup>
-
-        <!-- Email Field -->
-        <UFormGroup label="Email" name="email" required>
-          <UInput
-            v-model="formData.email"
-            type="email"
-            placeholder="you@example.com"
-            icon="i-heroicons-envelope"
-            size="lg"
-          />
-        </UFormGroup>
-
-        <!-- Password Field -->
-        <UFormGroup label="Password" name="password" required>
-          <UInput
-            v-model="formData.password"
-            type="password"
-            placeholder="Minimum 6 characters"
-            icon="i-heroicons-lock-closed"
-            size="lg"
-          />
-        </UFormGroup>
-
-        <!-- Password Confirmation Field -->
-        <UFormGroup
-          label="Confirm Password"
-          name="passwordConfirmation"
-          required
-        >
-          <UInput
-            v-model="formData.passwordConfirmation"
-            type="password"
-            placeholder="Re-enter your password"
-            icon="i-heroicons-lock-closed"
-            size="lg"
-          />
-        </UFormGroup>
-
-        <!-- Terms & Conditions -->
-        <UCheckbox v-model="acceptTerms" required>
-          <template #label>
-            <span class="text-sm">
-              I agree to the
-              <a href="#" class="text-primary-600 hover:text-primary-500"
-                >Terms & Conditions</a
-              >
-            </span>
-          </template>
-        </UCheckbox>
-
-        <!-- Error Message -->
-        <UAlert
-          v-if="errorMessage"
-          color="error"
-          variant="soft"
-          :title="errorMessage"
-          icon="i-heroicons-exclamation-triangle"
-        />
-
-        <!-- Submit Button -->
-        <UButton
-          type="submit"
-          color="primary"
-          size="lg"
-          block
-          :loading="loading"
-          :disabled="!acceptTerms"
-        >
-          Create Account
-        </UButton>
-      </UForm>
-
-      <template #footer>
-        <div class="text-center text-sm text-gray-600 dark:text-gray-400">
-          Already have an account?
-          <NuxtLink
-            to="/login"
-            class="text-primary-600 hover:text-primary-500 dark:text-primary-400 font-medium"
-          >
-            Sign in
-          </NuxtLink>
-        </div>
-      </template>
-    </UCard>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { registerSchema } from "~/utils/validation";
+import { registerSchema } from '~/utils/validation'
 
-definePageMeta({
-  layout: false,
-  middleware: "guest",
-});
+definePageMeta({ layout: false, middleware: 'guest' })
 
-const { register, loading } = useAuth();
-
-const formData = ref({
-  email: "",
-  password: "",
-  passwordConfirmation: "",
-  firstName: "",
-  lastName: "",
-});
-
-const acceptTerms = ref(false);
-const errorMessage = ref("");
+const { register, loading } = useAuth()
+const form = ref({
+  email: '',
+  password: '',
+  passwordConfirmation: '',
+  firstName: '',
+  lastName: '',
+})
+const errors = ref<Record<string, string>>({})
+const serverError = ref('')
+const acceptTerms = ref(false)
 
 async function handleSubmit() {
+  serverError.value = ''
+  errors.value = {}
+
   if (!acceptTerms.value) {
-    errorMessage.value = "You must accept the terms and conditions";
-    return;
+    serverError.value = 'You must accept the Terms & Conditions to continue.'
+    return
   }
 
-  errorMessage.value = "";
-
-  const success = await register(formData.value);
-
-  if (!success) {
-    errorMessage.value = "Registration failed. Please try again.";
+  const result = registerSchema.safeParse(form.value)
+  if (!result.success) {
+    for (const issue of result.error.issues) {
+      errors.value[String(issue.path[0])] = issue.message
+    }
+    return
   }
+
+  const ok = await register(form.value)
+  if (!ok) serverError.value = 'Registration failed. Please try again.'
 }
 </script>
+
+<template>
+  <AuthPageShell label="Create account page" card-width="30rem">
+    <header class="auth-card__head">
+      <h1 class="auth-card__title">Create your account</h1>
+      <p class="auth-card__sub">Join and start shopping today</p>
+    </header>
+
+    <div v-if="serverError" class="auth-alert" role="alert" aria-live="assertive">
+      <span class="material-symbols-outlined auth-alert__icon" aria-hidden="true">error</span>
+      {{ serverError }}
+    </div>
+
+    <form
+      class="auth-form"
+      novalidate
+      aria-label="Create account form"
+      @submit.prevent="handleSubmit"
+    >
+      <RegisterFormFields v-model="form" :errors="errors" />
+
+      <label class="auth-terms">
+        <input
+          v-model="acceptTerms"
+          type="checkbox"
+          class="auth-terms__check"
+          aria-required="true"
+        />
+        <span class="auth-terms__text">
+          I agree to the
+          <a href="#" class="auth-terms__link">Terms &amp; Conditions</a>
+          and
+          <a href="#" class="auth-terms__link">Privacy Policy</a>
+        </span>
+      </label>
+
+      <AppButton type="submit" :loading="loading" :disabled="!acceptTerms" :block="true" size="lg">
+        <span class="material-symbols-outlined" aria-hidden="true">person_add</span>
+        Create Account
+      </AppButton>
+    </form>
+
+    <footer class="auth-card__foot">
+      <p>
+        Already have an account?
+        <NuxtLink to="/login" class="auth-card__switch">Sign in</NuxtLink>
+      </p>
+    </footer>
+  </AuthPageShell>
+</template>
+
+<style scoped>
+.auth-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  cursor: pointer;
+}
+
+.auth-terms__check {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.1rem;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.auth-terms__text {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-on-surface-variant);
+  line-height: 1.5;
+}
+
+.auth-terms__link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-terms__link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+</style>

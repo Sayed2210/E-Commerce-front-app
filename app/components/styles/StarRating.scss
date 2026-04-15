@@ -1,0 +1,29 @@
+/* StarRating Component Styles */
+/* Design System: Stitch */
+
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.stars__icon {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.stars__icon--filled {
+  color: var(--color-primary-container);
+}
+
+.stars__icon--empty {
+  color: var(--color-outline-variant);
+}
+
+.stars__count {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin-left: 0.25rem;
+}

@@ -1,3 +1,43 @@
+<script setup lang="ts">
+import type { Product } from '~/types/api'
+
+definePageMeta({ layout: 'admin', middleware: 'admin' })
+
+const { listProducts, deleteProduct: apiDelete } = useProducts()
+const search = ref('')
+const statusFilter = ref('')
+const currentPage = ref(1)
+
+const { data, pending, refresh } = await listProducts({ page: currentPage.value, limit: 20 })
+watch(currentPage, () => refresh())
+
+const products = computed<Product[]>(() => (data.value as any)?.data ?? (data.value as any) ?? [])
+const total = computed<number>(() => (data.value as any)?.total ?? products.value.length)
+const totalPages = computed<number>(() => (data.value as any)?.totalPages ?? 1)
+
+const filteredProducts = computed(() =>
+  products.value.filter((p) => {
+    const name = productName(p).toLowerCase()
+    const matchSearch = !search.value || name.includes(search.value.toLowerCase())
+    const matchStatus =
+      !statusFilter.value || (statusFilter.value === 'active' ? p.isActive : !p.isActive)
+    return matchSearch && matchStatus
+  })
+)
+
+function productName(p: Product) {
+  return typeof p.name === 'string' ? p.name : (p.name?.en ?? '')
+}
+
+async function deleteProduct(id: string) {
+  if (!confirm('Delete this product?')) return
+  await apiDelete(id)
+  await refresh()
+}
+
+useSeoMeta({ title: 'Inventory — Admin' })
+</script>
+
 <template>
   <div class="space-y-6">
     <!-- Header -->
@@ -18,7 +58,10 @@
     <!-- Filters -->
     <div class="flex gap-3">
       <div class="relative flex-1 max-w-xs">
-        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-sm">search</span>
+        <span
+          class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-sm"
+          >search</span
+        >
         <input
           v-model="search"
           type="text"
@@ -41,12 +84,36 @@
       <table class="w-full">
         <thead class="bg-surface-container-low">
           <tr>
-            <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary">Product</th>
-            <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary hidden md:table-cell">Category</th>
-            <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary">Price</th>
-            <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary hidden sm:table-cell">Stock</th>
-            <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary">Status</th>
-            <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary">Actions</th>
+            <th
+              class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary"
+            >
+              Product
+            </th>
+            <th
+              class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary hidden md:table-cell"
+            >
+              Category
+            </th>
+            <th
+              class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary"
+            >
+              Price
+            </th>
+            <th
+              class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary hidden sm:table-cell"
+            >
+              Stock
+            </th>
+            <th
+              class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary"
+            >
+              Status
+            </th>
+            <th
+              class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-secondary"
+            >
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody v-if="pending">
@@ -73,7 +140,9 @@
                   />
                 </div>
                 <div>
-                  <p class="text-sm font-semibold text-on-surface line-clamp-1">{{ productName(product) }}</p>
+                  <p class="text-sm font-semibold text-on-surface line-clamp-1">
+                    {{ productName(product) }}
+                  </p>
                   <p class="text-xs text-secondary">{{ product.brand?.name ?? '' }}</p>
                 </div>
               </div>
@@ -82,81 +151,76 @@
               <span class="text-sm text-secondary">{{ product.category?.name ?? '—' }}</span>
             </td>
             <td class="px-6 py-4">
-              <span class="text-sm font-bold text-on-surface">${{ product.basePrice.toFixed(2) }}</span>
+              <span class="text-sm font-bold text-on-surface">${{ product.basePrice }}</span>
             </td>
             <td class="px-6 py-4 hidden sm:table-cell">
               <span
                 :class="product.inventoryQuantity < 10 ? 'text-error font-bold' : 'text-secondary'"
                 class="text-sm"
-              >{{ product.inventoryQuantity }}</span>
+                >{{ product.inventoryQuantity }}</span
+              >
             </td>
             <td class="px-6 py-4">
               <span
-                :class="product.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-surface-container text-secondary'"
+                :class="
+                  product.isActive
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : 'bg-surface-container text-secondary'
+                "
                 class="micro-chip"
-              >{{ product.isActive ? 'Active' : 'Inactive' }}</span>
+                >{{ product.isActive ? 'Active' : 'Inactive' }}</span
+              >
             </td>
             <td class="px-6 py-4">
               <div class="flex items-center gap-3">
-                <NuxtLink :to="`/admin/products/${product.id}/edit`" class="text-primary hover:underline text-xs font-semibold">Edit</NuxtLink>
-                <button @click="deleteProduct(product.id)" class="text-error hover:underline text-xs font-semibold">Delete</button>
+                <NuxtLink
+                  :to="`/admin/products/${product.id}/edit`"
+                  class="text-primary hover:underline text-xs font-semibold"
+                  >Edit</NuxtLink
+                >
+                <button
+                  type="button"
+                  class="text-error hover:underline text-xs font-semibold"
+                  @click="deleteProduct(product.id)"
+                >
+                  Delete
+                </button>
               </div>
             </td>
           </tr>
           <tr v-if="!filteredProducts.length">
-            <td colspan="6" class="px-6 py-12 text-center text-secondary text-sm">No products found</td>
+            <td colspan="6" class="px-6 py-12 text-center text-secondary text-sm">
+              No products found
+            </td>
           </tr>
         </tbody>
       </table>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex items-center justify-between px-6 py-4 border-t border-outline-variant/10">
+      <div
+        v-if="totalPages > 1"
+        class="flex items-center justify-between px-6 py-4 border-t border-outline-variant/10"
+      >
         <p class="text-xs text-secondary">Page {{ currentPage }} of {{ totalPages }}</p>
         <div class="flex gap-2">
-          <button @click="currentPage--" :disabled="currentPage === 1" class="px-3 py-1.5 text-xs rounded border border-outline-variant/20 disabled:opacity-40 hover:bg-surface-container-low">Prev</button>
-          <button @click="currentPage++" :disabled="currentPage === totalPages" class="px-3 py-1.5 text-xs rounded border border-outline-variant/20 disabled:opacity-40 hover:bg-surface-container-low">Next</button>
+          <button
+            type="button"
+            :disabled="currentPage === 1"
+            class="px-3 py-1.5 text-xs rounded border border-outline-variant/20 disabled:opacity-40 hover:bg-surface-container-low"
+            @click="currentPage--"
+          >
+            Prev
+          </button>
+          <button
+            type="button"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-1.5 text-xs rounded border border-outline-variant/20 disabled:opacity-40 hover:bg-surface-container-low"
+            @click="currentPage++"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import type { Product } from '~/types/api'
-
-definePageMeta({ layout: 'admin', middleware: 'admin' })
-
-const { listProducts, deleteProduct: apiDelete } = useProducts()
-const search       = ref('')
-const statusFilter = ref('')
-const currentPage  = ref(1)
-
-const { data, pending, refresh } = await listProducts({ page: currentPage.value, limit: 20 })
-watch(currentPage, () => refresh())
-
-const products  = computed<Product[]>(() => (data.value as any)?.data ?? (data.value as any) ?? [])
-const total     = computed<number>(() => (data.value as any)?.total ?? products.value.length)
-const totalPages = computed<number>(() => (data.value as any)?.totalPages ?? 1)
-
-const filteredProducts = computed(() =>
-  products.value.filter(p => {
-    const name = productName(p).toLowerCase()
-    const matchSearch = !search.value || name.includes(search.value.toLowerCase())
-    const matchStatus = !statusFilter.value ||
-      (statusFilter.value === 'active' ? p.isActive : !p.isActive)
-    return matchSearch && matchStatus
-  })
-)
-
-function productName(p: Product) {
-  return typeof p.name === 'string' ? p.name : p.name?.en ?? ''
-}
-
-async function deleteProduct(id: string) {
-  if (!confirm('Delete this product?')) return
-  await apiDelete(id)
-  await refresh()
-}
-
-useSeoMeta({ title: 'Inventory — Admin' })
-</script>

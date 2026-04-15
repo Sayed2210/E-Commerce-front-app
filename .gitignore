@@ -22,3 +22,14 @@ logs
 .env
 .env.*
 !.env.example
+
+# MCP config (contains API keys)
+.mcp.json
+
+# Testing
+coverage
+playwright-report
+test-results
+
+# Misc
+tsconfig.tsbuildinfo

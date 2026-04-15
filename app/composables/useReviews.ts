@@ -9,7 +9,7 @@ function authH(): Record<string, string> {
 }
 
 export function useReviews() {
-  const config  = useRuntimeConfig()
+  const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
   function getProductReviews(productId: string) {
@@ -19,7 +19,9 @@ export function useReviews() {
   async function createReview(dto: CreateReviewDto) {
     try {
       const data = await $fetch<Review>(`${baseURL}/reviews`, {
-        method: 'POST', body: dto, headers: authH()
+        method: 'POST',
+        body: dto,
+        headers: authH(),
       })
       return { data, error: null }
     } catch (err) {
@@ -30,7 +32,9 @@ export function useReviews() {
   async function updateReview(id: string, dto: UpdateReviewDto) {
     try {
       const data = await $fetch<Review>(`${baseURL}/reviews/${id}`, {
-        method: 'PATCH', body: dto, headers: authH()
+        method: 'PATCH',
+        body: dto,
+        headers: authH(),
       })
       return { data, error: null }
     } catch (err) {
@@ -40,7 +44,7 @@ export function useReviews() {
 
   async function deleteReview(id: string) {
     try {
-      await $fetch<void>(`${baseURL}/reviews/${id}`, { method: 'DELETE', headers: authH() })
+      await $fetch<undefined>(`${baseURL}/reviews/${id}`, { method: 'DELETE', headers: authH() })
       return { error: null }
     } catch (err) {
       return { error: err }
@@ -49,4 +53,3 @@ export function useReviews() {
 
   return { getProductReviews, createReview, updateReview, deleteReview }
 }
-

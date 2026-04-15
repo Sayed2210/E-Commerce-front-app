@@ -1,0 +1,39 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-recommended-vue"],
+  "rules": {
+    "color-no-invalid-hex": true,
+
+    "declaration-property-value-disallowed-list": {
+      "color": ["/^#/", "/^rgb/", "/^hsl/"],
+      "background-color": ["/^#/", "/^rgb/", "/^hsl/"],
+      "background": ["/^#/", "/^rgb/", "/^hsl/"],
+      "border-color": ["/^#/", "/^rgb/", "/^hsl/"],
+      "border": ["/^#[0-9a-fA-F]/"],
+      "outline-color": ["/^#/", "/^rgb/", "/^hsl/"],
+      "fill": ["/^#/", "/^rgb/", "/^hsl/"],
+      "stroke": ["/^#/", "/^rgb/", "/^hsl/"],
+      "box-shadow": ["/^#/", "/^rgb(?!a\\(26,\\s*28,\\s*28)/"],
+      "caret-color": ["/^#/", "/^rgb/", "/^hsl/"]
+    },
+
+    "declaration-property-value-allowed-list": {
+      "font-family": ["/var\\(--font-/", "inherit", "sans-serif", "serif", "monospace"]
+    },
+
+    "comment-empty-line-before": null,
+    "no-descending-specificity": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null,
+    "import-notation": null,
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "no-empty-source": null
+  },
+  "ignoreFiles": [
+    "node_modules/**",
+    ".nuxt/**",
+    "dist/**",
+    "app/styles/main.css",
+    "app/styles/main.scss"
+  ]
+}

@@ -3,15 +3,15 @@ import { setTokens, getAccessToken, getRefreshToken, clearTokens } from '~/utils
 
 // Mock useCookie
 vi.mock('#app', () => ({
-  useCookie: vi.fn((key: string, options?: any) => {
+  useCookie: vi.fn((key: string, _options?: any) => {
     const cookies: Record<string, any> = {}
     return {
       value: cookies[key] || null,
       set(val: any) {
         cookies[key] = val
-      }
+      },
     }
-  })
+  }),
 }))
 
 describe('Token Utility', () => {

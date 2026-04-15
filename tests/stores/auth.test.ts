@@ -10,7 +10,7 @@ describe('Auth Store', () => {
 
   it('should initialize with null user and loading false', () => {
     const store = useAuthStore()
-    
+
     expect(store.user).toBeNull()
     expect(store.loading).toBe(false)
   })

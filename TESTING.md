@@ -3,21 +3,25 @@
 ## Running Tests
 
 ### Run all tests
+
 ```bash
 npm test
 ```
 
 ### Run tests in watch mode
+
 ```bash
 npm run test:watch
 ```
 
 ### Run tests with UI
+
 ```bash
 npm run test:ui
 ```
 
 ### Generate coverage report
+
 ```bash
 npm run test:coverage
 ```

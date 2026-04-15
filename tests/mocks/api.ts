@@ -6,10 +6,10 @@ export const mockLoginResponse = {
     lastName: 'User',
     roles: ['CUSTOMER'],
     createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z'
+    updatedAt: '2024-01-01T00:00:00Z',
   },
   accessToken: 'mock-access-token',
-  refreshToken: 'mock-refresh-token'
+  refreshToken: 'mock-refresh-token',
 }
 
 export const mockAdminLoginResponse = {
@@ -20,15 +20,15 @@ export const mockAdminLoginResponse = {
     lastName: 'User',
     roles: ['ADMIN'],
     createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z'
+    updatedAt: '2024-01-01T00:00:00Z',
   },
   accessToken: 'mock-admin-access-token',
-  refreshToken: 'mock-admin-refresh-token'
+  refreshToken: 'mock-admin-refresh-token',
 }
 
 export const mockErrorResponse = {
   statusCode: 401,
-  message: 'Invalid credentials'
+  message: 'Invalid credentials',
 }
 
 export const mockValidationErrorResponse = {
@@ -36,6 +36,6 @@ export const mockValidationErrorResponse = {
   message: 'Validation failed',
   errors: {
     email: ['Invalid email format'],
-    password: ['Password too short']
-  }
+    password: ['Password too short'],
+  },
 }

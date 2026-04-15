@@ -14,15 +14,15 @@ export function useAuth() {
     try {
       const response = await $fetch<AuthResponse>(`${baseURL}/auth/login`, {
         method: 'POST',
-        body: credentials
+        body: credentials,
       })
 
-      if (isAdmin && !response.user.roles.includes(UserRole.ADMIN)) {
+      if (isAdmin && response.user.role !== UserRole.ADMIN) {
         showErrorToast({ message: 'Access denied. Admin privileges required.' })
         return false
       }
 
-      setTokens(response.accessToken, response.refreshToken)
+      setTokens(response.tokens.accessToken, response.tokens.refreshToken)
       authStore.setUser(response.user)
       showSuccessToast('Login successful!')
 
@@ -41,10 +41,10 @@ export function useAuth() {
     try {
       const response = await $fetch<AuthResponse>(`${baseURL}/auth/register`, {
         method: 'POST',
-        body: data
+        body: data,
       })
 
-      setTokens(response.accessToken, response.refreshToken)
+      setTokens(response.tokens.accessToken, response.tokens.refreshToken)
       authStore.setUser(response.user)
       showSuccessToast('Registration successful! Welcome!')
       await router.push('/')
@@ -89,6 +89,6 @@ export function useAuth() {
     user: computed(() => authStore.currentUser),
     isAuthenticated: computed(() => authStore.isAuthenticated),
     isAdmin: computed(() => authStore.isAdmin),
-    loading: computed(() => authStore.loading)
+    loading: computed(() => authStore.loading),
   }
 }

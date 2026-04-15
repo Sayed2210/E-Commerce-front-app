@@ -16,6 +16,7 @@ npm run test:coverage # Coverage report (v8 provider)
 ```
 
 To run a single test file:
+
 ```bash
 npx vitest tests/stores/auth.test.ts
 ```
@@ -23,6 +24,7 @@ npx vitest tests/stores/auth.test.ts
 ## Environment
 
 Create a `.env` file before running:
+
 ```env
 NUXT_PUBLIC_API_BASE_URL=http://localhost:3000
 ```
@@ -66,12 +68,12 @@ Tests live in `tests/` mirroring the `app/` structure: `tests/stores/`, `tests/c
 
 Expected endpoints at `NUXT_PUBLIC_API_BASE_URL`:
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| POST | `/auth/login` | Returns `{ user, accessToken, refreshToken }` |
-| POST | `/auth/register` | Returns `{ user, accessToken, refreshToken }` |
-| POST | `/auth/refresh` | Body: `{ refreshToken }`, returns new token pair |
-| POST | `/auth/logout` | No body |
-| GET | `/users/me` | Returns `User` object (requires Bearer token) |
+| Method | Path             | Purpose                                          |
+| ------ | ---------------- | ------------------------------------------------ |
+| POST   | `/auth/login`    | Returns `{ user, accessToken, refreshToken }`    |
+| POST   | `/auth/register` | Returns `{ user, accessToken, refreshToken }`    |
+| POST   | `/auth/refresh`  | Body: `{ refreshToken }`, returns new token pair |
+| POST   | `/auth/logout`   | No body                                          |
+| GET    | `/users/me`      | Returns `User` object (requires Bearer token)    |
 
 `User` type: `{ id, email, firstName?, lastName?, roles: UserRole[], createdAt, updatedAt }` where `UserRole` is `'ADMIN' | 'CUSTOMER'`.

@@ -21,6 +21,7 @@ All application code has been relocated:
 ### Configuration Updates
 
 **vitest.config.ts**
+
 - Updated path aliases to point to `app/` directory
 - `~` and `@` now resolve to `app/`
 - `~~` and `@@` now resolve to project root
