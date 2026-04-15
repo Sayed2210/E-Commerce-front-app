@@ -36,6 +36,15 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
   ],
 
+  components: {
+    dirs: [
+      {
+        path: '~/components',
+        pathPrefix: false, // use file name only — folder structure is organizational, not part of the component name
+      },
+    ],
+  },
+
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3000',

@@ -19,4 +19,4 @@ withDefaults(
   </div>
 </template>
 
-<style scoped lang="scss" src="./styles/ProductSkeleton.scss"></style>
+<style scoped lang="scss" src="./ProductSkeleton.scss"></style>

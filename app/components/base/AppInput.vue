@@ -95,4 +95,4 @@ const ariaDescribedby = computed(() => {
   </div>
 </template>
 
-<style scoped lang="scss" src="./styles/AppInput.scss"></style>
+<style scoped lang="scss" src="./AppInput.scss"></style>

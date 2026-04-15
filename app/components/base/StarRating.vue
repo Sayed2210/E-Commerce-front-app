@@ -33,4 +33,4 @@ const ariaLabel = computed(() => {
   </div>
 </template>
 
-<style scoped lang="scss" src="./styles/StarRating.scss"></style>
+<style scoped lang="scss" src="./StarRating.scss"></style>

@@ -109,4 +109,4 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
   </NuxtLink>
 </template>
 
-<style scoped lang="scss" src="./styles/ProductCard.scss"></style>
+<style scoped lang="scss" src="./ProductCard.scss"></style>
