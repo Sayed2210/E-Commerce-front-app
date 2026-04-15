@@ -17,12 +17,12 @@ export function useAuth() {
         body: credentials,
       })
 
-      if (isAdmin && !response.user.roles.includes(UserRole.ADMIN)) {
+      if (isAdmin && response.user.role !== UserRole.ADMIN) {
         showErrorToast({ message: 'Access denied. Admin privileges required.' })
         return false
       }
 
-      setTokens(response.accessToken, response.refreshToken)
+      setTokens(response.tokens.accessToken, response.tokens.refreshToken)
       authStore.setUser(response.user)
       showSuccessToast('Login successful!')
 
@@ -44,7 +44,7 @@ export function useAuth() {
         body: data,
       })
 
-      setTokens(response.accessToken, response.refreshToken)
+      setTokens(response.tokens.accessToken, response.tokens.refreshToken)
       authStore.setUser(response.user)
       showSuccessToast('Registration successful! Welcome!')
       await router.push('/')

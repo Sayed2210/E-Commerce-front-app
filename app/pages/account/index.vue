@@ -98,7 +98,7 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
           <h2 class="font-bold text-lg text-on-surface font-headline">{{ fullName }}</h2>
           <p class="text-secondary text-sm">{{ user?.email }}</p>
           <span class="mt-3 micro-chip bg-surface-container text-secondary">
-            {{ user?.roles?.includes(UserRole.ADMIN) ? 'Administrator' : 'Customer' }}
+            {{ user?.role === UserRole.ADMIN ? 'Administrator' : 'Customer' }}
           </span>
           <p class="text-xs text-secondary mt-3">Member since {{ memberSince }}</p>
         </div>

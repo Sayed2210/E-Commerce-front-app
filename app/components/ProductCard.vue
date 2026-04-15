@@ -35,11 +35,9 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
     :to="`/products/${product.id}`"
     class="card"
     :class="isGrid ? 'card--grid' : 'card--list'"
-    :aria-label="`${name}, $${product.basePrice.toFixed(2)}`"
+    :aria-label="`${name}, $${product.basePrice}`"
   >
-    <!-- ── Image ──────────────────────────────────────────────────────── -->
     <div class="card__img-wrap" :class="isGrid ? 'card__img-wrap--grid' : 'card__img-wrap--list'">
-      <!-- Stock badge -->
       <span v-if="isLowStock" class="card__badge card__badge--warn" aria-label="Low stock">
         Low Stock
       </span>
@@ -63,7 +61,6 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
         <span class="material-symbols-outlined">image</span>
       </div>
 
-      <!-- Wishlist toggle — grid variant only -->
       <button
         v-if="isGrid && wishlist"
         type="button"
@@ -75,17 +72,13 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
       </button>
     </div>
 
-    <!-- ── Info ───────────────────────────────────────────────────────── -->
     <div class="card__info" :class="isGrid ? 'card__info--grid' : 'card__info--list'">
-      <!-- Brand -->
       <p v-if="product.brand?.name" class="card__brand">{{ product.brand.name }}</p>
 
-      <!-- Title -->
       <h3 class="card__title" :class="isGrid ? 'card__title--grid' : 'card__title--list'">
         {{ name }}
       </h3>
 
-      <!-- Rating -->
       <StarRating
         :rating="product.averageRating ?? 0"
         :count="product.reviewCount ?? 0"
@@ -93,10 +86,9 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
         class="card__rating"
       />
 
-      <!-- Price + CTA row -->
       <div class="card__foot">
         <span class="card__price" :class="isGrid ? 'card__price--grid' : 'card__price--list'">
-          ${{ product.basePrice.toFixed(2) }}
+          ${{ product.basePrice }}
         </span>
 
         <button
@@ -117,277 +109,4 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
   </NuxtLink>
 </template>
 
-<style scoped>
-/* ── Card shell ──────────────────────────────────────────────────────────── */
-.card {
-  display: block;
-  text-decoration: none;
-  background: var(--color-surface-container-lowest);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  transition:
-    box-shadow 250ms ease,
-    transform 250ms ease;
-}
-
-.card:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-.card--grid {
-  display: flex;
-  flex-direction: column;
-}
-
-.card--list {
-  display: flex;
-  flex-direction: row;
-  padding: 1rem;
-  gap: 1.25rem;
-}
-
-.card:hover {
-  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-on-surface) 6%, transparent);
-  transform: translateY(-2px);
-}
-
-/* ── Image wrapper ───────────────────────────────────────────────────────── */
-.card__img-wrap {
-  position: relative;
-  overflow: hidden;
-  background: var(--color-surface-container-low);
-}
-
-.card__img-wrap--grid {
-  aspect-ratio: 1;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-
-.card__img-wrap--list {
-  width: 7rem;
-  height: 7rem;
-  flex-shrink: 0;
-  border-radius: var(--radius-DEFAULT);
-}
-
-.card__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 500ms ease;
-}
-
-.card:hover .card__img {
-  transform: scale(1.04);
-}
-
-.card__img-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-on-surface-variant);
-  opacity: 0.3;
-  font-size: 3rem;
-}
-
-/* ── Badges ──────────────────────────────────────────────────────────────── */
-.card__badge {
-  position: absolute;
-  top: 0.625rem;
-  left: 0.625rem;
-  z-index: 1;
-  padding: 2px 7px;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-label);
-  font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  line-height: 1.6;
-}
-
-.card__badge--warn {
-  background: var(--color-primary-fixed);
-  color: var(--color-on-primary-fixed);
-}
-
-.card__badge--error {
-  background: var(--color-error-container);
-  color: var(--color-on-error-container);
-}
-
-/* ── Wishlist button ─────────────────────────────────────────────────────── */
-.card__wish {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  width: 2rem;
-  height: 2rem;
-  background: var(--color-surface-container-lowest);
-  border: none;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--color-secondary);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-on-surface) 8%, transparent);
-  opacity: 0;
-  transform: scale(0.9);
-  transition:
-    opacity 200ms ease,
-    transform 200ms ease,
-    color 200ms ease;
-}
-
-.card:hover .card__wish,
-.card__wish:focus-visible {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.card__wish:hover,
-.card__wish:focus-visible {
-  color: var(--color-primary);
-}
-
-.card__wish:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-.card__wish .material-symbols-outlined {
-  font-size: 1rem;
-}
-
-/* ── Info block ──────────────────────────────────────────────────────────── */
-.card__info--grid {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 0.875rem;
-}
-
-.card__info--list {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  flex: 1;
-}
-
-/* ── Brand ───────────────────────────────────────────────────────────────── */
-.card__brand {
-  font-family: var(--font-label);
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--color-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin: 0 0 0.25rem;
-}
-
-/* ── Title ───────────────────────────────────────────────────────────────── */
-.card__title {
-  font-family: var(--font-headline);
-  font-weight: 700;
-  color: var(--color-on-surface);
-  margin: 0 0 0.375rem;
-  line-height: 1.3;
-}
-
-.card__title--grid {
-  font-size: 0.875rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.card__title--list {
-  font-size: 1rem;
-}
-
-/* ── Rating ──────────────────────────────────────────────────────────────── */
-.card__rating {
-  margin-bottom: 0.75rem;
-}
-
-/* ── Foot: price + CTA ───────────────────────────────────────────────────── */
-.card__foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-top: auto;
-}
-
-.card__price {
-  font-family: var(--font-headline);
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.card__price--grid {
-  font-size: 1.125rem;
-}
-
-.card__price--list {
-  font-size: 1.25rem;
-}
-
-/* ── CTA button ──────────────────────────────────────────────────────────── */
-.card__cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  font-family: var(--font-label);
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  border-radius: var(--radius-DEFAULT);
-  transition:
-    background 200ms ease,
-    color 200ms ease,
-    box-shadow 200ms ease;
-}
-
-.card__cta:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.card__cta:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* Grid: icon-only amber pill */
-.card__cta--icon {
-  background: var(--color-surface-container);
-  color: var(--color-primary);
-  width: 2.25rem;
-  height: 2.25rem;
-  flex-shrink: 0;
-}
-
-.card__cta--icon:hover:not(:disabled) {
-  background: var(--color-primary-container);
-  color: var(--color-on-primary-container);
-}
-
-/* List: labelled gradient button */
-.card__cta--full {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
-  color: var(--color-on-primary);
-  font-size: 0.8125rem;
-  padding: 0.5rem 1rem;
-}
-
-.card__cta--full:hover:not(:disabled) {
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--color-primary) 28%, transparent);
-}
-</style>
+<style scoped lang="scss" src="./styles/ProductCard.scss"></style>

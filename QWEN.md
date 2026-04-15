@@ -22,7 +22,7 @@ This is a **Nuxt 4** (v4.2.2) e-commerce frontend application with a **dual auth
 - Uses the **Nuxt 4 `app/` directory** convention (migrated from root-level structure)
 - **SSR-safe authentication** via HTTP-only cookies (`access_token` / `refresh_token`)
 - **Automatic token refresh** — when access token expires, a refresh is attempted via `POST /auth/refresh`
-- **Role-based access control (RBAC)** — admin routes check `roles.includes('ADMIN')`
+- **Role-based access control (RBAC)** — admin routes check `role is 'ADMIN'`
 - **Multi-language support** — product/category content uses JSONB with `en`/`ar` keys
 - **Custom fonts** — Work Sans + Plus Jakarta Sans via Google Fonts
 

@@ -1,0 +1,211 @@
+/* ── Shared Auth Page Styles ──────────────────────────────────────────────── */
+/* Used by: login, register, forgot-password, reset-password, verify-email */
+
+/* ── Page shell ────────────────────────────────────────────────────────────── */
+.auth-page {
+  min-height: 100dvh;
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-page__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.auth-page__blob {
+  position: absolute;
+  border-radius: var(--radius-full);
+  filter: blur(80px);
+  opacity: 0.12;
+}
+
+.auth-page__blob--1 {
+  width: 40vw;
+  height: 40vw;
+  background: var(--color-primary-container);
+  top: -10%;
+  right: -5%;
+}
+
+.auth-page__blob--2 {
+  width: 30vw;
+  height: 30vw;
+  background: var(--color-primary);
+  bottom: 0;
+  left: 5%;
+}
+
+/* ── Navigation ────────────────────────────────────────────────────────────── */
+.auth-nav {
+  position: relative;
+  z-index: 10;
+  padding: 1.25rem 2rem;
+}
+
+.auth-nav__logo {
+  font-family: var(--font-headline);
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-on-surface);
+  text-decoration: none;
+  transition: color 200ms ease;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ── Main centering wrapper ────────────────────────────────────────────────── */
+.auth-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Glass card ────────────────────────────────────────────────────────────── */
+.auth-card {
+  width: 100%;
+  max-width: var(--auth-card-width, 26rem);
+  background: color-mix(in srgb, var(--color-surface-container-lowest) 85%, transparent);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem 2rem;
+  box-shadow: 0 24px 64px color-mix(in srgb, var(--color-on-surface) 8%, transparent);
+}
+
+.auth-card__head {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-card__icon-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.auth-card__icon {
+  font-size: 2.5rem;
+  color: var(--color-primary);
+}
+
+.auth-card__title {
+  font-family: var(--font-headline);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-on-surface);
+  margin: 0 0 0.375rem;
+}
+
+.auth-card__sub {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+.auth-card__foot {
+  margin-top: 1.75rem;
+  text-align: center;
+
+  p {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+}
+
+.auth-card__switch {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ── Alert ──────────────────────────────────────────────────────────────────── */
+.auth-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: var(--color-error-container);
+  color: var(--color-on-error-container);
+  border-radius: var(--radius-DEFAULT);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+
+.auth-alert__icon {
+  font-size: 1.125rem;
+  flex-shrink: 0;
+  margin-top: 0.0625rem;
+}
+
+/* ── Form ──────────────────────────────────────────────────────────────────── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Shared button link (used on success/error states) ────────────────────── */
+.auth-btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 1rem;
+  padding: 0.625rem 1.5rem;
+  background: linear-gradient(180deg, var(--color-primary-container) 0%, var(--color-primary) 100%);
+  color: var(--color-on-primary);
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: opacity 200ms ease;
+
+  &:hover {
+    opacity: 0.88;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+}
+
+.auth-btn-link--secondary {
+  background: var(--color-surface-container-high);
+  color: var(--color-on-surface);
+}

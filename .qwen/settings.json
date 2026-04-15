@@ -1,5 +1,6 @@
 {
   "permissions": {
-    "allow": ["Bash(npx *)"]
-  }
+    "allow": ["Bash(npx *)", "Bash(find *)", "Bash(mkdir *)"]
+  },
+  "$version": 3
 }

@@ -1,4 +1,6 @@
-// ── SCSS design tokens (mirror the CSS custom properties) ──────────────────
+@import './auth';
+
+/* ── SCSS design tokens (mirror the CSS custom properties) ───────────────── */
 $primary: #8a5100;
 $primary-container: #ff9900;
 $on-primary: #ffffff;
@@ -14,7 +16,7 @@ $surface-container-high: #e8e8e8;
 $outline-variant: #dbc2ad;
 $error-container: #ffdad6;
 
-// ── Mixins ─────────────────────────────────────────────────────────────────
+/* ── Mixins ────────────────────────────────────────────────────────────────── */
 @mixin glass {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
@@ -40,7 +42,7 @@ $error-container: #ffdad6;
   letter-spacing: 0.05em;
 }
 
-// ── Base ───────────────────────────────────────────────────────────────────
+/* ── Base ──────────────────────────────────────────────────────────────────── */
 body {
   font-family: var(--font-body);
   background-color: var(--color-surface);
@@ -56,7 +58,7 @@ h6 {
   font-family: var(--font-headline);
 }
 
-// ── Material Symbols ───────────────────────────────────────────────────────
+/* ── Material Symbols ──────────────────────────────────────────────────────── */
 .material-symbols-outlined {
   font-variation-settings:
     'FILL' 0,
@@ -68,7 +70,7 @@ h6 {
   vertical-align: middle;
 }
 
-// ── Utility classes ────────────────────────────────────────────────────────
+/* ── Utility classes ──────────────────────────────────────────────────────── */
 .glass {
   @include glass;
 }

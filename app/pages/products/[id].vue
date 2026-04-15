@@ -235,12 +235,12 @@ useSeoMeta({ title: computed(() => `${productName.value} — ArchitectMarket`) }
         <!-- Price -->
         <div class="flex items-baseline gap-3">
           <span class="text-3xl font-bold text-on-surface font-headline"
-            >${{ effectivePrice.toFixed(2) }}</span
+            >${{ effectivePrice }}</span
           >
           <span
             v-if="selectedVariant?.priceModifier && selectedVariant.priceModifier !== 0"
             class="text-sm text-secondary line-through"
-            >${{ product.basePrice.toFixed(2) }}</span
+            >${{ product.basePrice }}</span
           >
         </div>
 
@@ -347,9 +347,7 @@ useSeoMeta({ title: computed(() => `${productName.value} — ArchitectMarket`) }
       <!-- Buy box (sticky right) -->
       <div class="lg:col-span-3">
         <div class="bg-surface-container-lowest rounded p-6 space-y-4 sticky top-24">
-          <p class="text-2xl font-bold text-on-surface font-headline">
-            ${{ effectivePrice.toFixed(2) }}
-          </p>
+          <p class="text-2xl font-bold text-on-surface font-headline">${{ effectivePrice }}</p>
           <p class="text-xs text-secondary">FREE delivery on orders over $99</p>
           <div class="flex items-center gap-2 text-xs">
             <span class="material-symbols-outlined text-sm text-green-600">check_circle</span>

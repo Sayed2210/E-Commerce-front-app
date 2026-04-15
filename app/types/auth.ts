@@ -9,7 +9,7 @@ export interface User {
   email: string
   firstName?: string
   lastName?: string
-  roles: UserRole[]
+  role: UserRole
   phone?: string
   avatar?: string
   createdAt: string

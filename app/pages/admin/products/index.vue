@@ -151,9 +151,7 @@ useSeoMeta({ title: 'Inventory — Admin' })
               <span class="text-sm text-secondary">{{ product.category?.name ?? '—' }}</span>
             </td>
             <td class="px-6 py-4">
-              <span class="text-sm font-bold text-on-surface"
-                >${{ product.basePrice.toFixed(2) }}</span
-              >
+              <span class="text-sm font-bold text-on-surface">${{ product.basePrice }}</span>
             </td>
             <td class="px-6 py-4 hidden sm:table-cell">
               <span
