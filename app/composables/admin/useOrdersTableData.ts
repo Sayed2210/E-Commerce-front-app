@@ -1,6 +1,6 @@
 import type { Order } from '~/types/api'
 
-export function useOrdersTableData() {
+export async function useOrdersTableData() {
   const { listOrders, updateOrderStatus: apiUpdateStatus } = useOrders()
 
   // State

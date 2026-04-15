@@ -15,7 +15,7 @@ interface OrderStatusItem {
   color: string
 }
 
-export function useDashboardStats() {
+export async function useDashboardStats() {
   const { getDashboardStats } = useAdmin()
   const { data, pending } = await getDashboardStats()
 
