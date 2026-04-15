@@ -464,11 +464,12 @@ function submitNewsletter() {
 
 /* ── Product grid ────────────────────────────────────────────────────────── */
 .product-grid {
+  margin-inline: auto;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 1.25rem;
   list-style: none;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
 }
 

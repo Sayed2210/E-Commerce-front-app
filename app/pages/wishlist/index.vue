@@ -33,7 +33,7 @@ async function clearAll() {
 }
 
 async function moveToCart(item: WishlistItem) {
-  await addItem({ productId: item.productId, quantity: 1 })
+  await addItem({ productId: item.product?.id, quantity: 1 })
   await removeFromWishlist(item.productId)
   await refresh()
 }
@@ -137,7 +137,7 @@ useSeoMeta({ title: 'My Wishlist — ArchitectMarket' })
           </div>
           <div class="flex items-center justify-between mt-auto">
             <span class="text-primary font-bold text-lg"
-              >${{ item.product?.basePrice?.toFixed(2) ?? '—' }}</span
+              >${{ item.product?.basePrice ?? '—' }}</span
             >
             <button
               type="button"
