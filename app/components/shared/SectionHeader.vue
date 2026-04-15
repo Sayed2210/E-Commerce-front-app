@@ -29,4 +29,4 @@ withDefaults(
   </div>
 </template>
 
-<style scoped lang="scss" src="./styles/SectionHeader.scss"></style>
+<style scoped lang="scss" src="./SectionHeader.scss"></style>

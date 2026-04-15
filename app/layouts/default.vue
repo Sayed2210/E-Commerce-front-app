@@ -226,7 +226,7 @@ onMounted(async () => {
 .nav {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: var(--z-nav);
   background: color-mix(in srgb, var(--color-surface-container-lowest) 80%, transparent);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid color-mix(in srgb, var(--color-outline-variant) 15%, transparent);
@@ -630,15 +630,5 @@ onMounted(async () => {
   text-align: center;
 }
 
-/* ── Utility ──────────────────────────────────────────────────────────────── */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  white-space: nowrap;
-  border: 0;
-}
+/* .sr-only is defined globally in main.scss */
 </style>

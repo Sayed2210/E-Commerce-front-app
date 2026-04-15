@@ -35,4 +35,4 @@ withDefaults(
   </button>
 </template>
 
-<style scoped lang="scss" src="./styles/AppButton.scss"></style>
+<style scoped lang="scss" src="./AppButton.scss"></style>

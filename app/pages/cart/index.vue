@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import type { CartItem, Product, ProductVariant } from '~/types/api'
-
 definePageMeta({ layout: 'default', middleware: 'auth' })
+useSeoMeta({ title: 'Shopping Cart — ArchitectMarket' })
 
 const cartStore = useCartStore()
 const { fetchCart, updateItem, removeItem } = useCart()
 
 const loading = ref(true)
-const couponCode = ref('')
-const couponMessage = ref('')
-const couponApplied = ref(false)
 
 const items = computed(() => cartStore.items)
 const isEmpty = computed(() => cartStore.isEmpty)
@@ -26,270 +22,193 @@ onMounted(async () => {
   loading.value = false
 })
 
-function productName(p: Product | undefined) {
-  if (!p) return ''
-  return typeof p.name === 'string' ? p.name : (p.name?.en ?? '')
+async function handleChangeQty(id: string, qty: number) {
+  if (qty < 1) return handleRemove(id)
+  await updateItem(id, { quantity: qty })
 }
 
-function variantName(v: ProductVariant) {
-  const n = v.variantName
-  return typeof n === 'string' ? n : (n?.en ?? '')
+async function handleRemove(id: string) {
+  await removeItem(id)
 }
 
-async function changeQty(item: CartItem, newQty: number) {
-  if (newQty < 1) return remove(item.id)
-  await updateItem(item.id, { quantity: newQty })
-}
-
-async function remove(itemId: string) {
-  await removeItem(itemId)
-}
-
-function saveForLater(_itemId: string) {
+function handleSaveForLater(_id: string) {
   // TODO: move to wishlist
 }
 
-function applyCoupon() {
-  if (!couponCode.value.trim()) return
-  // Validate via API when checkout composable is ready
-  couponMessage.value = 'Coupon applied!'
-  couponApplied.value = true
-}
-
-useSeoMeta({ title: 'Shopping Cart — ArchitectMarket' })
+const breadcrumbs = [{ label: 'Marketplace', to: '/' }, { label: 'Shopping Cart' }]
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto px-6 py-8">
-    <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 mb-8 text-xs uppercase tracking-widest text-secondary">
-      <NuxtLink to="/" class="hover:text-primary transition-colors">Marketplace</NuxtLink>
-      <span class="material-symbols-outlined text-[10px]">chevron_right</span>
-      <span class="text-on-surface">Shopping Cart</span>
-    </nav>
+  <div class="cart-page">
+    <AppBreadcrumb :items="breadcrumbs" />
 
-    <!-- Empty state -->
-    <div v-if="isEmpty && !loading" class="text-center py-24">
-      <span class="material-symbols-outlined text-7xl text-secondary/20 block mb-4"
-        >shopping_cart</span
-      >
-      <h2 class="text-2xl font-bold text-on-surface font-headline mb-2">Your cart is empty</h2>
-      <p class="text-secondary text-sm mb-6">Looks like you haven't added anything yet.</p>
-      <NuxtLink
-        to="/products"
-        class="inline-block bg-primary-container text-on-primary-container px-8 py-3 rounded font-bold text-sm hover:bg-primary hover:text-on-primary transition-all"
-      >
-        Start Shopping
-      </NuxtLink>
-    </div>
+    <AppEmptyState
+      v-if="isEmpty && !loading"
+      icon="shopping_cart"
+      title="Your cart is empty"
+      body="Looks like you haven't added anything yet."
+    >
+      <template #cta>
+        <NuxtLink to="/products" class="cart-page__empty-cta">Start Shopping</NuxtLink>
+      </template>
+    </AppEmptyState>
 
-    <div v-else class="flex flex-col lg:flex-row gap-8">
-      <!-- Cart items -->
-      <section class="lg:w-3/4 space-y-4">
-        <div class="flex items-end justify-between border-b border-outline-variant/15 pb-4">
-          <h1 class="text-3xl font-bold text-on-surface font-headline">Shopping Cart</h1>
-          <span class="text-secondary text-sm"
+    <div v-else class="cart-page__layout">
+      <section class="cart-section" aria-label="Cart items">
+        <div class="cart-section__header">
+          <h1 class="cart-section__title">Shopping Cart</h1>
+          <span class="cart-section__count"
             >{{ itemCount }} item{{ itemCount !== 1 ? 's' : '' }}</span
           >
         </div>
 
-        <!-- Loading skeletons -->
-        <div v-if="loading" class="space-y-4">
-          <div
-            v-for="i in 3"
-            :key="i"
-            class="bg-surface-container-lowest rounded p-6 flex gap-6 animate-pulse"
-          >
-            <div class="w-32 h-32 bg-surface-container-low rounded shrink-0"></div>
-            <div class="flex-1 space-y-3">
-              <div class="h-5 bg-surface-container-low rounded w-2/3"></div>
-              <div class="h-4 bg-surface-container-low rounded w-1/3"></div>
-              <div class="h-4 bg-surface-container-low rounded w-1/4"></div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          v-for="item in items"
-          :key="item.id"
-          class="bg-surface-container-lowest rounded p-6 flex gap-6 transition-all hover:shadow-ambient"
+        <ul
+          v-if="loading"
+          class="cart-section__list"
+          role="list"
+          aria-busy="true"
+          aria-label="Loading cart"
         >
-          <!-- Image -->
-          <div class="w-32 h-32 shrink-0 bg-surface-container-low rounded overflow-hidden">
-            <img
-              v-if="item.product?.images?.[0]"
-              :src="item.product.images[0]"
-              :alt="productName(item.product)"
-              class="w-full h-full object-cover"
-            />
-          </div>
+          <li v-for="i in 3" :key="i"><ProductSkeleton variant="list" /></li>
+        </ul>
 
-          <!-- Details -->
-          <div class="flex-grow flex flex-col justify-between">
-            <div>
-              <div class="flex justify-between items-start">
-                <div>
-                  <h3 class="font-headline font-semibold text-lg text-on-surface">
-                    {{ productName(item.product) }}
-                  </h3>
-                  <p v-if="item.variant" class="text-secondary text-sm mt-0.5">
-                    Variant: {{ variantName(item.variant) }}
-                  </p>
-                </div>
-                <p class="font-headline font-bold text-xl text-on-surface">
-                  ${{ item.totalPrice.toFixed(2) }}
-                </p>
-              </div>
-              <div class="mt-2">
-                <span
-                  :class="
-                    item.product?.inventoryQuantity > 0
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'bg-error-container text-on-error-container'
-                  "
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tighter"
-                >
-                  {{ item.product?.inventoryQuantity > 0 ? 'In Stock' : 'Out of Stock' }}
-                </span>
-              </div>
-            </div>
+        <ul v-else class="cart-section__list" role="list" :aria-label="`${itemCount} cart items`">
+          <CartItem
+            v-for="item in items"
+            :key="item.id"
+            :item="item"
+            @change-qty="handleChangeQty"
+            @remove="handleRemove"
+            @save-for-later="handleSaveForLater"
+          />
+        </ul>
 
-            <!-- Qty + actions -->
-            <div class="flex items-center gap-6 mt-4">
-              <div class="flex items-center gap-2">
-                <label class="text-[10px] font-bold uppercase text-secondary">Qty:</label>
-                <div class="flex items-center border border-outline-variant/20 rounded">
-                  <button
-                    type="button"
-                    class="px-2 py-1 text-secondary hover:text-primary transition-colors"
-                    @click="changeQty(item, item.quantity - 1)"
-                  >
-                    <span class="material-symbols-outlined text-sm">remove</span>
-                  </button>
-                  <span class="px-3 text-sm font-bold">{{ item.quantity }}</span>
-                  <button
-                    type="button"
-                    class="px-2 py-1 text-secondary hover:text-primary transition-colors"
-                    @click="changeQty(item, item.quantity + 1)"
-                  >
-                    <span class="material-symbols-outlined text-sm">add</span>
-                  </button>
-                </div>
-              </div>
-              <div class="h-4 w-px bg-outline-variant/30"></div>
-              <div class="flex gap-4">
-                <button
-                  type="button"
-                  class="text-xs text-error hover:underline transition-all"
-                  @click="remove(item.id)"
-                >
-                  Remove
-                </button>
-                <button
-                  type="button"
-                  class="text-xs text-primary hover:underline transition-all"
-                  @click="saveForLater(item.id)"
-                >
-                  Save for later
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Continue shopping -->
-        <NuxtLink
-          to="/products"
-          class="inline-flex items-center gap-2 text-primary text-sm font-semibold hover:underline mt-2"
-        >
-          <span class="material-symbols-outlined text-sm">arrow_back</span>
+        <NuxtLink to="/products" class="cart-section__continue">
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
           Continue Shopping
         </NuxtLink>
       </section>
 
-      <!-- Order summary -->
-      <aside class="lg:w-1/4 space-y-4">
-        <div class="bg-surface-container-lowest rounded p-6 space-y-4 sticky top-24">
-          <h2
-            class="font-headline font-bold text-lg text-on-surface border-b border-outline-variant/15 pb-3"
-          >
-            Order Summary
-          </h2>
-
-          <!-- Coupon -->
-          <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-widest text-secondary"
-              >Coupon Code</label
-            >
-            <div class="flex gap-2">
-              <input
-                v-model="couponCode"
-                type="text"
-                placeholder="Enter code"
-                class="flex-1 bg-surface-container-low border-none rounded py-2 px-3 text-sm outline-none focus:ring-1 focus:ring-primary"
-              />
-              <button
-                type="button"
-                class="bg-surface-container text-primary px-3 py-2 rounded text-xs font-bold hover:bg-primary-container hover:text-on-primary-container transition-all"
-                @click="applyCoupon"
-              >
-                Apply
-              </button>
-            </div>
-            <p
-              v-if="couponMessage"
-              class="text-xs"
-              :class="couponApplied ? 'text-green-600' : 'text-error'"
-            >
-              {{ couponMessage }}
-            </p>
-          </div>
-
-          <!-- Totals -->
-          <div class="space-y-2 text-sm border-t border-outline-variant/15 pt-4">
-            <div class="flex justify-between text-secondary">
-              <span>Subtotal</span>
-              <span>${{ subtotal.toFixed(2) }}</span>
-            </div>
-            <div v-if="discount > 0" class="flex justify-between text-green-600">
-              <span>Discount</span>
-              <span>-${{ discount.toFixed(2) }}</span>
-            </div>
-            <div class="flex justify-between text-secondary">
-              <span>Shipping</span>
-              <span class="text-green-600 font-semibold">{{
-                subtotal >= 99 ? 'FREE' : '$9.99'
-              }}</span>
-            </div>
-            <div
-              class="flex justify-between font-bold text-on-surface text-base border-t border-outline-variant/15 pt-2 mt-2"
-            >
-              <span>Total</span>
-              <span>${{ cartTotal.toFixed(2) }}</span>
-            </div>
-          </div>
-
-          <NuxtLink
-            to="/checkout"
-            class="w-full bg-primary-container text-on-primary-container py-3 rounded font-bold text-sm hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center gap-2"
-          >
-            <span class="material-symbols-outlined text-sm">lock</span>
-            Proceed to Checkout
-          </NuxtLink>
-
-          <div class="flex items-center justify-center gap-4 text-xs text-secondary pt-2">
-            <span class="flex items-center gap-1"
-              ><span class="material-symbols-outlined text-sm">credit_card</span> Stripe</span
-            >
-            <span class="flex items-center gap-1"
-              ><span class="material-symbols-outlined text-sm">account_balance</span> PayPal</span
-            >
-            <span class="flex items-center gap-1"
-              ><span class="material-symbols-outlined text-sm">payments</span> COD</span
-            >
-          </div>
-        </div>
+      <aside class="cart-sidebar" aria-label="Order summary">
+        <CartOrderSummary :subtotal="subtotal" :discount="discount" :total="cartTotal" />
       </aside>
     </div>
   </div>
 </template>
+
+<style scoped>
+.cart-page {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: 1.5rem var(--container-pad) 4rem;
+}
+
+.cart-page__empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+  color: var(--color-on-primary);
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border-radius: var(--radius-DEFAULT);
+  text-decoration: none;
+  transition: box-shadow var(--transition-base);
+}
+
+.cart-page__empty-cta:hover {
+  box-shadow: var(--shadow-btn-hover);
+}
+
+.cart-page__empty-cta:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.cart-page__layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (width >= 1024px) {
+  .cart-page__layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.cart-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-section__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-outline-variant) 15%, transparent);
+}
+
+.cart-section__title {
+  font-family: var(--font-headline);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.cart-section__count {
+  font-family: var(--font-label);
+  font-size: 0.8125rem;
+  color: var(--color-secondary);
+}
+
+.cart-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cart-section__continue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 1.5rem;
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: gap var(--transition-fast);
+}
+
+.cart-section__continue:hover {
+  gap: 0.625rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cart-section__continue .material-symbols-outlined {
+  font-size: 0.875rem;
+}
+
+.cart-sidebar {
+  width: 100%;
+}
+
+@media (width >= 1024px) {
+  .cart-sidebar {
+    width: 22rem;
+    flex-shrink: 0;
+  }
+}
+</style>
