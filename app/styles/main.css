@@ -53,6 +53,10 @@
   --color-error-container: #ffdad6;
   --color-on-error: #ffffff;
   --color-on-error-container: #93000a;
+  --color-success: #16a34a;
+  --color-on-success: #ffffff;
+  --color-success-container: color-mix(in srgb, #16a34a 12%, transparent);
+  --color-on-success-container: #15803d;
 
   /* Fonts */
   --font-headline: 'Work Sans', sans-serif;
