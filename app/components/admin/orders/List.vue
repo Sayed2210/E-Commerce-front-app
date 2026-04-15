@@ -11,7 +11,7 @@ const {
   totalPages,
   pending,
   updateStatus,
-} = useOrdersTableData()
+} = await useOrdersTableData()
 
 function handlePageChange(page: number) {
   currentPage.value = page
