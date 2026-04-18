@@ -66,6 +66,7 @@ onMounted(async () => {
         <!-- Actions -->
         <div class="nav__actions">
           <template v-if="isAuthenticated">
+            <SharedNotificationBell />
             <NuxtLink to="/account" class="nav__icon-btn" aria-label="My account">
               <span class="material-symbols-outlined" aria-hidden="true">person</span>
             </NuxtLink>

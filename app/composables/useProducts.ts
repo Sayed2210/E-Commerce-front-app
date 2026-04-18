@@ -24,7 +24,7 @@ export function useProducts() {
     if (params?.page) query.page = params.page
     if (params?.limit) query.limit = params.limit
     if (params?.categoryId) query.categoryId = params.categoryId
-    if (params?.sort) query.sort = params.sort
+    if (params?.sort) query.sortBy = params.sort
     if (params?.minPrice) query.minPrice = params.minPrice
     if (params?.maxPrice) query.maxPrice = params.maxPrice
     return useFetch<PaginatedResponse<Product>>('/products', { baseURL, query, headers: authH() })

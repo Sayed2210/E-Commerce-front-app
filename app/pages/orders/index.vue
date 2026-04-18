@@ -17,7 +17,10 @@ const STATUS_TABS = [
 ]
 
 const { data, pending } = await listOrders({ limit: 20 })
-const orders = computed<Order[]>(() => (data.value as any)?.data ?? (data.value as any) ?? [])
+const orders = computed<Order[]>(() => {
+  const response = data.value as { data?: Order[] } | Order[] | null
+  return (response && 'data' in response ? response.data : response) ?? []
+})
 
 const filteredOrders = computed(() =>
   activeTab.value === 'all'
@@ -25,9 +28,11 @@ const filteredOrders = computed(() =>
     : orders.value.filter((o) => o.status === activeTab.value)
 )
 
-function openReturnDialog(_orderId: string) {
-  // TODO: open return modal
+function openReturnDialog(orderId: string) {
+  router.push(`/orders/${orderId}`)
 }
+
+const router = useRouter()
 </script>
 
 <template>

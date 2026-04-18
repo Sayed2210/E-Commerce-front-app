@@ -9,6 +9,7 @@ const navLinks = [
   { to: '/admin/users', icon: 'group', label: 'Customers' },
   { to: '/admin/analytics', icon: 'leaderboard', label: 'Analytics' },
   { to: '/admin/coupons', icon: 'local_offer', label: 'Coupons' },
+  { to: '/admin/returns', icon: 'assignment_return', label: 'Returns' },
 ]
 
 const pageTitles: Record<string, string> = {
@@ -18,6 +19,7 @@ const pageTitles: Record<string, string> = {
   '/admin/users': 'Customers',
   '/admin/analytics': 'Analytics',
   '/admin/coupons': 'Coupons',
+  '/admin/returns': 'Returns',
 }
 
 const pageTitle = computed(() => pageTitles[route.path] ?? 'Admin')
