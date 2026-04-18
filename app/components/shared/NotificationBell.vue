@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useNotificationsStore } from '~/stores/notifications'
 import { showErrorToast } from '~/utils/errorHandler'
 
 const notificationsStore = useNotificationsStore()
@@ -42,7 +43,9 @@ function timeAgo(dateStr: string) {
   return `${Math.floor(h / 24)}d ago`
 }
 
-onClickOutside(bell, () => { open.value = false })
+onClickOutside(bell, () => {
+  open.value = false
+})
 </script>
 
 <template>
@@ -85,7 +88,15 @@ onClickOutside(bell, () => { open.value = false })
           >
             <span class="notif-bell__item-icon">
               <span class="material-symbols-outlined" aria-hidden="true">
-                {{ n.type === 'order' ? 'shopping_bag' : n.type === 'promo' ? 'local_offer' : n.type === 'review' ? 'star' : 'info' }}
+                {{
+                  n.type === 'order'
+                    ? 'shopping_bag'
+                    : n.type === 'promo'
+                      ? 'local_offer'
+                      : n.type === 'review'
+                        ? 'star'
+                        : 'info'
+                }}
               </span>
             </span>
             <span class="notif-bell__item-body">
@@ -102,11 +113,7 @@ onClickOutside(bell, () => { open.value = false })
           <span>No notifications yet</span>
         </div>
 
-        <NuxtLink
-          to="/notifications"
-          class="notif-bell__see-all"
-          @click="open = false"
-        >
+        <NuxtLink to="/notifications" class="notif-bell__see-all" @click="open = false">
           See all notifications
           <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
         </NuxtLink>
@@ -132,7 +139,9 @@ onClickOutside(bell, () => { open.value = false })
   cursor: pointer;
   color: var(--color-secondary);
   position: relative;
-  transition: color 180ms ease, background 180ms ease;
+  transition:
+    color 180ms ease,
+    background 180ms ease;
 }
 
 .notif-bell__btn:hover {
@@ -206,7 +215,9 @@ onClickOutside(bell, () => { open.value = false })
   transition: opacity var(--transition-fast);
 }
 
-.notif-bell__mark-all:hover { opacity: 0.75; }
+.notif-bell__mark-all:hover {
+  opacity: 0.75;
+}
 
 .notif-bell__list {
   list-style: none;
@@ -227,10 +238,17 @@ onClickOutside(bell, () => { open.value = false })
   transition: background var(--transition-fast);
 }
 
-.notif-bell__item:hover { background: var(--color-surface-container-low); }
+.notif-bell__item:hover {
+  background: var(--color-surface-container-low);
+}
 
-.notif-bell__item--unread { background: color-mix(in srgb, var(--color-primary-fixed) 40%, transparent); }
-.notif-bell__item--unread:hover { background: color-mix(in srgb, var(--color-primary-fixed) 60%, transparent); }
+.notif-bell__item--unread {
+  background: color-mix(in srgb, var(--color-primary-fixed) 40%, transparent);
+}
+
+.notif-bell__item--unread:hover {
+  background: color-mix(in srgb, var(--color-primary-fixed) 60%, transparent);
+}
 
 .notif-bell__item-icon {
   display: flex;
@@ -244,7 +262,9 @@ onClickOutside(bell, () => { open.value = false })
   flex-shrink: 0;
 }
 
-.notif-bell__item-icon .material-symbols-outlined { font-size: 1rem; }
+.notif-bell__item-icon .material-symbols-outlined {
+  font-size: 1rem;
+}
 
 .notif-bell__item-body {
   flex: 1;
@@ -302,7 +322,10 @@ onClickOutside(bell, () => { open.value = false })
   color: var(--color-secondary);
 }
 
-.notif-bell__empty .material-symbols-outlined { font-size: 2rem; opacity: 0.4; }
+.notif-bell__empty .material-symbols-outlined {
+  font-size: 2rem;
+  opacity: 0.4;
+}
 
 .notif-bell__see-all {
   display: flex;
@@ -319,13 +342,20 @@ onClickOutside(bell, () => { open.value = false })
   transition: background var(--transition-fast);
 }
 
-.notif-bell__see-all:hover { background: var(--color-surface-container-low); }
-.notif-bell__see-all .material-symbols-outlined { font-size: 0.875rem; }
+.notif-bell__see-all:hover {
+  background: var(--color-surface-container-low);
+}
+
+.notif-bell__see-all .material-symbols-outlined {
+  font-size: 0.875rem;
+}
 
 /* Dropdown transition */
 .notif-drop-enter-active,
 .notif-drop-leave-active {
-  transition: opacity 150ms ease, transform 150ms ease;
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
 }
 
 .notif-drop-enter-from,

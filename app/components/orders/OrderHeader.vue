@@ -19,7 +19,13 @@ const STATUS_COLOR: Record<string, string> = {
     <div class="order-header__meta">
       <h1 class="order-header__id">Order #{{ order.id.slice(-8).toUpperCase() }}</h1>
       <time class="order-header__date" :datetime="order.createdAt">
-        {{ new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}
+        {{
+          new Date(order.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        }}
       </time>
     </div>
     <span class="order-header__badge" :class="STATUS_COLOR[order.status]">
@@ -71,11 +77,38 @@ const STATUS_COLOR: Record<string, string> = {
   white-space: nowrap;
 }
 
-.order-header__badge--pending    { background: color-mix(in srgb, var(--color-secondary) 12%, transparent); color: var(--color-secondary); }
-.order-header__badge--confirmed  { background: color-mix(in srgb, var(--color-tertiary) 12%, transparent); color: var(--color-tertiary); }
-.order-header__badge--processing { background: color-mix(in srgb, var(--color-primary) 12%, transparent); color: var(--color-primary); }
-.order-header__badge--shipped    { background: color-mix(in srgb, var(--color-tertiary) 18%, transparent); color: var(--color-tertiary); }
-.order-header__badge--delivered  { background: color-mix(in srgb, var(--color-success, #2d6a4f) 12%, transparent); color: var(--color-success, #2d6a4f); }
-.order-header__badge--cancelled  { background: var(--color-error-container); color: var(--color-on-error-container); }
-.order-header__badge--refunded   { background: var(--color-error-container); color: var(--color-on-error-container); }
+.order-header__badge--pending {
+  background: color-mix(in srgb, var(--color-secondary) 12%, transparent);
+  color: var(--color-secondary);
+}
+
+.order-header__badge--confirmed {
+  background: color-mix(in srgb, var(--color-tertiary) 12%, transparent);
+  color: var(--color-tertiary);
+}
+
+.order-header__badge--processing {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+}
+
+.order-header__badge--shipped {
+  background: color-mix(in srgb, var(--color-tertiary) 18%, transparent);
+  color: var(--color-tertiary);
+}
+
+.order-header__badge--delivered {
+  background: color-mix(in srgb, var(--color-success, #2d6a4f) 12%, transparent);
+  color: var(--color-success, #2d6a4f);
+}
+
+.order-header__badge--cancelled {
+  background: var(--color-error-container);
+  color: var(--color-on-error-container);
+}
+
+.order-header__badge--refunded {
+  background: var(--color-error-container);
+  color: var(--color-on-error-container);
+}
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useNotificationsStore } from '~/stores/notifications'
 import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
 
 definePageMeta({ middleware: 'auth' })
@@ -31,7 +32,10 @@ async function handleMarkAllRead() {
 
 async function handleDelete(id: string) {
   const { error } = await deleteNotification(id)
-  if (error) { showErrorToast(error); return }
+  if (error) {
+    showErrorToast(error)
+    return
+  }
   notificationsStore.remove(id)
 }
 
@@ -92,7 +96,9 @@ const typeIcon: Record<string, string> = {
         @click="!n.isRead && handleMarkRead(n.id)"
       >
         <div class="notif-page__item-icon">
-          <span class="material-symbols-outlined" aria-hidden="true">{{ typeIcon[n.type] ?? 'info' }}</span>
+          <span class="material-symbols-outlined" aria-hidden="true">{{
+            typeIcon[n.type] ?? 'info'
+          }}</span>
         </div>
         <div class="notif-page__item-body">
           <div class="notif-page__item-top">
@@ -171,8 +177,13 @@ const typeIcon: Record<string, string> = {
   transition: opacity var(--transition-fast);
 }
 
-.notif-page__mark-all:hover { opacity: 0.75; }
-.notif-page__mark-all .material-symbols-outlined { font-size: 1rem; }
+.notif-page__mark-all:hover {
+  opacity: 0.75;
+}
+
+.notif-page__mark-all .material-symbols-outlined {
+  font-size: 1rem;
+}
 
 .notif-page__loading {
   display: flex;
@@ -185,7 +196,11 @@ const typeIcon: Record<string, string> = {
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .notif-page__empty {
   display: flex;
@@ -197,7 +212,10 @@ const typeIcon: Record<string, string> = {
   text-align: center;
 }
 
-.notif-page__empty .material-symbols-outlined { font-size: 3rem; opacity: 0.35; }
+.notif-page__empty .material-symbols-outlined {
+  font-size: 3rem;
+  opacity: 0.35;
+}
 
 .notif-page__empty p {
   font-family: var(--font-headline);
@@ -233,7 +251,9 @@ const typeIcon: Record<string, string> = {
   position: relative;
 }
 
-.notif-page__item:hover { background: var(--color-surface-container-low); }
+.notif-page__item:hover {
+  background: var(--color-surface-container-low);
+}
 
 .notif-page__item--unread {
   background: color-mix(in srgb, var(--color-primary-fixed) 35%, transparent);
@@ -255,7 +275,9 @@ const typeIcon: Record<string, string> = {
   flex-shrink: 0;
 }
 
-.notif-page__item-icon .material-symbols-outlined { font-size: 1.25rem; }
+.notif-page__item-icon .material-symbols-outlined {
+  font-size: 1.25rem;
+}
 
 .notif-page__item-body {
   flex: 1;
@@ -323,10 +345,22 @@ const typeIcon: Record<string, string> = {
   cursor: pointer;
   color: var(--color-secondary);
   opacity: 0;
-  transition: opacity var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 
-.notif-page__item:hover .notif-page__delete-btn { opacity: 1; }
-.notif-page__delete-btn:hover { background: var(--color-error-container); color: var(--color-error); }
-.notif-page__delete-btn .material-symbols-outlined { font-size: 1rem; }
+.notif-page__item:hover .notif-page__delete-btn {
+  opacity: 1;
+}
+
+.notif-page__delete-btn:hover {
+  background: var(--color-error-container);
+  color: var(--color-error);
+}
+
+.notif-page__delete-btn .material-symbols-outlined {
+  font-size: 1rem;
+}
 </style>

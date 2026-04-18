@@ -50,7 +50,9 @@ async function handleDelete(id: string) {
     <div class="coupons-list__head">
       <h1 class="coupons-list__title">Coupons</h1>
       <button type="button" class="coupons-list__create-btn" @click="showCreate = !showCreate">
-        <span class="material-symbols-outlined" aria-hidden="true">{{ showCreate ? 'close' : 'add' }}</span>
+        <span class="material-symbols-outlined" aria-hidden="true">{{
+          showCreate ? 'close' : 'add'
+        }}</span>
         {{ showCreate ? 'Cancel' : 'New Coupon' }}
       </button>
     </div>
@@ -132,7 +134,12 @@ async function handleDelete(id: string) {
 
 .coupons-list__skel {
   height: 3rem;
-  background: linear-gradient(90deg, var(--color-surface-container) 25%, var(--color-surface-container-lowest) 50%, var(--color-surface-container) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-container) 25%,
+    var(--color-surface-container-lowest) 50%,
+    var(--color-surface-container) 75%
+  );
   background-size: 200% 100%;
   border-radius: var(--radius-sm);
   animation: shimmer 1.5s infinite;
@@ -142,6 +149,7 @@ async function handleDelete(id: string) {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }

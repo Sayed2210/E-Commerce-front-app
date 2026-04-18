@@ -86,7 +86,13 @@ async function process(id: string, status: 'approved' | 'rejected') {
               </span>
             </td>
             <td class="returns-list__date">
-              {{ new Date(ret.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}
+              {{
+                new Date(ret.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })
+              }}
             </td>
             <td>
               <div v-if="ret.status === 'pending'" class="returns-list__actions">
@@ -146,7 +152,16 @@ async function process(id: string, status: 'approved' | 'rejected') {
   animation: skel 1.6s ease-in-out infinite;
 }
 
-@keyframes skel { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes skel {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
 
 .returns-list__table-wrap {
   background: var(--color-surface-container-lowest);
@@ -216,10 +231,25 @@ async function process(id: string, status: 'approved' | 'rejected') {
   letter-spacing: 0.06em;
 }
 
-.badge--pending   { background: color-mix(in srgb, var(--color-secondary) 12%, transparent); color: var(--color-secondary); }
-.badge--approved  { background: color-mix(in srgb, var(--color-tertiary) 12%, transparent); color: var(--color-tertiary); }
-.badge--rejected  { background: var(--color-error-container); color: var(--color-on-error-container); }
-.badge--completed { background: color-mix(in srgb, var(--color-primary) 12%, transparent); color: var(--color-primary); }
+.badge--pending {
+  background: color-mix(in srgb, var(--color-secondary) 12%, transparent);
+  color: var(--color-secondary);
+}
+
+.badge--approved {
+  background: color-mix(in srgb, var(--color-tertiary) 12%, transparent);
+  color: var(--color-tertiary);
+}
+
+.badge--rejected {
+  background: var(--color-error-container);
+  color: var(--color-on-error-container);
+}
+
+.badge--completed {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+}
 
 .returns-list__actions {
   display: flex;
