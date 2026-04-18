@@ -3,6 +3,7 @@ import { UserRole } from '~/types/auth'
 import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
+useSeoMeta({ title: 'My Account — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { user, fetchUser } = useAuth()
 const { apiCall } = useApiClient()
@@ -77,7 +78,10 @@ async function changePassword() {
     method: 'POST',
     body: { currentPassword: pwForm.current, newPassword: pwForm.newPw },
   })
-  if (error) { showErrorToast(error); return }
+  if (error) {
+    showErrorToast(error)
+    return
+  }
   showSuccessToast('Password updated.')
   pwForm.current = ''
   pwForm.newPw = ''
@@ -138,15 +142,27 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
           <button
             type="button"
             class="px-5 py-2 rounded text-sm font-bold font-label transition-colors"
-            :class="activeTab === 'profile' ? 'bg-surface-container-lowest text-on-surface shadow-sm' : 'text-secondary hover:text-on-surface'"
+            :class="
+              activeTab === 'profile'
+                ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                : 'text-secondary hover:text-on-surface'
+            "
             @click="activeTab = 'profile'"
-          >Profile</button>
+          >
+            Profile
+          </button>
           <button
             type="button"
             class="px-5 py-2 rounded text-sm font-bold font-label transition-colors"
-            :class="activeTab === 'addresses' ? 'bg-surface-container-lowest text-on-surface shadow-sm' : 'text-secondary hover:text-on-surface'"
+            :class="
+              activeTab === 'addresses'
+                ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                : 'text-secondary hover:text-on-surface'
+            "
             @click="activeTab = 'addresses'"
-          >Addresses</button>
+          >
+            Addresses
+          </button>
         </div>
         <!-- Addresses tab -->
         <div v-if="activeTab === 'addresses'" class="bg-surface-container-lowest rounded p-8">

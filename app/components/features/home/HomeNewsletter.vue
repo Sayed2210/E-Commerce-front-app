@@ -42,7 +42,9 @@ const { email, sent, submit } = useNewsletter()
   </section>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'abstracts' as *;
+
 .newsletter {
   background: var(--color-inverse-surface);
 }
@@ -58,10 +60,8 @@ const { email, sent, submit } = useNewsletter()
   gap: 2rem;
   align-items: center;
   text-align: center;
-}
 
-@media (width >= 768px) {
-  .newsletter__inner {
+  @media (width >= 768px) {
     flex-direction: row;
     text-align: left;
     justify-content: space-between;
@@ -133,23 +133,24 @@ const { email, sent, submit } = useNewsletter()
   transition:
     border-color var(--transition-base),
     background var(--transition-base);
-}
 
-.newsletter__input::placeholder {
-  color: var(--color-surface-container-high);
-}
+  &::placeholder {
+    color: var(--color-surface-container-high);
+  }
 
-.newsletter__input:focus {
-  border-color: var(--color-primary-container);
-  background: color-mix(in srgb, var(--color-surface-container-lowest) 15%, transparent);
+  &:focus {
+    border-color: var(--color-primary-container);
+    background: color-mix(in srgb, var(--color-surface-container-lowest) 15%, transparent);
+  }
 }
 
 .newsletter__btn {
+  @include button-gradient;
+  @include focus-ring(var(--color-primary-fixed), 3px);
+
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
-  color: var(--color-on-primary);
   font-family: var(--font-label);
   font-size: 0.875rem;
   font-weight: 700;
@@ -159,15 +160,10 @@ const { email, sent, submit } = useNewsletter()
   cursor: pointer;
   white-space: nowrap;
   transition: box-shadow var(--transition-base);
-}
 
-.newsletter__btn:hover {
-  box-shadow: var(--shadow-btn-primary);
-}
-
-.newsletter__btn:focus-visible {
-  outline: 2px solid var(--color-primary-fixed);
-  outline-offset: 3px;
+  &:hover {
+    box-shadow: var(--shadow-btn-primary);
+  }
 }
 
 .newsletter__thanks {
@@ -178,10 +174,10 @@ const { email, sent, submit } = useNewsletter()
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--color-primary-fixed);
-}
 
-.newsletter__thanks .material-symbols-outlined {
-  font-size: 1.375rem;
-  color: var(--color-primary-container);
+  .material-symbols-outlined {
+    font-size: 1.375rem;
+    color: var(--color-primary-container);
+  }
 }
 </style>

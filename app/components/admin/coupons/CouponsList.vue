@@ -6,9 +6,11 @@ import { getAccessToken } from '~/utils/token'
 const config = useRuntimeConfig()
 const baseURL = config.public.apiBaseUrl as string
 
-function authH() {
+function authH(): Record<string, string> {
   const t = getAccessToken()
-  return t ? { Authorization: `Bearer ${t}` } : {}
+  const h: Record<string, string> = {}
+  if (t) h['Authorization'] = `Bearer ${t}`
+  return h
 }
 
 const { data, pending, refresh } = await useFetch<Coupon[]>('/coupons', {

@@ -2,7 +2,7 @@
 import type { Order } from '~/types/api'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
-useSeoMeta({ title: 'My Orders — ArchitectMarket' })
+useSeoMeta({ title: 'My Orders — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { listOrders } = useOrders()
 

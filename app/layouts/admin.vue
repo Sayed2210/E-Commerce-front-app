@@ -2,6 +2,8 @@
 const { logout, user } = useAuth()
 const route = useRoute()
 
+useSeoMeta({ robots: 'noindex, nofollow' })
+
 const navLinks = [
   { to: '/admin', icon: 'dashboard', label: 'Dashboard' },
   { to: '/admin/products', icon: 'inventory_2', label: 'Inventory' },

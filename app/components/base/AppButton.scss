@@ -1,7 +1,7 @@
-/* AppButton Component Styles */
-/* Design System: Stitch */
+// AppButton Component Styles
+@use 'abstracts' as *;
 
-/* ── Base ────────────────────────────────────────────────────────────────── */
+// ── Base ───────────────────────────────────────────────────────────────────
 .btn {
   display: inline-flex;
   align-items: center;
@@ -22,24 +22,21 @@
     background var(--transition-base),
     color var(--transition-base),
     border-color var(--transition-base);
-}
 
-.btn:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 3px;
-}
+  @include focus-ring(var(--color-primary), 3px);
 
-.btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  pointer-events: none;
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
 
 .btn--block {
   width: 100%;
 }
 
-/* ── Sizes ───────────────────────────────────────────────────────────────── */
+// ── Sizes ──────────────────────────────────────────────────────────────────
 .btn--sm {
   font-size: 0.75rem;
   padding: 0.375rem 0.875rem;
@@ -58,63 +55,62 @@
   min-height: 3rem;
 }
 
-/* ── Primary — gradient fill ──────────────────────────────────────────────── */
+// ── Primary — gradient fill ────────────────────────────────────────────────
 .btn--primary {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
-  color: var(--color-on-primary);
+  @include button-gradient;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
 }
 
-.btn--primary:hover:not(:disabled) {
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
-.btn--primary:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 20%, transparent);
-}
-
-/* ── Secondary — ghost ────────────────────────────────────────────────────── */
+// ── Secondary — ghost ──────────────────────────────────────────────────────
 .btn--secondary {
   background: transparent;
   color: var(--color-primary);
   border: 1px solid color-mix(in srgb, var(--color-outline) 25%, transparent);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+    border-color: color-mix(in srgb, var(--color-outline) 50%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  }
 }
 
-.btn--secondary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
-  border-color: color-mix(in srgb, var(--color-outline) 50%, transparent);
-}
-
-.btn--secondary:active:not(:disabled) {
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-}
-
-/* ── Tertiary — text only ─────────────────────────────────────────────────── */
+// ── Tertiary — text only ───────────────────────────────────────────────────
 .btn--tertiary {
   background: transparent;
   color: var(--color-primary);
   padding-left: 0;
   padding-right: 0;
   border-radius: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--color-primary-fixed-dim);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms ease;
+  }
+
+  &:hover:not(:disabled)::after {
+    transform: scaleX(1);
+  }
 }
 
-.btn--tertiary::after {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--color-primary-fixed-dim);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 200ms ease;
-}
-
-.btn--tertiary:hover:not(:disabled)::after {
-  transform: scaleX(1);
-}
-
-/* ── Loading spinner ──────────────────────────────────────────────────────── */
+// ── Loading spinner ────────────────────────────────────────────────────────
 .btn__spinner {
   width: 1em;
   height: 1em;

@@ -6,9 +6,11 @@ export function useCoupons() {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
-  function authH() {
+  function authH(): Record<string, string> {
     const t = getAccessToken()
-    return t ? { Authorization: `Bearer ${t}` } : {}
+    const h: Record<string, string> = {}
+    if (t) h['Authorization'] = `Bearer ${t}`
+    return h
   }
 
   async function handleCreate(form: CreateCouponDto, refresh: () => Promise<void>) {
@@ -34,7 +36,11 @@ export function useCoupons() {
     }
   }
 
-  async function toggleActive(coupon: Coupon, processingId: Ref<string | null>, refresh: () => Promise<void>) {
+  async function toggleActive(
+    coupon: Coupon,
+    processingId: Ref<string | null>,
+    refresh: () => Promise<void>
+  ) {
     processingId.value = coupon.id
     try {
       await $fetch(`${baseURL}/coupons/${coupon.id}`, {
@@ -51,7 +57,11 @@ export function useCoupons() {
     }
   }
 
-  async function deleteCoupon(id: string, processingId: Ref<string | null>, refresh: () => Promise<void>) {
+  async function deleteCoupon(
+    id: string,
+    processingId: Ref<string | null>,
+    refresh: () => Promise<void>
+  ) {
     processingId.value = id
     try {
       await $fetch(`${baseURL}/coupons/${id}`, { method: 'DELETE', headers: authH() })
@@ -65,7 +75,11 @@ export function useCoupons() {
   }
 
   function formatValue(c: Coupon) {
-    return c.type === 'percentage' ? `${c.value}%` : c.type === 'fixed' ? `$${c.value}` : 'Free shipping'
+    return c.type === 'percentage'
+      ? `${c.value}%`
+      : c.type === 'fixed'
+        ? `$${c.value}`
+        : 'Free shipping'
   }
 
   return { handleCreate, toggleActive, deleteCoupon, formatValue }

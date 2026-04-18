@@ -2,6 +2,7 @@
 import { loginSchema } from '~/utils/validation'
 
 definePageMeta({ layout: false, middleware: 'guest' })
+useSeoMeta({ title: 'Sign In — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { login, loading } = useAuth()
 const form = ref({ email: '', password: '' })

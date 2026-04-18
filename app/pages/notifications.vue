@@ -3,6 +3,7 @@ import { useNotificationsStore } from '~/stores/notifications'
 import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
 
 definePageMeta({ middleware: 'auth' })
+useSeoMeta({ title: 'Notifications — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const notificationsStore = useNotificationsStore()
 const { listNotifications, markAsRead, markAllAsRead, deleteNotification } = useNotifications()

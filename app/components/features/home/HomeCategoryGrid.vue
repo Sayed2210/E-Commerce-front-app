@@ -19,7 +19,9 @@ const { categoryIcon } = useCategories()
   </ul>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'abstracts' as *;
+
 .cats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -27,22 +29,16 @@ const { categoryIcon } = useCategories()
   list-style: none;
   margin: 0;
   padding: 0;
-}
 
-@media (width >= 480px) {
-  .cats-grid {
+  @media (width >= 480px) {
     grid-template-columns: repeat(3, 1fr);
   }
-}
 
-@media (width >= 768px) {
-  .cats-grid {
+  @media (width >= 768px) {
     grid-template-columns: repeat(4, 1fr);
   }
-}
 
-@media (width >= 1024px) {
-  .cats-grid {
+  @media (width >= 1024px) {
     grid-template-columns: repeat(8, 1fr);
   }
 }
@@ -60,16 +56,21 @@ const { categoryIcon } = useCategories()
   transition:
     box-shadow var(--transition-base),
     transform var(--transition-base);
-}
 
-.cat-card:hover {
-  box-shadow: var(--shadow-card);
-  transform: translateY(-2px);
-}
+  @include focus-ring;
 
-.cat-card:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  &:hover {
+    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+
+    .cat-card__icon {
+      transform: scale(1.1);
+    }
+
+    .cat-card__name {
+      color: var(--color-primary);
+    }
+  }
 }
 
 .cat-card__icon {
@@ -78,22 +79,12 @@ const { categoryIcon } = useCategories()
   transition: transform var(--transition-base);
 }
 
-.cat-card:hover .cat-card__icon {
-  transform: scale(1.1);
-}
-
 .cat-card__name {
-  font-family: var(--font-label);
+  @include label-xs(0.04em);
+
   font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   color: var(--color-on-surface);
   text-align: center;
   transition: color var(--transition-fast);
-}
-
-.cat-card:hover .cat-card__name {
-  color: var(--color-primary);
 }
 </style>

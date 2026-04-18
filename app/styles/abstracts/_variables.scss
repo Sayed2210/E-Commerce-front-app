@@ -1,0 +1,17 @@
+// ── SCSS variables (mirror CSS custom properties for mixin logic) ─────────────
+// These are NOT used by components directly — components use var(--color-*).
+// Use these only inside mixin calculations or @if conditions.
+
+$primary: #8a5100;
+$primary-container: #ff9900;
+$on-primary: #ffffff;
+$on-primary-container: #653a00;
+$secondary: #595f68;
+$surface: #f9f9f9;
+$on-surface: #1a1c1c;
+$surface-container-lowest: #ffffff;
+$surface-container-low: #f3f3f3;
+$surface-container: #eeeeee;
+$surface-container-high: #e8e8e8;
+$outline-variant: #dbc2ad;
+$error-container: #ffdad6;

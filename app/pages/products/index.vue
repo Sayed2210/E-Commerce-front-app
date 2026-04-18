@@ -2,7 +2,19 @@
 import type { Product, Category } from '~/types/api'
 
 definePageMeta({ layout: 'default' })
-useSeoMeta({ title: 'Products — ArchitectMarket' })
+useSeoMeta({
+  title: 'Products',
+  description:
+    'Browse our full catalog of precision architectural tools, materials, and equipment. Filter by category, price, and more.',
+  ogTitle: 'Products — ArchitectMarket',
+  ogDescription: 'Browse our full catalog of precision architectural tools and materials.',
+  ogType: 'website',
+  ogImage: '/og-products.jpg',
+  twitterCard: 'summary_large_image',
+})
+
+const canonicalUrl = computed(() => `${useRequestURL().origin}/products`)
+useHead({ link: [{ rel: 'canonical', href: canonicalUrl }] })
 
 const route = useRoute()
 const { listProducts } = useProducts()
@@ -38,7 +50,10 @@ const products = computed<Product[]>(() => {
 })
 const total = computed<number>(() => {
   const response = data.value as { total?: number } | null
-  return (response && 'total' in response ? response.total : products.value.length) ?? products.value.length
+  return (
+    (response && 'total' in response ? response.total : products.value.length) ??
+    products.value.length
+  )
 })
 const totalPages = computed<number>(() => {
   const response = data.value as { totalPages?: number } | null

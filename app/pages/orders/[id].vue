@@ -2,6 +2,7 @@
 import type { ReturnReason } from '~/types/api'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
+useSeoMeta({ title: 'Order Details — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const id = route.params.id as string
@@ -46,9 +47,7 @@ async function submitReturn() {
   returnModal.open = false
 }
 
-const canReturn = computed(() =>
-  order.value?.status === 'delivered'
-)
+const canReturn = computed(() => order.value?.status === 'delivered')
 
 const shippingAddr = computed(() => order.value?.shippingAddress)
 
@@ -94,11 +93,13 @@ const breadcrumbs = computed(() => [
           <div v-if="shippingAddr" class="order-detail__card">
             <h2 class="order-detail__section-title">Shipping Address</h2>
             <address class="order-detail__address">
-              <span v-if="shippingAddr.firstName || shippingAddr.lastName" class="order-detail__addr-name">
+              <span
+                v-if="shippingAddr.firstName || shippingAddr.lastName"
+                class="order-detail__addr-name"
+              >
                 {{ [shippingAddr.firstName, shippingAddr.lastName].filter(Boolean).join(' ') }}
               </span>
-              {{ shippingAddr.street }},
-              {{ shippingAddr.city }},
+              {{ shippingAddr.street }}, {{ shippingAddr.city }},
               {{ shippingAddr.state }}
               {{ shippingAddr.postalCode }},
               {{ shippingAddr.country }}
@@ -115,13 +116,21 @@ const breadcrumbs = computed(() => [
     </template>
 
     <Teleport to="body">
-      <div v-if="returnModal.open" class="return-modal-overlay" role="dialog" aria-modal="true" aria-label="Request return">
+      <div
+        v-if="returnModal.open"
+        class="return-modal-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Request return"
+      >
         <div class="return-modal">
           <h2 class="return-modal__title">Request Return</h2>
 
           <label class="return-modal__label" for="return-reason">Reason</label>
           <select id="return-reason" v-model="returnModal.reason" class="return-modal__select">
-            <option v-for="r in RETURN_REASONS" :key="r.value" :value="r.value">{{ r.label }}</option>
+            <option v-for="r in RETURN_REASONS" :key="r.value" :value="r.value">
+              {{ r.label }}
+            </option>
           </select>
 
           <label class="return-modal__label" for="return-notes">Additional Notes</label>
@@ -134,7 +143,11 @@ const breadcrumbs = computed(() => [
           />
 
           <div class="return-modal__actions">
-            <button type="button" class="return-modal__btn return-modal__btn--ghost" @click="returnModal.open = false">
+            <button
+              type="button"
+              class="return-modal__btn return-modal__btn--ghost"
+              @click="returnModal.open = false"
+            >
               Cancel
             </button>
             <button
@@ -241,14 +254,31 @@ const breadcrumbs = computed(() => [
   animation: skeleton-shimmer 1.6s ease-in-out infinite;
 }
 
-.order-detail__skel-line:nth-child(1) { width: 30%; }
-.order-detail__skel-line:nth-child(2) { width: 80%; }
-.order-detail__skel-line:nth-child(3) { width: 60%; }
-.order-detail__skel-line:nth-child(4) { width: 40%; }
+.order-detail__skel-line:nth-child(1) {
+  width: 30%;
+}
+
+.order-detail__skel-line:nth-child(2) {
+  width: 80%;
+}
+
+.order-detail__skel-line:nth-child(3) {
+  width: 60%;
+}
+
+.order-detail__skel-line:nth-child(4) {
+  width: 40%;
+}
 
 @keyframes skeleton-shimmer {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .order-detail__back {
@@ -345,7 +375,9 @@ const breadcrumbs = computed(() => [
   border-radius: var(--radius-DEFAULT);
   border: none;
   cursor: pointer;
-  transition: box-shadow var(--transition-base), opacity var(--transition-fast);
+  transition:
+    box-shadow var(--transition-base),
+    opacity var(--transition-fast);
 }
 
 .return-modal__btn:disabled {

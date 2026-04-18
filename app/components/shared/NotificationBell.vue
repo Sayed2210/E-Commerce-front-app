@@ -122,7 +122,9 @@ onClickOutside(bell, () => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'abstracts' as *;
+
 .notif-bell {
   position: relative;
 }
@@ -142,24 +144,21 @@ onClickOutside(bell, () => {
   transition:
     color 180ms ease,
     background 180ms ease;
-}
 
-.notif-bell__btn:hover {
-  color: var(--color-primary);
-  background: var(--color-surface-container-low);
-}
+  @include focus-ring;
 
-.notif-bell__btn:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-surface-container-low);
+  }
 }
 
 .notif-bell__badge {
+  @include button-gradient;
+
   position: absolute;
   top: 0;
   right: 0;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
-  color: var(--color-on-primary);
   font-family: var(--font-label);
   font-size: 0.55rem;
   font-weight: 700;

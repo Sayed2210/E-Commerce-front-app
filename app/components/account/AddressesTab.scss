@@ -1,3 +1,6 @@
+// AddressesTab Component Styles
+@use 'abstracts' as *;
+
 .addr-tab__head {
   display: flex;
   align-items: center;
@@ -14,11 +17,11 @@
 }
 
 .addr-tab__add-btn {
+  @include button-gradient;
+
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
-  color: var(--color-on-primary);
   border: none;
   border-radius: var(--radius-DEFAULT);
   padding: 0.5rem 1.25rem;
@@ -27,14 +30,14 @@
   font-weight: 700;
   cursor: pointer;
   transition: box-shadow var(--transition-base);
-}
 
-.addr-tab__add-btn:hover {
-  box-shadow: var(--shadow-btn-hover);
-}
+  &:hover {
+    box-shadow: var(--shadow-btn-hover);
+  }
 
-.addr-tab__add-btn .material-symbols-outlined {
-  font-size: 1rem;
+  .material-symbols-outlined {
+    font-size: 1rem;
+  }
 }
 
 .addr-tab__form {
@@ -86,17 +89,12 @@
 }
 
 .addr-tab__badge {
-  display: inline-flex;
+  @include badge-base;
+
   align-self: flex-start;
-  padding: 2px 8px;
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
   color: var(--color-primary);
-  border-radius: var(--radius-full);
-  font-family: var(--font-label);
   font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   margin-top: 0.25rem;
 }
 
@@ -118,21 +116,21 @@
   text-underline-offset: 2px;
   padding: 0;
   transition: opacity var(--transition-fast);
-}
 
-.addr-tab__action:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
-.addr-tab__action--default {
-  color: var(--color-primary);
-}
+  &--default {
+    color: var(--color-primary);
+  }
 
-.addr-tab__action--delete {
-  color: var(--color-error);
-}
+  &--delete {
+    color: var(--color-error);
+  }
 
-.addr-tab__action:hover:not(:disabled) {
-  opacity: 0.75;
+  &:hover:not(:disabled) {
+    opacity: 0.75;
+  }
 }

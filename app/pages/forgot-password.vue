@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: false, middleware: 'guest' })
+useSeoMeta({ title: 'Forgot Password — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { form, errors, loading, submitted, serverError, handleSubmit } = useForgotPassword()
 </script>

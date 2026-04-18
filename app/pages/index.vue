@@ -2,7 +2,19 @@
 import type { Product, Category } from '~/types/api'
 
 definePageMeta({ layout: 'default' })
-useSeoMeta({ title: 'ArchitectMarket — Precision Tools Marketplace' })
+useSeoMeta({
+  title: 'Precision Tools Marketplace',
+  description:
+    'Shop professional-grade architectural tools, materials, and equipment. Fast delivery, 30-day returns, and expert support.',
+  ogTitle: 'ArchitectMarket — Precision Tools Marketplace',
+  ogDescription:
+    'Shop professional-grade architectural tools, materials, and equipment. Fast delivery, 30-day returns, and expert support.',
+  ogType: 'website',
+  ogImage: '/og-home.jpg',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'ArchitectMarket — Precision Tools Marketplace',
+  twitterDescription: 'Shop professional-grade architectural tools, materials, and equipment.',
+})
 
 const { listProducts } = useProducts()
 const { listCategories } = useCategories()

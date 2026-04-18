@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: false })
+useSeoMeta({ title: 'Verify Email — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { state, errorMessage } = useVerifyEmail()
 </script>

@@ -128,7 +128,58 @@ function formatDate(date: string) {
   })
 }
 
-useSeoMeta({ title: computed(() => `${productName.value} — ArchitectMarket`) })
+useSeoMeta({
+  title: computed(() => productName.value || 'Product'),
+  description: computed(
+    () =>
+      productDescription.value?.slice(0, 155) ||
+      'View product details, pricing, and reviews on ArchitectMarket.'
+  ),
+  ogTitle: computed(() => `${productName.value || 'Product'} — ArchitectMarket`),
+  ogDescription: computed(
+    () =>
+      productDescription.value?.slice(0, 155) ||
+      'View product details, pricing, and reviews on ArchitectMarket.'
+  ),
+  ogType: 'product',
+  ogImage: computed(() => product.value?.images?.[0] || '/og-products.jpg'),
+  twitterCard: 'summary_large_image',
+})
+
+const { origin } = useRequestURL()
+useHead({
+  link: [{ rel: 'canonical', href: computed(() => `${origin}/products/${id}`) }],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() =>
+        product.value
+          ? JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Product',
+              name: productName.value,
+              description: productDescription.value,
+              image: product.value.images ?? [],
+              offers: {
+                '@type': 'Offer',
+                price: effectivePrice.value,
+                priceCurrency: 'USD',
+                availability: 'https://schema.org/InStock',
+              },
+              aggregateRating:
+                product.value.reviewCount && product.value.reviewCount > 0
+                  ? {
+                      '@type': 'AggregateRating',
+                      ratingValue: product.value.averageRating,
+                      reviewCount: product.value.reviewCount,
+                    }
+                  : undefined,
+            })
+          : ''
+      ),
+    },
+  ],
+})
 </script>
 
 <template>

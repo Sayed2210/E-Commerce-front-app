@@ -5,7 +5,7 @@ import type { PaymentMethod, ApplyCouponResponse } from '~/types/api'
 import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
-useSeoMeta({ title: 'Checkout — ArchitectMarket' })
+useSeoMeta({ title: 'Checkout — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -51,7 +51,9 @@ async function handlePlaceOrder() {
   placingOrder.value = false
 
   if (error) {
-    const status = (error as { response?: { status: number }, statusCode?: number })?.response?.status ?? (error as { statusCode?: number })?.statusCode
+    const status =
+      (error as { response?: { status: number }; statusCode?: number })?.response?.status ??
+      (error as { statusCode?: number })?.statusCode
     if (status === 403) {
       emailNotVerified.value = true
       showErrorToast({ message: 'Please verify your email before placing an order.' })
@@ -85,7 +87,10 @@ async function handleResendVerification() {
 
 async function handleAddAddress(dto: Parameters<typeof createAddress>[0]) {
   const { error } = await createAddress(dto)
-  if (error) { showErrorToast(error); return }
+  if (error) {
+    showErrorToast(error)
+    return
+  }
   await refreshAddresses()
   if (!selectedAddressId.value && addresses.value.length) {
     selectedAddressId.value = addresses.value[0]!.id
@@ -116,8 +121,8 @@ const breadcrumbs = [
           :disabled="resendingVerification"
           @click="handleResendVerification"
         >
-          {{ resendingVerification ? 'Sending…' : 'resend the verification email' }}
-        </button>.
+          {{ resendingVerification ? 'Sending…' : 'resend the verification email' }}</button
+        >.
       </span>
     </div>
 

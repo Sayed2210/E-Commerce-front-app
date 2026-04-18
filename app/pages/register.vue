@@ -2,6 +2,7 @@
 import { registerSchema } from '~/utils/validation'
 
 definePageMeta({ layout: false, middleware: 'guest' })
+useSeoMeta({ title: 'Create Account — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { register, loading } = useAuth()
 const form = ref({
