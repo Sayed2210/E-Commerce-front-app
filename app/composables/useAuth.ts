@@ -1,6 +1,6 @@
 import type { LoginCredentials, RegisterData, AuthResponse, User } from '~/types/auth'
 import { UserRole } from '~/types/auth'
-import { setTokens, clearTokens } from '~/utils/token'
+import { setTokens, clearTokens, getAccessToken, getRefreshToken } from '~/utils/token'
 import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
 
 export function useAuth() {
@@ -59,13 +59,30 @@ export function useAuth() {
 
   async function logout() {
     try {
-      await $fetch(`${baseURL}/auth/logout`, { method: 'POST' })
+      const refreshToken = getRefreshToken()
+      await $fetch(`${baseURL}/auth/logout`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getAccessToken()}` },
+        body: { refreshToken },
+      })
     } catch {
       // ignore
     } finally {
       clearTokens()
       authStore.clearUser()
       await router.push('/login')
+    }
+  }
+
+  async function resendVerification() {
+    try {
+      await $fetch(`${baseURL}/auth/resend-verification`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getAccessToken()}` },
+      })
+      return true
+    } catch {
+      return false
     }
   }
 
@@ -86,6 +103,7 @@ export function useAuth() {
     register,
     logout,
     fetchUser,
+    resendVerification,
     user: computed(() => authStore.currentUser),
     isAuthenticated: computed(() => authStore.isAuthenticated),
     isAdmin: computed(() => authStore.isAdmin),

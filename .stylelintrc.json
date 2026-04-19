@@ -1,6 +1,9 @@
 {
   "extends": ["stylelint-config-standard", "stylelint-config-recommended-vue"],
+  "plugins": ["stylelint-scss"],
   "rules": {
+    "at-rule-no-unknown": null,
+    "scss/at-rule-no-unknown": true,
     "color-no-invalid-hex": true,
 
     "declaration-property-value-disallowed-list": {
@@ -27,13 +30,19 @@
     "import-notation": null,
     "selector-class-pattern": null,
     "custom-property-pattern": null,
-    "no-empty-source": null
+    "no-empty-source": null,
+    "no-invalid-double-slash-comments": null,
+    "property-no-deprecated": null,
+    "property-no-vendor-prefix": null,
+    "color-function-alias-notation": null,
+    "color-hex-length": null,
+    "nesting-selector-no-missing-scoping-root": null
   },
-  "ignoreFiles": [
-    "node_modules/**",
-    ".nuxt/**",
-    "dist/**",
-    "app/styles/main.css",
-    "app/styles/main.scss"
-  ]
+  "overrides": [
+    {
+      "files": ["**/*.scss"],
+      "customSyntax": "postcss-scss"
+    }
+  ],
+  "ignoreFiles": ["node_modules/**", ".nuxt/**", "dist/**", "app/styles/main.css"]
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: false, middleware: 'guest' })
+useSeoMeta({ title: 'Reset Password — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { form, errors, loading, success, serverError, invalidToken, handleSubmit } =
   useResetPassword()

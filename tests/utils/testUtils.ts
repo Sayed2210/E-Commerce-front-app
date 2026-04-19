@@ -39,14 +39,14 @@ export function createMockApiResponse<T>(data: T, error: any = null) {
 }
 
 /**
- * Mock user data
+ * Mock user data (matches app/types/auth.ts User interface)
  */
 export const mockUser = {
   id: '123',
   email: 'test@example.com',
   firstName: 'Test',
   lastName: 'User',
-  roles: ['CUSTOMER' as const],
+  role: 'customer' as const,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 }
@@ -57,7 +57,7 @@ export const mockUser = {
 export const mockAdminUser = {
   ...mockUser,
   email: 'admin@example.com',
-  roles: ['ADMIN' as const],
+  role: 'admin' as const,
 }
 
 /**

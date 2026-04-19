@@ -26,7 +26,9 @@
   </section>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'abstracts' as *;
+
 .hero {
   position: relative;
   min-height: 60vh;
@@ -75,12 +77,9 @@
 }
 
 .hero__eyebrow {
+  @include label-xs(0.12em);
+
   display: inline-block;
-  font-family: var(--font-label);
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
   color: var(--color-primary-container);
   background: color-mix(in srgb, var(--color-primary-container) 15%, transparent);
   padding: 0.25rem 0.75rem;
@@ -118,11 +117,12 @@
 }
 
 .hero__btn-primary {
+  @include button-gradient;
+  @include focus-ring(var(--color-primary-fixed), 3px);
+
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
-  color: var(--color-on-primary);
   font-family: var(--font-label);
   font-size: 0.9375rem;
   font-weight: 700;
@@ -132,19 +132,16 @@
   transition:
     box-shadow var(--transition-base),
     gap var(--transition-base);
-}
 
-.hero__btn-primary:hover {
-  box-shadow: var(--shadow-btn-hover);
-  gap: 0.75rem;
-}
-
-.hero__btn-primary:focus-visible {
-  outline: 2px solid var(--color-primary-fixed);
-  outline-offset: 3px;
+  &:hover {
+    box-shadow: var(--shadow-btn-hover);
+    gap: 0.75rem;
+  }
 }
 
 .hero__btn-secondary {
+  @include focus-ring(var(--color-primary-fixed), 3px);
+
   display: inline-flex;
   align-items: center;
   font-family: var(--font-label);
@@ -158,15 +155,10 @@
   transition:
     background var(--transition-base),
     border-color var(--transition-base);
-}
 
-.hero__btn-secondary:hover {
-  background: color-mix(in srgb, var(--color-surface-container-lowest) 10%, transparent);
-  border-color: color-mix(in srgb, var(--color-surface-container-lowest) 50%, transparent);
-}
-
-.hero__btn-secondary:focus-visible {
-  outline: 2px solid var(--color-primary-fixed);
-  outline-offset: 3px;
+  &:hover {
+    background: color-mix(in srgb, var(--color-surface-container-lowest) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-surface-container-lowest) 50%, transparent);
+  }
 }
 </style>

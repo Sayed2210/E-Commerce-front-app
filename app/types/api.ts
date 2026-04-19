@@ -211,12 +211,35 @@ export interface OrderItem {
 
 export interface Address {
   id: string
+  firstName?: string
+  lastName?: string
+  phone?: string
   street: string
   city: string
   state: string
   country: string
   postalCode: string
   isDefault?: boolean
+}
+
+export interface CreateAddressDto {
+  firstName?: string
+  lastName?: string
+  phone?: string
+  street: string
+  city: string
+  state: string
+  country: string
+  postalCode: string
+  isDefault?: boolean
+}
+
+export type UpdateAddressDto = Partial<CreateAddressDto>
+
+export interface ApplyCouponResponse {
+  discountValue: number
+  type: 'percentage' | 'fixed'
+  couponId: string
 }
 
 export interface Order {

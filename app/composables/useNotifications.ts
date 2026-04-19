@@ -12,8 +12,13 @@ export function useNotifications() {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
-  function listNotifications() {
-    return useFetch<Notification[]>('/notifications', { baseURL, headers: authH() })
+  async function listNotifications() {
+    try {
+      const data = await $fetch<Notification[]>(`${baseURL}/notifications`, { headers: authH() })
+      return { data, error: null }
+    } catch (err) {
+      return { data: null, error: err }
+    }
   }
 
   async function createNotification(dto: CreateNotificationDto) {

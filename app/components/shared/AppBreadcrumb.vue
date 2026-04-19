@@ -33,45 +33,43 @@ withDefaults(
   </nav>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'abstracts' as *;
+
 .breadcrumb {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
   margin-bottom: 1.75rem;
-}
 
-.breadcrumb--glass {
-  background: color-mix(in srgb, var(--color-surface-container-lowest) 75%, transparent);
-  backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in srgb, var(--color-outline-variant) 20%, transparent);
-  padding: 0.375rem 0.875rem;
-  border-radius: var(--radius-full);
+  &--glass {
+    background: color-mix(in srgb, var(--color-surface-container-lowest) 75%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, var(--color-outline-variant) 20%, transparent);
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radius-full);
+  }
 }
 
 .breadcrumb__item {
-  font-family: var(--font-label);
+  @include label-xs(0.07em);
+
   font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
   color: var(--color-secondary);
   text-decoration: none;
   transition: color var(--transition-fast);
-}
 
-.breadcrumb__item:is(a):hover {
-  color: var(--color-primary);
-}
+  &:is(a):hover {
+    color: var(--color-primary);
+  }
 
-.breadcrumb__item:is(a):focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
+  &:is(a) {
+    @include focus-ring(var(--color-primary), 2px, var(--radius-sm));
+  }
 
-.breadcrumb__item--current {
-  color: var(--color-on-surface);
+  &--current {
+    color: var(--color-on-surface);
+  }
 }
 
 .breadcrumb__sep {

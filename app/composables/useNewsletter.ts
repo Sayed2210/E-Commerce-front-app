@@ -1,13 +1,24 @@
 export function useNewsletter() {
+  const config = useRuntimeConfig()
   const email = ref('')
+  const name = ref('')
   const sent = ref(false)
+  const loading = ref(false)
 
-  function submit() {
-    if (email.value.trim()) {
+  async function submit() {
+    if (!email.value.trim()) return
+    loading.value = true
+    try {
+      await $fetch('/newsletter/subscribe', {
+        method: 'POST',
+        body: { email: email.value, name: name.value || undefined },
+        baseURL: config.public.apiBaseUrl as string,
+      })
       sent.value = true
-      // TODO: POST to /newsletter/subscribe when endpoint is available
+    } finally {
+      loading.value = false
     }
   }
 
-  return { email, sent, submit }
+  return { email, name, sent, loading, submit }
 }

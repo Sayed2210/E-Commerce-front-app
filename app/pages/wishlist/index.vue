@@ -2,6 +2,7 @@
 import type { WishlistItem } from '~/types/api'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
+useSeoMeta({ title: 'My Wishlist — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { getWishlist, removeFromWishlist, clearWishlist } = useWishlist()
 const { addItem } = useCart()

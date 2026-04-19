@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -5,6 +7,16 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      titleTemplate: '%s — ArchitectMarket',
+      meta: [
+        {
+          name: 'description',
+          content:
+            'ArchitectMarket — precision tools and materials for architects, designers, and builders. Shop professional-grade products with fast delivery.',
+        },
+      ],
       link: [
         {
           rel: 'preconnect',
@@ -51,4 +63,14 @@ export default defineNuxtConfig({
     },
   },
   css: ['~/styles/main.css', '~/styles/main.scss'],
+
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          loadPaths: [fileURLToPath(new URL('./app/styles', import.meta.url))],
+        },
+      },
+    },
+  },
 })

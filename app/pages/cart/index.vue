@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default', middleware: 'auth' })
-useSeoMeta({ title: 'Shopping Cart — ArchitectMarket' })
+useSeoMeta({ title: 'Shopping Cart — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const cartStore = useCartStore()
 const { fetchCart, updateItem, removeItem } = useCart()

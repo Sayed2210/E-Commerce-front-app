@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { UserRole } from '~/types/auth'
+import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
+useSeoMeta({ title: 'My Account — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { user, fetchUser } = useAuth()
 const { apiCall } = useApiClient()
@@ -51,6 +53,8 @@ const accountLinks = [
   { to: '/cart', icon: 'shopping_cart', label: 'Cart' },
 ]
 
+const activeTab = ref<'profile' | 'addresses'>('profile')
+
 async function saveProfile() {
   saving.value = true
   await apiCall('/users/me', {
@@ -65,12 +69,23 @@ async function saveProfile() {
   }, 3000)
 }
 
-function changePassword() {
+async function changePassword() {
   if (pwForm.newPw !== pwForm.confirm) {
-    alert('Passwords do not match')
+    showErrorToast({ message: 'Passwords do not match.' })
     return
   }
-  // POST /auth/reset-password (needs current password flow)
+  const { error } = await apiCall('/auth/change-password', {
+    method: 'POST',
+    body: { currentPassword: pwForm.current, newPassword: pwForm.newPw },
+  })
+  if (error) {
+    showErrorToast(error)
+    return
+  }
+  showSuccessToast('Password updated.')
+  pwForm.current = ''
+  pwForm.newPw = ''
+  pwForm.confirm = ''
 }
 
 useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
@@ -120,10 +135,42 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
         </div>
       </div>
 
-      <!-- Right: Edit form -->
+      <!-- Right: Tab content -->
       <div class="lg:col-span-8 space-y-6">
+        <!-- Tab bar -->
+        <div class="flex gap-1 bg-surface-container-low rounded p-1 w-fit">
+          <button
+            type="button"
+            class="px-5 py-2 rounded text-sm font-bold font-label transition-colors"
+            :class="
+              activeTab === 'profile'
+                ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                : 'text-secondary hover:text-on-surface'
+            "
+            @click="activeTab = 'profile'"
+          >
+            Profile
+          </button>
+          <button
+            type="button"
+            class="px-5 py-2 rounded text-sm font-bold font-label transition-colors"
+            :class="
+              activeTab === 'addresses'
+                ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                : 'text-secondary hover:text-on-surface'
+            "
+            @click="activeTab = 'addresses'"
+          >
+            Addresses
+          </button>
+        </div>
+        <!-- Addresses tab -->
+        <div v-if="activeTab === 'addresses'" class="bg-surface-container-lowest rounded p-8">
+          <AccountAddressesTab />
+        </div>
+
         <!-- Personal info -->
-        <div class="bg-surface-container-lowest rounded p-8">
+        <div v-if="activeTab === 'profile'" class="bg-surface-container-lowest rounded p-8">
           <h2 class="font-bold text-on-surface font-headline mb-6">Personal Information</h2>
           <form class="space-y-5" @submit.prevent="saveProfile">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -195,7 +242,7 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
         </div>
 
         <!-- Password change -->
-        <div class="bg-surface-container-lowest rounded p-8">
+        <div v-if="activeTab === 'profile'" class="bg-surface-container-lowest rounded p-8">
           <h2 class="font-bold text-on-surface font-headline mb-6">Change Password</h2>
           <form class="space-y-5" @submit.prevent="changePassword">
             <div>

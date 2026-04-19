@@ -2,7 +2,19 @@
 import type { Product, Category } from '~/types/api'
 
 definePageMeta({ layout: 'default' })
-useSeoMeta({ title: 'Products — ArchitectMarket' })
+useSeoMeta({
+  title: 'Products',
+  description:
+    'Browse our full catalog of precision architectural tools, materials, and equipment. Filter by category, price, and more.',
+  ogTitle: 'Products — ArchitectMarket',
+  ogDescription: 'Browse our full catalog of precision architectural tools and materials.',
+  ogType: 'website',
+  ogImage: '/og-products.jpg',
+  twitterCard: 'summary_large_image',
+})
+
+const canonicalUrl = computed(() => `${useRequestURL().origin}/products`)
+useHead({ link: [{ rel: 'canonical', href: canonicalUrl }] })
 
 const route = useRoute()
 const { listProducts } = useProducts()
@@ -32,9 +44,21 @@ const [{ data: rawCategories }, { data, pending, refresh }] = await Promise.all(
 ])
 
 const categories = computed<Category[]>(() => rawCategories.value ?? [])
-const products = computed<Product[]>(() => (data.value as any)?.data ?? (data.value as any) ?? [])
-const total = computed<number>(() => (data.value as any)?.total ?? products.value.length)
-const totalPages = computed<number>(() => (data.value as any)?.totalPages ?? 1)
+const products = computed<Product[]>(() => {
+  const response = data.value as { data?: Product[] } | Product[] | null
+  return (response && 'data' in response ? response.data : response) ?? []
+})
+const total = computed<number>(() => {
+  const response = data.value as { total?: number } | null
+  return (
+    (response && 'total' in response ? response.total : products.value.length) ??
+    products.value.length
+  )
+})
+const totalPages = computed<number>(() => {
+  const response = data.value as { totalPages?: number } | null
+  return (response && 'totalPages' in response ? response.totalPages : 1) ?? 1
+})
 
 watch([currentPage, selectedCategory, selectedSort, selectedPrice], () => {
   refresh()
@@ -53,6 +77,11 @@ async function quickAdd(productId: string) {
 async function toggleWish(productId: string) {
   await addToWishlist(productId)
 }
+
+function onCategoryChange(val: string) {
+  selectedCategory.value = val
+  currentPage.value = 1
+}
 </script>
 
 <template>
@@ -66,10 +95,7 @@ async function toggleWish(productId: string) {
         :selected-price="selectedPrice"
         :filter-open="filterOpen"
         :active-filters-count="activeFiltersCount"
-        @update:selected-category="
-          selectedCategory = $event
-          currentPage = 1
-        "
+        @update:selected-category="onCategoryChange"
         @update:selected-price="selectedPrice = $event"
         @update:filter-open="filterOpen = $event"
         @clear="clearFilters"
