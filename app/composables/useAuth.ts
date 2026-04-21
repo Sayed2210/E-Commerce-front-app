@@ -46,8 +46,8 @@ export function useAuth() {
 
       setTokens(response.tokens.accessToken, response.tokens.refreshToken)
       authStore.setUser(response.user)
-      showSuccessToast('Registration successful! Welcome!')
-      await router.push('/')
+      showSuccessToast('Registration successful! Please verify your email.')
+      await router.push('/verify-email?sent=true')
       return true
     } catch (err) {
       showErrorToast(err)

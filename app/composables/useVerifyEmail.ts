@@ -1,4 +1,4 @@
-type VerifyState = 'loading' | 'success' | 'error' | 'no-token'
+type VerifyState = 'loading' | 'success' | 'error' | 'no-token' | 'pending'
 
 export function useVerifyEmail() {
   const config = useRuntimeConfig()
@@ -6,7 +6,9 @@ export function useVerifyEmail() {
   const route = useRoute()
 
   const token = computed(() => String(route.query.token ?? ''))
-  const state = ref<VerifyState>(token.value ? 'loading' : 'no-token')
+  const sent = computed(() => route.query.sent === 'true')
+  const initialState: VerifyState = token.value ? 'loading' : sent.value ? 'pending' : 'no-token'
+  const state = ref<VerifyState>(initialState)
   const errorMessage = ref('This verification link is invalid or has already been used.')
 
   onMounted(async () => {
@@ -26,5 +28,5 @@ export function useVerifyEmail() {
     }
   })
 
-  return { state, errorMessage }
+  return { state, errorMessage, sent }
 }
