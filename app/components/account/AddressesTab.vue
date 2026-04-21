@@ -62,7 +62,7 @@ async function handleDelete(id: string) {
       </button>
     </div>
 
-    <CheckoutAddressForm
+    <AddressForm
       v-if="showForm"
       class="addr-tab__form"
       @submit="handleAdd"

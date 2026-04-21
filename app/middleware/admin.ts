@@ -1,14 +1,8 @@
-import { getAccessToken } from '~/utils/token'
-
-/**
- * Middleware to protect admin routes
- */
 export default defineNuxtRouteMiddleware(async () => {
-  const token = getAccessToken()
+  const token = useCookie('access_token')
   const authStore = useAuthStore()
 
-  // Check if user is authenticated
-  if (!token) {
+  if (!token.value) {
     return navigateTo('/admin/login')
   }
 

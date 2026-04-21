@@ -166,7 +166,7 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
         </div>
         <!-- Addresses tab -->
         <div v-if="activeTab === 'addresses'" class="bg-surface-container-lowest rounded p-8">
-          <AccountAddressesTab />
+          <AddressesTab />
         </div>
 
         <!-- Personal info -->

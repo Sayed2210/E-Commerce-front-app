@@ -1,14 +1,9 @@
-import { getAccessToken } from '~/utils/token'
-
-/**
- * Middleware to redirect authenticated users away from guest pages
- */
 export default defineNuxtRouteMiddleware(async () => {
-  const token = getAccessToken()
+  const token = useCookie('access_token')
   const authStore = useAuthStore()
 
   // If authenticated, redirect based on role
-  if (token) {
+  if (token.value) {
     // Load user data if not already loaded
     if (!authStore.user) {
       const { fetchUser } = useAuth()

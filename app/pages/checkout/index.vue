@@ -132,7 +132,7 @@ const breadcrumbs = [
     <div class="checkout-page__layout">
       <section class="checkout-page__main">
         <div class="checkout-page__section">
-          <CheckoutAddressPicker
+          <AddressPicker
             v-model="selectedAddressId"
             :addresses="addresses"
             @add="handleAddAddress"
@@ -140,12 +140,12 @@ const breadcrumbs = [
         </div>
 
         <div class="checkout-page__section">
-          <CheckoutPaymentMethodSelector v-model="paymentMethod" />
+          <PaymentMethodSelector v-model="paymentMethod" />
         </div>
 
         <div class="checkout-page__section">
           <h2 class="checkout-page__section-title">Coupon</h2>
-          <CheckoutCouponInput @applied="handleCouponApplied" />
+          <CouponInput @applied="handleCouponApplied" />
         </div>
       </section>
 

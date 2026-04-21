@@ -8,8 +8,8 @@ export const useNotificationsStore = defineStore('notifications', {
   }),
 
   getters: {
-    unreadCount: (state): number => state.items.filter((n) => !n.isRead).length,
-    recent: (state): Notification[] => state.items.slice(0, 5),
+    unreadCount: (state): number => (state.items ? state.items.filter((n) => !n.isRead).length : 0),
+    recent: (state): Notification[] => state.items?.slice(0, 5) ?? [],
   },
 
   actions: {

@@ -7,15 +7,14 @@ const emit = defineEmits<{
 }>()
 
 const form = reactive<CreateAddressDto>({
-  firstName: '',
-  lastName: '',
   phone: '',
-  street: '',
+  streetAddress: '',
   city: '',
   state: '',
   country: '',
   postalCode: '',
   isDefault: false,
+  label: 'home',
 })
 
 const loading = ref(false)
@@ -32,41 +31,66 @@ async function handleSubmit() {
 
 <template>
   <form class="addr-form" @submit.prevent="handleSubmit">
-    <div class="addr-form__row">
-      <div class="addr-form__field">
-        <label class="addr-form__label" for="addr-first">First Name</label>
-        <input id="addr-first" v-model="form.firstName" type="text" class="addr-form__input" />
-      </div>
-      <div class="addr-form__field">
-        <label class="addr-form__label" for="addr-last">Last Name</label>
-        <input id="addr-last" v-model="form.lastName" type="text" class="addr-form__input" />
-      </div>
-    </div>
-
     <div class="addr-form__field">
-      <label class="addr-form__label" for="addr-street">Street Address <span aria-hidden="true">*</span></label>
-      <input id="addr-street" v-model="form.street" type="text" class="addr-form__input" required />
+      <label class="addr-form__label" for="addr-street"
+        >Street Address <span aria-hidden="true">*</span></label
+      >
+      <input
+        id="addr-street"
+        v-model="form.streetAddress"
+        type="text"
+        class="addr-form__input"
+        required
+      />
     </div>
 
     <div class="addr-form__row">
       <div class="addr-form__field">
-        <label class="addr-form__label" for="addr-city">City <span aria-hidden="true">*</span></label>
+        <label class="addr-form__label" for="addr-city"
+          >City <span aria-hidden="true">*</span></label
+        >
         <input id="addr-city" v-model="form.city" type="text" class="addr-form__input" required />
+      </div>
+      <div class="addr-form__field">
+        <label class="addr-form__label" for="addr-country"
+          >Country <span aria-hidden="true">*</span></label
+        >
+        <input
+          id="addr-country"
+          v-model="form.country"
+          type="text"
+          class="addr-form__input"
+          required
+        />
+      </div>
+    </div>
+    <!-- <div class="addr-form__row"> -->
+    <div class="addr-form__field">
+      <label class="addr-form__label" for="addr-label">Address Label</label>
+      <select id="addr-label" v-model="form.label" class="addr-form__input">
+        <option value="home">Home</option>
+        <option value="work">Work</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <!-- </div> -->
+
+    <div class="addr-form__row">
+      <div class="addr-form__field">
+        <label class="addr-form__label" for="addr-zip"
+          >Postal Code <span aria-hidden="true">*</span></label
+        >
+        <input
+          id="addr-zip"
+          v-model="form.postalCode"
+          type="text"
+          class="addr-form__input"
+          required
+        />
       </div>
       <div class="addr-form__field">
         <label class="addr-form__label" for="addr-state">State / Province</label>
         <input id="addr-state" v-model="form.state" type="text" class="addr-form__input" />
-      </div>
-    </div>
-
-    <div class="addr-form__row">
-      <div class="addr-form__field">
-        <label class="addr-form__label" for="addr-zip">Postal Code <span aria-hidden="true">*</span></label>
-        <input id="addr-zip" v-model="form.postalCode" type="text" class="addr-form__input" required />
-      </div>
-      <div class="addr-form__field">
-        <label class="addr-form__label" for="addr-country">Country <span aria-hidden="true">*</span></label>
-        <input id="addr-country" v-model="form.country" type="text" class="addr-form__input" required />
       </div>
     </div>
 
@@ -128,7 +152,9 @@ async function handleSubmit() {
   font-size: 0.875rem;
   color: var(--color-on-surface);
   outline: none;
-  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .addr-form__input:focus {
@@ -167,7 +193,9 @@ async function handleSubmit() {
   border-radius: var(--radius-DEFAULT);
   border: none;
   cursor: pointer;
-  transition: box-shadow var(--transition-base), opacity var(--transition-fast);
+  transition:
+    box-shadow var(--transition-base),
+    opacity var(--transition-fast);
 }
 
 .addr-form__btn:disabled {
