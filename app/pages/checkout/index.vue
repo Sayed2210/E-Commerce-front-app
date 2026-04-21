@@ -3,6 +3,7 @@ import { useAddresses } from '~/composables/useAddresses'
 import { useCheckout } from '~/composables/useCheckout'
 import type { PaymentMethod, ApplyCouponResponse } from '~/types/api'
 import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
+import { SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from '~/utils/constants'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
 useSeoMeta({ title: 'Checkout — ArchitectMarket', robots: 'noindex, nofollow' })
@@ -35,7 +36,9 @@ function handleCouponApplied(result: ApplyCouponResponse & { code: string }) {
       : (cartStore.subtotal * result.discountValue) / 100
 }
 
-const shippingFee = computed(() => (cartStore.subtotal >= 99 ? 0 : 9.99))
+const shippingFee = computed(() =>
+  cartStore.subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE
+)
 
 async function handlePlaceOrder() {
   if (!selectedAddressId.value) {

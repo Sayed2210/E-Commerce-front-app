@@ -28,7 +28,12 @@ export function useApiClient() {
           try {
             const refreshed = await refreshAccessToken()
             if (refreshed) {
-              // Retry the original request
+              // Refresh succeeded — update header with new token before retry.
+              // onRequest already ran with the expired token, so we must overwrite it here.
+              const freshToken = getAccessToken()
+              const headers = new Headers(options.headers)
+              headers.set('Authorization', `Bearer ${freshToken}`)
+              options.headers = headers
               // @ts-expect-error - options mismatch between Resolved and Nitro types
               return $fetch(request, options)
             }
@@ -45,58 +50,14 @@ export function useApiClient() {
     },
   })
 
-  /**
-   * Make an authenticated API request
-   */
   async function apiCall<T>(
     url: string,
     options: Parameters<typeof $fetch>[1] & { method?: string } = {}
   ): Promise<{ data: T | null; error: Error | null }> {
-    const accessToken = getAccessToken()
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      ...((options.headers as Record<string, string>) || {}),
-    }
-
-    if (accessToken) {
-      headers.Authorization = `Bearer ${accessToken}`
-    }
-
     try {
-      const data = await $fetch<T>(`${baseURL}${url}`, {
-        ...options,
-        headers,
-      })
+      const data = await client<T>(url, options)
       return { data, error: null }
     } catch (err: any) {
-      // Handle 401 Unauthorized - token expired
-      if (err?.response?.status === 401) {
-        const refreshToken = getRefreshToken()
-
-        if (refreshToken) {
-          const refreshed = await refreshAccessToken()
-
-          if (refreshed) {
-            const newAccessToken = getAccessToken()
-            headers.Authorization = `Bearer ${newAccessToken}`
-
-            try {
-              const data = await $fetch<T>(`${baseURL}${url}`, {
-                ...options,
-                headers,
-              })
-              return { data, error: null }
-            } catch (retryErr: any) {
-              return { data: null, error: retryErr }
-            }
-          }
-        }
-
-        clearTokens()
-        await navigateTo('/login')
-      }
-
       return { data: null, error: err }
     }
   }

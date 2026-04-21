@@ -68,7 +68,7 @@ function productName(item: CartItem) {
     <button
       type="button"
       class="review-panel__cta"
-      :disabled="loading"
+      :disabled="loading || emailNotVerified"
       @click="emit('place-order')"
     >
       <span class="material-symbols-outlined" aria-hidden="true">lock</span>
@@ -208,7 +208,9 @@ function productName(item: CartItem) {
   font-size: 0.9375rem;
   font-weight: 700;
   cursor: pointer;
-  transition: box-shadow var(--transition-base), opacity var(--transition-fast);
+  transition:
+    box-shadow var(--transition-base),
+    opacity var(--transition-fast);
 }
 
 .review-panel__cta:hover:not(:disabled) {

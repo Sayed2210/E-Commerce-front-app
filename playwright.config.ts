@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: [['html'], ['github']],
 
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:9001',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3001',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from '~/utils/constants'
+
 definePageMeta({ layout: 'default', middleware: 'auth' })
 useSeoMeta({ title: 'Shopping Cart — ArchitectMarket', robots: 'noindex, nofollow' })
 
@@ -12,8 +14,9 @@ const isEmpty = computed(() => cartStore.isEmpty)
 const itemCount = computed(() => cartStore.itemCount)
 const subtotal = computed(() => cartStore.subtotal)
 const discount = computed(() => cartStore.discount)
+
 const cartTotal = computed(() => {
-  const shipping = subtotal.value >= 99 ? 0 : 9.99
+  const shipping = subtotal.value >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE
   return Math.max(0, subtotal.value - discount.value + shipping)
 })
 

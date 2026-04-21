@@ -1,11 +1,14 @@
 const ACCESS_TOKEN_KEY = 'access_token'
 const REFRESH_TOKEN_KEY = 'refresh_token'
 
-/**
- * Helper to set a cookie with options
- */
+// SECURITY NOTE: tokens are written via document.cookie (client-side only).
+// HttpOnly cannot be set from JavaScript — only a server Set-Cookie response header can do that.
+// Until the backend issues tokens via a server-side endpoint with Set-Cookie: ...; HttpOnly; Secure; SameSite=Strict,
+// any XSS on this origin can read both the access token and refresh token from document.cookie.
 function setCookie(name: string, value: string, maxAge: number) {
   if (import.meta.client) {
+    // Secure is intentionally omitted in non-production: browsers reject Secure cookies on http://localhost.
+    // Consequence: tokens travel over plain HTTP in dev/staging. Acceptable until those environments use HTTPS.
     const secure = process.env.NODE_ENV === 'production' ? ';Secure' : ''
     document.cookie = `${name}=${encodeURIComponent(value)};path=/;max-age=${maxAge};SameSite=Lax${secure}`
   }
