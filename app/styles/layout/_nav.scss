@@ -143,6 +143,9 @@
   border-radius: var(--radius-full);
   color: var(--color-secondary);
   text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
   transition:
     color 180ms ease,
     background 180ms ease;
@@ -292,6 +295,11 @@
   text-decoration: none;
   padding: 0.75rem 1rem;
   border-radius: var(--radius-DEFAULT);
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
   transition:
     background 180ms ease,
     color 180ms ease;
@@ -299,5 +307,82 @@
   &:hover {
     background: var(--color-surface-container-low);
     color: var(--color-primary);
+  }
+
+  &--danger {
+    color: var(--color-error);
+
+    &:hover {
+      background: var(--color-error-container);
+      color: var(--color-on-error-container);
+    }
+  }
+}
+
+.nav__user-menu {
+  position: relative;
+}
+
+.nav__dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 10rem;
+  background: var(--color-surface-container-lowest);
+  border: 1px solid color-mix(in srgb, var(--color-outline-variant) 20%, transparent);
+  border-radius: var(--radius-DEFAULT);
+  box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.12));
+  overflow: hidden;
+  z-index: calc(var(--z-nav) + 1);
+}
+
+.nav__dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-on-surface);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+
+  .material-symbols-outlined {
+    font-size: 1.125rem;
+    color: var(--color-secondary);
+  }
+
+  &:hover {
+    background: var(--color-surface-container-low);
+    color: var(--color-primary);
+
+    .material-symbols-outlined {
+      color: var(--color-primary);
+    }
+  }
+
+  &--danger {
+    color: var(--color-error);
+
+    .material-symbols-outlined {
+      color: var(--color-error);
+    }
+
+    &:hover {
+      background: var(--color-error-container);
+      color: var(--color-on-error-container);
+
+      .material-symbols-outlined {
+        color: var(--color-on-error-container);
+      }
+    }
   }
 }

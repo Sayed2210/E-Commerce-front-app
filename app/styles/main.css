@@ -83,7 +83,7 @@
 
   /* Z-index scale */
   --z-raised: 10;
-  --z-nav: 50;
+  --z-nav: 150;
   --z-drawer: 60;
   --z-modal: 70;
   --z-toast: 80;
