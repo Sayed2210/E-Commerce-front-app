@@ -2,14 +2,16 @@
 import type { OrderItem } from '~/types/api'
 
 defineProps<{ items: OrderItem[]; canReturn?: boolean }>()
-const emit = defineEmits<{ requestReturn: [itemId: string] }>()
+const emit = defineEmits<{ 'request-return': [itemId: string] }>()
 
 function productName(item: OrderItem) {
+  if (item.productName) return item.productName
   const n = item.product?.name
   return typeof n === 'string' ? n : (n?.en ?? '')
 }
 
 function variantLabel(item: OrderItem) {
+  if (item.variantName) return item.variantName
   if (!item.variant) return null
   const n = item.variant.variantName
   return typeof n === 'string' ? n : (n?.en ?? null)
@@ -42,7 +44,7 @@ function variantLabel(item: OrderItem) {
             v-if="canReturn"
             type="button"
             class="line-items__return"
-            @click="emit('requestReturn', item.id)"
+            @click="emit('request-return', item.id)"
           >
             Return
           </button>

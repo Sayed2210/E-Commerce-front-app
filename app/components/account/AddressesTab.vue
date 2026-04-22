@@ -13,7 +13,7 @@ const savingId = ref<string | null>(null)
 const deletingId = ref<string | null>(null)
 
 function addressLine(a: Address) {
-  return [a.street, a.city, a.state, a.postalCode, a.country].filter(Boolean).join(', ')
+  return [a.streetAddress, a.city, a.state, a.postalCode, a.country].filter(Boolean).join(', ')
 }
 
 async function handleAdd(dto: CreateAddressDto) {

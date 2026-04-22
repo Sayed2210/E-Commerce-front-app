@@ -13,7 +13,15 @@ const { createReturn } = useReturns()
 
 useSeoMeta({ title: `Order Details — ArchitectMarket` })
 
-const { data: order, pending, error } = await getOrder(id)
+const { data: order, pending, error, refresh: refreshOrder } = await getOrder(id)
+
+const { $orderSocket } = useNuxtApp()
+watch(
+  () => $orderSocket.lastOrderUpdate.value,
+  (updated) => {
+    if (updated?.id === id) refreshOrder()
+  }
+)
 
 const returnModal = reactive({
   open: false,
@@ -100,7 +108,7 @@ const breadcrumbs = computed(() => [
               >
                 {{ [shippingAddr.firstName, shippingAddr.lastName].filter(Boolean).join(' ') }}
               </span>
-              {{ shippingAddr.street }}, {{ shippingAddr.city }},
+              {{ shippingAddr.streetAddress }}, {{ shippingAddr.city }},
               {{ shippingAddr.state }}
               {{ shippingAddr.postalCode }},
               {{ shippingAddr.country }}

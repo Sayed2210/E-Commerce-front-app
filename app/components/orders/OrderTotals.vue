@@ -12,19 +12,23 @@ defineProps<{ order: Order }>()
         <dt>Subtotal</dt>
         <dd>${{ order.subtotal.toFixed(2) }}</dd>
       </div>
-      <div v-if="order.discount > 0" class="order-totals__row order-totals__row--positive">
+      <div v-if="order.discountAmount > 0" class="order-totals__row order-totals__row--positive">
         <dt>Discount</dt>
-        <dd>-${{ order.discount.toFixed(2) }}</dd>
+        <dd>-${{ order.discountAmount.toFixed(2) }}</dd>
       </div>
       <div class="order-totals__row">
         <dt>Shipping</dt>
-        <dd :class="{ 'order-totals__val--free': order.shippingFee === 0 }">
-          {{ order.shippingFee === 0 ? 'FREE' : `$${order.shippingFee.toFixed(2)}` }}
+        <dd :class="{ 'order-totals__val--free': order.shippingAmount === 0 }">
+          {{ order.shippingAmount === 0 ? 'FREE' : `$${order.shippingAmount.toFixed(2)}` }}
         </dd>
+      </div>
+      <div v-if="order.taxAmount > 0" class="order-totals__row">
+        <dt>Tax</dt>
+        <dd>${{ order.taxAmount.toFixed(2) }}</dd>
       </div>
       <div class="order-totals__row order-totals__row--total">
         <dt>Total</dt>
-        <dd>${{ order.total.toFixed(2) }}</dd>
+        <dd>${{ order.totalAmount.toFixed(2) }}</dd>
       </div>
     </dl>
     <div class="order-totals__method">
@@ -34,7 +38,9 @@ defineProps<{ order: Order }>()
       <span>
         {{ order.paymentMethod === 'cash_on_delivery' ? 'Cash on Delivery' : 'Paid by Card' }}
         —
-        <span :class="['order-totals__pay-status', `order-totals__pay-status--${order.paymentStatus}`]">
+        <span
+          :class="['order-totals__pay-status', `order-totals__pay-status--${order.paymentStatus}`]"
+        >
           {{ order.paymentStatus }}
         </span>
       </span>
@@ -109,8 +115,19 @@ defineProps<{ order: Order }>()
   text-transform: capitalize;
 }
 
-.order-totals__pay-status--paid    { color: var(--color-tertiary); }
-.order-totals__pay-status--pending { color: var(--color-secondary); }
-.order-totals__pay-status--failed  { color: var(--color-error); }
-.order-totals__pay-status--refunded { color: var(--color-primary); }
+.order-totals__pay-status--paid {
+  color: var(--color-tertiary);
+}
+
+.order-totals__pay-status--pending {
+  color: var(--color-secondary);
+}
+
+.order-totals__pay-status--failed {
+  color: var(--color-error);
+}
+
+.order-totals__pay-status--refunded {
+  color: var(--color-primary);
+}
 </style>

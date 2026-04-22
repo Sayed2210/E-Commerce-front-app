@@ -7,6 +7,8 @@ const props = defineProps<{
   discount: number
   couponDiscount: number
   shippingFee: number
+  tax?: number | null
+  totalOverride?: number | null
   loading: boolean
   emailNotVerified?: boolean
 }>()
@@ -14,7 +16,9 @@ const props = defineProps<{
 const emit = defineEmits<{ 'place-order': [] }>()
 
 const total = computed(() =>
-  Math.max(0, props.subtotal - props.discount - props.couponDiscount + props.shippingFee)
+  props.totalOverride != null
+    ? props.totalOverride
+    : Math.max(0, props.subtotal - props.discount - props.couponDiscount + props.shippingFee)
 )
 
 function productName(item: CartItem) {
@@ -53,6 +57,10 @@ function productName(item: CartItem) {
         <dd :class="{ 'review-panel__val--free': shippingFee === 0 }">
           {{ shippingFee === 0 ? 'FREE' : `$${shippingFee.toFixed(2)}` }}
         </dd>
+      </div>
+      <div v-if="tax != null && tax > 0" class="review-panel__row">
+        <dt>Tax</dt>
+        <dd>${{ tax.toFixed(2) }}</dd>
       </div>
       <div class="review-panel__row review-panel__row--total">
         <dt>Total</dt>

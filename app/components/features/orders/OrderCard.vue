@@ -56,7 +56,7 @@ function stepComplete(orderStatus: string, step: string) {
         <div class="order-card__meta-item">
           <span class="order-card__label">Total</span>
           <span class="order-card__value order-card__value--bold"
-            >${{ order.total.toFixed(2) }}</span
+            >${{ order.totalAmount.toFixed(2) }}</span
           >
         </div>
       </div>

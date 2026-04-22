@@ -52,7 +52,7 @@ function getOrderId(orderId: string): string {
           <p class="text-xs text-secondary">{{ order.user?.email ?? 'Customer' }}</p>
         </div>
         <div class="text-right hidden sm:block">
-          <p class="text-sm font-semibold text-on-surface">${{ order.total.toFixed(2) }}</p>
+          <p class="text-sm font-semibold text-on-surface">${{ order.totalAmount.toFixed(2) }}</p>
           <p class="text-xs text-secondary">{{ formatDate(order.createdAt) }}</p>
         </div>
         <AdminSharedStatusBadge :status="order.status" size="sm" />

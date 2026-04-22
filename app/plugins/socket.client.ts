@@ -1,12 +1,14 @@
 import { io } from 'socket.io-client'
 import { getAccessToken } from '~/utils/token'
-import type { Notification } from '~/types/api'
+import type { Notification, Order } from '~/types/api'
 import { useNotificationsStore } from '~/stores/notifications'
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
   const authStore = useAuthStore()
   const notificationsStore = useNotificationsStore()
+
+  const lastOrderUpdate = ref<Order | null>(null)
 
   let socket: ReturnType<typeof io> | null = null
 
@@ -22,6 +24,10 @@ export default defineNuxtPlugin(() => {
 
     socket.on('notification', (data: Notification) => {
       notificationsStore.prepend(data)
+    })
+
+    socket.on('order:updated', (order: Order) => {
+      lastOrderUpdate.value = order
     })
 
     socket.on('connect_error', (err: Error) => {
@@ -46,4 +52,10 @@ export default defineNuxtPlugin(() => {
     },
     { immediate: true }
   )
+
+  return {
+    provide: {
+      orderSocket: { lastOrderUpdate: readonly(lastOrderUpdate) },
+    },
+  }
 })

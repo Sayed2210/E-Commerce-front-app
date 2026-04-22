@@ -17,7 +17,9 @@ const STATUS_COLOR: Record<string, string> = {
 <template>
   <div class="order-header">
     <div class="order-header__meta">
-      <h1 class="order-header__id">Order #{{ order.id.slice(-8).toUpperCase() }}</h1>
+      <h1 class="order-header__id">
+        {{ order.orderNumber ?? `#${order.id.slice(-8).toUpperCase()}` }}
+      </h1>
       <time class="order-header__date" :datetime="order.createdAt">
         {{
           new Date(order.createdAt).toLocaleDateString('en-US', {

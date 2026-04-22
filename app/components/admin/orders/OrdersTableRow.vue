@@ -57,7 +57,7 @@ function handleStatusChange(event: Event) {
       </span>
     </td>
     <td class="px-6 py-4">
-      <span class="text-sm font-bold text-on-surface">${{ order.total.toFixed(2) }}</span>
+      <span class="text-sm font-bold text-on-surface">${{ order.totalAmount.toFixed(2) }}</span>
     </td>
     <td class="px-6 py-4">
       <select

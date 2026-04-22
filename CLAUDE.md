@@ -27,9 +27,10 @@ Create a `.env` file before running:
 
 ```env
 NUXT_PUBLIC_API_BASE_URL=http://localhost:3000
+NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
-This is the only required environment variable. It's exposed as `useRuntimeConfig().public.apiBaseUrl`.
+`NUXT_PUBLIC_API_BASE_URL` is required. `NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is required for Stripe payments (leave empty to disable the Stripe card element).
 
 ## Architecture
 
