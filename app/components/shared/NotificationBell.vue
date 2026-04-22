@@ -14,7 +14,7 @@ const recent = computed(() => notificationsStore.recent)
 onMounted(async () => {
   if (!notificationsStore.loaded) {
     const { data } = await listNotifications()
-    if (data) notificationsStore.setAll(data)
+    if (data) notificationsStore.setAll(data.data)
   }
 })
 
@@ -42,10 +42,6 @@ function timeAgo(dateStr: string) {
   if (h < 24) return `${h}h ago`
   return `${Math.floor(h / 24)}d ago`
 }
-
-onClickOutside(bell, () => {
-  open.value = false
-})
 </script>
 
 <template>

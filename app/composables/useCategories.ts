@@ -30,7 +30,7 @@ export function useCategories() {
     const query: Record<string, number> = {}
     if (params?.page) query.page = params.page
     if (params?.limit) query.limit = params.limit
-    return useFetch<Category[]>('/categories', { baseURL, query })
+    return useFetch<Category[]>('/categories', { baseURL, query, server: false })
   }
 
   /** Return the icon name for a category slug, with a sensible fallback. */

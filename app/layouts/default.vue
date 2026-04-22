@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import type { Category } from '~/types/api'
 
-const { isAuthenticated } = useAuth()
+const { isAuthenticated, logout } = useAuth()
 const cartStore = useCartStore()
 const itemCount = computed(() => cartStore.itemCount)
 
 const searchQuery = ref('')
 const router = useRouter()
 const mobileMenuOpen = ref(false)
+const userMenuOpen = ref(false)
+const userMenuRef = ref<HTMLElement | null>(null)
+
+// onClickOutside(userMenuRef, () => { userMenuOpen.value = false })
+function closeUserMenu() {
+  userMenuOpen.value = false
+}
 
 const { listCategories, categoryIcon } = useCategories()
 const { data: rawCategories } = await listCategories({ limit: 20 })
@@ -66,10 +73,38 @@ onMounted(async () => {
         <!-- Actions -->
         <div class="nav__actions">
           <template v-if="isAuthenticated">
-            <SharedNotificationBell />
-            <NuxtLink to="/account" class="nav__icon-btn" aria-label="My account">
-              <span class="material-symbols-outlined" aria-hidden="true">person</span>
-            </NuxtLink>
+            <NotificationBell />
+            <div ref="userMenuRef" class="nav__user-menu">
+              <button
+                type="button"
+                class="nav__icon-btn"
+                aria-label="User menu"
+                :aria-expanded="userMenuOpen"
+                @click="userMenuOpen = !userMenuOpen"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true">person</span>
+              </button>
+              <div v-if="userMenuOpen" class="nav__dropdown" role="menu">
+                <NuxtLink
+                  to="/account"
+                  class="nav__dropdown-item"
+                  role="menuitem"
+                  @click="closeUserMenu"
+                >
+                  <span class="material-symbols-outlined" aria-hidden="true">manage_accounts</span>
+                  My Account
+                </NuxtLink>
+                <button
+                  type="button"
+                  class="nav__dropdown-item nav__dropdown-item--danger"
+                  role="menuitem"
+                  @click="logout"
+                >
+                  <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+                  Sign Out
+                </button>
+              </div>
+            </div>
           </template>
           <template v-else>
             <NuxtLink to="/login" class="nav__signin">Sign in</NuxtLink>
@@ -131,13 +166,14 @@ onMounted(async () => {
         <NuxtLink to="/wishlist" class="nav__mobile-link" @click="mobileMenuOpen = false"
           >Wishlist</NuxtLink
         >
-        <NuxtLink
-          v-if="isAuthenticated"
-          to="/account"
-          class="nav__mobile-link"
-          @click="mobileMenuOpen = false"
-          >My Account</NuxtLink
-        >
+        <template v-if="isAuthenticated">
+          <NuxtLink to="/account" class="nav__mobile-link" @click="mobileMenuOpen = false"
+            >My Account</NuxtLink
+          >
+          <button type="button" class="nav__mobile-link nav__mobile-link--danger" @click="logout">
+            Sign Out
+          </button>
+        </template>
         <NuxtLink v-else to="/login" class="nav__mobile-link" @click="mobileMenuOpen = false"
           >Sign in</NuxtLink
         >

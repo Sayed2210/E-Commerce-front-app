@@ -3,6 +3,16 @@ definePageMeta({ layout: false })
 useSeoMeta({ title: 'Verify Email — ArchitectMarket', robots: 'noindex, nofollow' })
 
 const { state, errorMessage } = useVerifyEmail()
+const { resendVerification } = useAuth()
+const resending = ref(false)
+const resent = ref(false)
+
+async function handleResend() {
+  resending.value = true
+  const ok = await resendVerification()
+  resending.value = false
+  if (ok) resent.value = true
+}
 </script>
 
 <template>
@@ -41,6 +51,27 @@ const { state, errorMessage } = useVerifyEmail()
         </NuxtLink>
         <NuxtLink to="/login" class="auth-btn-link">Sign In</NuxtLink>
       </div>
+    </div>
+
+    <div v-else-if="state === 'pending'" class="ve-state" aria-live="polite">
+      <div class="ve-icon-wrap ve-icon-wrap--pending" aria-hidden="true">
+        <span class="material-symbols-outlined ve-icon">mark_email_unread</span>
+      </div>
+      <h1 class="auth-card__title">Check your email</h1>
+      <p class="auth-card__sub">
+        We sent a verification link to your email address. Click the link to activate your account.
+      </p>
+      <p v-if="resent" class="ve-resent-msg">Email resent! Check your inbox.</p>
+      <button
+        class="auth-btn-link auth-btn-link--secondary"
+        :disabled="resending || resent"
+        type="button"
+        aria-label="Resend verification email"
+        @click="handleResend"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">send</span>
+        {{ resending ? 'Sending…' : resent ? 'Sent!' : 'Resend email' }}
+      </button>
     </div>
 
     <div v-else class="ve-state" aria-live="polite">
@@ -102,6 +133,14 @@ const { state, errorMessage } = useVerifyEmail()
   background: var(--color-primary-fixed);
 }
 
+.ve-icon-wrap--pending {
+  background: var(--color-secondary-container, #e8def8);
+}
+
+.ve-icon-wrap--pending .ve-icon {
+  color: var(--color-secondary, #625b71);
+}
+
 .ve-icon-wrap--error {
   background: var(--color-error-container);
 }
@@ -124,5 +163,10 @@ const { state, errorMessage } = useVerifyEmail()
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 0.5rem;
+}
+
+.ve-resent-msg {
+  font-size: 0.875rem;
+  color: var(--color-primary);
 }
 </style>

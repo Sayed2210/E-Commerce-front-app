@@ -23,6 +23,14 @@ export default defineNuxtPlugin(() => {
     socket.on('notification', (data: Notification) => {
       notificationsStore.prepend(data)
     })
+
+    socket.on('connect_error', (err: Error) => {
+      console.warn('[socket] connection error:', err.message)
+    })
+
+    socket.on('error', (err: Error) => {
+      console.error('[socket] error:', err.message)
+    })
   }
 
   function disconnect() {

@@ -198,6 +198,8 @@ export type OrderStatus =
 
 export type PaymentMethod = 'stripe' | 'paypal' | 'cash_on_delivery'
 
+export type AddressLabel = 'home' | 'work' | 'other'
+
 export interface OrderItem {
   id: string
   productId: string
@@ -223,10 +225,9 @@ export interface Address {
 }
 
 export interface CreateAddressDto {
-  firstName?: string
-  lastName?: string
+  label: AddressLabel
   phone?: string
-  street: string
+  streetAddress: string
   city: string
   state: string
   country: string

@@ -1,5 +1,5 @@
 import { getAccessToken } from '~/utils/token'
-import type { Notification, CreateNotificationDto } from '~/types/api'
+import type { Notification, CreateNotificationDto, PaginatedResponse } from '~/types/api'
 
 function authH(): Record<string, string> {
   const t = getAccessToken()
@@ -14,7 +14,11 @@ export function useNotifications() {
 
   async function listNotifications() {
     try {
-      const data = await $fetch<Notification[]>(`${baseURL}/notifications`, { headers: authH() })
+      const data = await $fetch<PaginatedResponse<Notification>>(`${baseURL}/notifications`, {
+        headers: authH(),
+      })
+      // console.log('Created notification:', data)
+
       return { data, error: null }
     } catch (err) {
       return { data: null, error: err }

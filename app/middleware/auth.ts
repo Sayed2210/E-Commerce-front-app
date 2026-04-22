@@ -1,13 +1,7 @@
-import { getAccessToken } from '~/utils/token'
-
-/**
- * Middleware to protect authenticated routes
- */
 export default defineNuxtRouteMiddleware((to) => {
-  const token = getAccessToken()
+  const token = useCookie('access_token')
 
-  // If no token, redirect to login and preserve intended destination
-  if (!token) {
+  if (!token.value) {
     return navigateTo({
       path: '/login',
       query: { redirect: to.fullPath },

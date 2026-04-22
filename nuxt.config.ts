@@ -52,7 +52,9 @@ export default defineNuxtConfig({
     dirs: [
       {
         path: '~/components',
-        pathPrefix: false, // use file name only — folder structure is organizational, not part of the component name
+        pathPrefix: false, // components are named by filename only — folders are organisational.
+        // INVARIANT: every .vue filename under app/components/ must be globally unique.
+        // Two files sharing a name will silently shadow each other at runtime.
       },
     ],
   },

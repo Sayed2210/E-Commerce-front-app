@@ -3,6 +3,7 @@ import { useAddresses } from '~/composables/useAddresses'
 import { useCheckout } from '~/composables/useCheckout'
 import type { PaymentMethod, ApplyCouponResponse } from '~/types/api'
 import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
+import { SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from '~/utils/constants'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
 useSeoMeta({ title: 'Checkout — ArchitectMarket', robots: 'noindex, nofollow' })
@@ -35,7 +36,9 @@ function handleCouponApplied(result: ApplyCouponResponse & { code: string }) {
       : (cartStore.subtotal * result.discountValue) / 100
 }
 
-const shippingFee = computed(() => (cartStore.subtotal >= 99 ? 0 : 9.99))
+const shippingFee = computed(() =>
+  cartStore.subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE
+)
 
 async function handlePlaceOrder() {
   if (!selectedAddressId.value) {
@@ -129,7 +132,7 @@ const breadcrumbs = [
     <div class="checkout-page__layout">
       <section class="checkout-page__main">
         <div class="checkout-page__section">
-          <CheckoutAddressPicker
+          <AddressPicker
             v-model="selectedAddressId"
             :addresses="addresses"
             @add="handleAddAddress"
@@ -137,12 +140,12 @@ const breadcrumbs = [
         </div>
 
         <div class="checkout-page__section">
-          <CheckoutPaymentMethodSelector v-model="paymentMethod" />
+          <PaymentMethodSelector v-model="paymentMethod" />
         </div>
 
         <div class="checkout-page__section">
           <h2 class="checkout-page__section-title">Coupon</h2>
-          <CheckoutCouponInput @applied="handleCouponApplied" />
+          <CouponInput @applied="handleCouponApplied" />
         </div>
       </section>
 

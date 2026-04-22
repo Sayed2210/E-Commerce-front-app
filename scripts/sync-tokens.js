@@ -3,8 +3,8 @@
  * scripts/sync-tokens.js
  *
  * Syncs design tokens from the Stitch design system into:
- *   - app/styles/main.css  (CSS custom properties inside @theme)
- *   - app/utils/tokens.ts  (TypeScript constants)
+ *   - app/styles/main.css      (CSS custom properties inside @theme)
+ *   - app/utils/designTokens.ts  (TypeScript constants)
  *
  * Usage:
  *   npm run tokens:sync
@@ -224,7 +224,7 @@ function hasDrift(filePath, newContent) {
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 const cssPath = path.join(ROOT, 'app/styles/main.css')
-const tsPath = path.join(ROOT, 'app/utils/tokens.ts')
+const tsPath = path.join(ROOT, 'app/utils/designTokens.ts') // was tokens.ts before rename
 
 const newCSS = generateCSS(STITCH_TOKENS)
 const newTS = generateTS(STITCH_TOKENS)
@@ -250,15 +250,15 @@ if (hasDrift(cssPath, newCSS)) {
 if (hasDrift(tsPath, newTS)) {
   if (checkOnly) {
     console.error(
-      '❌ Token drift detected in app/utils/tokens.ts — run `npm run tokens:sync` to fix.'
+      '❌ Token drift detected in app/utils/designTokens.ts — run `npm run tokens:sync` to fix.'
     )
     driftFound = true
   } else {
     fs.writeFileSync(tsPath, newTS)
-    console.log('✅ app/utils/tokens.ts updated')
+    console.log('✅ app/utils/designTokens.ts updated')
   }
 } else {
-  console.log('✓  app/utils/tokens.ts is in sync')
+  console.log('✓  app/utils/designTokens.ts is in sync')
 }
 
 if (driftFound) process.exit(1)
