@@ -36,7 +36,7 @@ defineProps<{ order: Order }>()
         {{ order.paymentMethod === 'stripe' ? 'credit_card' : 'local_shipping' }}
       </span>
       <span>
-        {{ order.paymentMethod === 'cash_on_delivery' ? 'Cash on Delivery' : 'Paid by Card' }}
+        {{ order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Paid by Card' }}
         —
         <span
           :class="['order-totals__pay-status', `order-totals__pay-status--${order.paymentStatus}`]"

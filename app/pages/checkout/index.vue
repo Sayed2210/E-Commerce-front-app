@@ -30,7 +30,7 @@ const emailNotVerified = ref(false)
 const resendingVerification = ref(false)
 const validatedTotals = ref<ValidateCheckoutResponse | null>(null)
 
-const stripeCardRef = useTemplateRef<InstanceType<typeof CheckoutStripeCardElement>>('stripeCard')
+const stripeCardRef = useTemplateRef<InstanceType<typeof StripeCardElement>>('stripeCard')
 const stripePublishableKey = config.public.stripePublishableKey as string
 
 function handleCouponApplied(result: ApplyCouponResponse & { code: string }) {
@@ -52,7 +52,8 @@ async function runValidate() {
   if (!selectedAddressId.value) return
   const { data } = await validateCheckout({
     shippingAddressId: selectedAddressId.value,
-    couponCode: couponCode.value || undefined,
+    paymentMethod: paymentMethod.value,
+    // couponCode: couponCode.value || undefined,
   })
   if (data) validatedTotals.value = data
 }
@@ -229,7 +230,7 @@ const breadcrumbs = [
 
         <div class="checkout-page__section">
           <PaymentMethodSelector v-model="paymentMethod" />
-          <CheckoutStripeCardElement
+          <StripeCardElement
             v-if="paymentMethod === 'stripe' && stripePublishableKey"
             ref="stripeCard"
             :publishable-key="stripePublishableKey"
