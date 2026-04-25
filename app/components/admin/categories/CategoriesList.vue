@@ -87,7 +87,7 @@ async function handleDelete(id: string) {
       </form>
     </AdminFormPanel>
 
-    <AdminDataTable :pending="pending" :empty="!categories.length" column-count="4">
+    <AdminDataTable :pending="pending" :empty="!categories.length" :column-count="4">
       <template #header>
         <thead class="bg-surface-container">
           <tr>
