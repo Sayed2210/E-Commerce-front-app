@@ -17,6 +17,7 @@ export function useProductFilters() {
   const route = useRoute()
 
   const selectedCategory = ref((route.query.category as string) ?? '')
+  const selectedBrand = ref((route.query.brand as string) ?? '')
   const selectedPrice = ref('')
   const selectedSort = ref('')
   const currentPage = ref(1)
@@ -25,6 +26,7 @@ export function useProductFilters() {
   const activeFiltersCount = computed(() => {
     let n = 0
     if (selectedCategory.value) n++
+    if (selectedBrand.value) n++
     if (selectedPrice.value) n++
     return n
   })
@@ -36,6 +38,7 @@ export function useProductFilters() {
 
   function clearFilters() {
     selectedCategory.value = ''
+    selectedBrand.value = ''
     selectedPrice.value = ''
     selectedSort.value = ''
     currentPage.value = 1
@@ -43,6 +46,7 @@ export function useProductFilters() {
 
   return {
     selectedCategory,
+    selectedBrand,
     selectedPrice,
     selectedSort,
     currentPage,

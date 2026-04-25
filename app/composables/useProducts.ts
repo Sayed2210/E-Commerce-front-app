@@ -1,5 +1,6 @@
 import { getAccessToken } from '~/utils/token'
 import type { Product, CreateProductDto, UpdateProductDto, PaginatedResponse } from '~/types/api'
+import type { MaybeRefOrGetter } from 'vue'
 
 function authH(): Record<string, string> {
   const t = getAccessToken()
@@ -13,20 +14,37 @@ export function useProducts() {
   const baseURL = config.public.apiBaseUrl as string
 
   function listProducts(params?: {
-    page?: number
-    limit?: number
-    categoryId?: string
-    minPrice?: number
-    maxPrice?: number
-    sort?: string
+    page?: MaybeRefOrGetter<number | undefined>
+    limit?: MaybeRefOrGetter<number | undefined>
+    categoryId?: MaybeRefOrGetter<string | undefined>
+    brandId?: MaybeRefOrGetter<string | undefined>
+    search?: MaybeRefOrGetter<string | undefined>
+    minPrice?: MaybeRefOrGetter<number | undefined>
+    maxPrice?: MaybeRefOrGetter<number | undefined>
+    sort?: MaybeRefOrGetter<string | undefined>
   }) {
-    const query: Record<string, string | number> = {}
-    if (params?.page) query.page = params.page
-    if (params?.limit) query.limit = params.limit
-    if (params?.categoryId) query.categoryId = params.categoryId
-    if (params?.sort) query.sortBy = params.sort
-    if (params?.minPrice) query.minPrice = params.minPrice
-    if (params?.maxPrice) query.maxPrice = params.maxPrice
+    const query = computed(() => {
+      const q: Record<string, string | number> = {}
+      const page = toValue(params?.page)
+      const limit = toValue(params?.limit)
+      const categoryId = toValue(params?.categoryId)
+      const brandId = toValue(params?.brandId)
+      const search = toValue(params?.search)
+      const sort = toValue(params?.sort)
+      const minPrice = toValue(params?.minPrice)
+      const maxPrice = toValue(params?.maxPrice)
+
+      if (page) q.page = page
+      if (limit) q.limit = limit
+      if (categoryId) q.categoryId = categoryId
+      if (brandId) q.brandId = brandId
+      if (search) q.search = search
+      if (sort) q.sortBy = sort
+      if (minPrice) q.minPrice = minPrice
+      if (maxPrice) q.maxPrice = maxPrice
+
+      return q
+    })
     return useFetch<PaginatedResponse<Product>>('/products', { baseURL, query, headers: authH() })
   }
 

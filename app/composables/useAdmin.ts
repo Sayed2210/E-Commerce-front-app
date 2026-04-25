@@ -72,6 +72,22 @@ export function useAdmin() {
     }
   }
 
+  async function updateStaff(
+    id: string,
+    dto: { firstName?: string; lastName?: string; role?: string }
+  ) {
+    try {
+      const data = await $fetch<StaffMember>(`${baseURL}/admin/staff/${id}`, {
+        method: 'PATCH',
+        body: dto,
+        headers: authH(),
+      })
+      return { data, error: null }
+    } catch (err) {
+      return { data: null, error: err }
+    }
+  }
+
   function getAuditLogs(params?: { page?: number; limit?: number }) {
     return useFetch<PaginatedResponse<AuditLog>>('/admin/analytics/audit-logs', {
       baseURL,
@@ -86,6 +102,7 @@ export function useAdmin() {
     deleteUser,
     listStaff,
     createStaff,
+    updateStaff,
     deleteStaff,
     getAuditLogs,
   }

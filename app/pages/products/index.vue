@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Product, Category } from '~/types/api'
+import type { Brand, Product, Category } from '~/types/api'
 
 definePageMeta({ layout: 'default' })
 useSeoMeta({
@@ -19,11 +19,13 @@ useHead({ link: [{ rel: 'canonical', href: canonicalUrl }] })
 const route = useRoute()
 const { listProducts } = useProducts()
 const { listCategories } = useCategories()
+const { listBrands } = useBrands()
 const { addItem } = useCart()
 const { addToWishlist } = useWishlist()
 
 const {
   selectedCategory,
+  selectedBrand,
   selectedPrice,
   selectedSort,
   currentPage,
@@ -33,17 +35,32 @@ const {
 } = useProductFilters()
 
 const viewMode = ref<'grid' | 'list'>('grid')
+const selectedMinPrice = computed(() => {
+  const [min] = selectedPrice.value.split('-').map(Number)
+  return Number.isFinite(min) ? min : undefined
+})
+const selectedMaxPrice = computed(() => {
+  const [, max] = selectedPrice.value.split('-').map(Number)
+  return Number.isFinite(max) ? max : undefined
+})
 
-const [{ data: rawCategories }, { data, pending, refresh }] = await Promise.all([
-  listCategories({ limit: 20 }),
-  listProducts({
-    page: currentPage.value,
-    limit: 24,
-    categoryId: selectedCategory.value || undefined,
-  }),
-])
+const [{ data: rawCategories }, { data: rawBrands }, { data, pending, refresh }] =
+  await Promise.all([
+    listCategories({ limit: 20 }),
+    listBrands({ limit: 50 }),
+    listProducts({
+      page: currentPage,
+      limit: 24,
+      categoryId: computed(() => selectedCategory.value || undefined),
+      brandId: computed(() => selectedBrand.value || undefined),
+      minPrice: selectedMinPrice,
+      maxPrice: selectedMaxPrice,
+      sort: selectedSort,
+    }),
+  ])
 
 const categories = computed<Category[]>(() => rawCategories.value ?? [])
+const brands = computed<Brand[]>(() => rawBrands.value ?? [])
 const products = computed<Product[]>(() => {
   const response = data.value as { data?: Product[] } | Product[] | null
   return (response && 'data' in response ? response.data : response) ?? []
@@ -60,9 +77,9 @@ const totalPages = computed<number>(() => {
   return (response && 'totalPages' in response ? response.totalPages : 1) ?? 1
 })
 
-watch([currentPage, selectedCategory, selectedSort, selectedPrice], () => {
+watch([currentPage, selectedCategory, selectedBrand, selectedSort, selectedPrice], () => {
   refresh()
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  if (import.meta.client) window.scrollTo({ top: 0, behavior: 'smooth' })
 })
 
 const breadcrumbs = computed(() => {
@@ -82,6 +99,11 @@ function onCategoryChange(val: string) {
   selectedCategory.value = val
   currentPage.value = 1
 }
+
+function onBrandChange(val: string) {
+  selectedBrand.value = val
+  currentPage.value = 1
+}
 </script>
 
 <template>
@@ -91,11 +113,14 @@ function onCategoryChange(val: string) {
     <div class="products-page__layout">
       <ProductsFilters
         :categories="categories"
+        :brands="brands"
         :selected-category="selectedCategory"
+        :selected-brand="selectedBrand"
         :selected-price="selectedPrice"
         :filter-open="filterOpen"
         :active-filters-count="activeFiltersCount"
         @update:selected-category="onCategoryChange"
+        @update:selected-brand="onBrandChange"
         @update:selected-price="selectedPrice = $event"
         @update:filter-open="filterOpen = $event"
         @clear="clearFilters"

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import type { Category } from '~/types/api'
+import type { Brand, Category } from '~/types/api'
 import { PRICE_RANGES } from '~/composables/useProductFilters'
 
 defineProps<{
   categories: Category[]
+  brands: Brand[]
   selectedCategory: string
+  selectedBrand: string
   selectedPrice: string
   filterOpen: boolean
   activeFiltersCount: number
@@ -12,6 +14,7 @@ defineProps<{
 
 const emit = defineEmits<{
   'update:selectedCategory': [value: string]
+  'update:selectedBrand': [value: string]
   'update:selectedPrice': [value: string]
   'update:filterOpen': [value: boolean]
   clear: []
@@ -37,15 +40,32 @@ const emit = defineEmits<{
     <div class="filter-group">
       <h3 id="dept-heading" class="filter-group__heading">Department</h3>
       <ul class="filter-group__list" role="list" aria-labelledby="dept-heading">
-        <li v-for="cat in categories" :key="cat.slug">
+        <li v-for="cat in categories" :key="cat.id">
           <button
             type="button"
             class="filter-btn"
-            :class="{ 'filter-btn--active': selectedCategory === cat.slug }"
-            :aria-pressed="selectedCategory === cat.slug"
-            @click="emit('update:selectedCategory', selectedCategory === cat.slug ? '' : cat.slug)"
+            :class="{ 'filter-btn--active': selectedCategory === cat.id }"
+            :aria-pressed="selectedCategory === cat.id"
+            @click="emit('update:selectedCategory', selectedCategory === cat.id ? '' : cat.id)"
           >
             {{ cat.name }}
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="filter-group">
+      <h3 id="brand-heading" class="filter-group__heading">Brand</h3>
+      <ul class="filter-group__list" role="list" aria-labelledby="brand-heading">
+        <li v-for="brand in brands" :key="brand.id">
+          <button
+            type="button"
+            class="filter-btn"
+            :class="{ 'filter-btn--active': selectedBrand === brand.id }"
+            :aria-pressed="selectedBrand === brand.id"
+            @click="emit('update:selectedBrand', selectedBrand === brand.id ? '' : brand.id)"
+          >
+            {{ brand.name }}
           </button>
         </li>
       </ul>
