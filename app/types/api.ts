@@ -196,7 +196,7 @@ export type OrderStatus =
   | 'cancelled'
   | 'refunded'
 
-export type PaymentMethod = 'stripe' | 'paypal' | 'cash_on_delivery'
+export type PaymentMethod = 'stripe' | 'paypal' | 'cod'
 
 export type AddressLabel = 'home' | 'work' | 'other'
 
@@ -274,7 +274,7 @@ export interface Order {
 
 export interface ValidateCheckoutDto {
   shippingAddressId: string
-  couponCode?: string
+  paymentMethod: PaymentMethod
 }
 
 export interface ValidateCheckoutResponse {

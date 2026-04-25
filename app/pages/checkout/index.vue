@@ -21,7 +21,7 @@ const addresses = computed(() => addressData.value ?? [])
 const selectedAddressId = ref<string | null>(
   addresses.value.find((a) => a.isDefault)?.id ?? addresses.value[0]?.id ?? null
 )
-const paymentMethod = ref<PaymentMethod>('cash_on_delivery')
+const paymentMethod = ref<PaymentMethod>('cod')
 const couponCode = ref('')
 const couponDiscount = ref(0)
 const freeShipping = ref(false)
@@ -84,7 +84,8 @@ async function handlePlaceOrder() {
   if (!validatedTotals.value) {
     const { data, error } = await validateCheckout({
       shippingAddressId: selectedAddressId.value,
-      couponCode: couponCode.value || undefined,
+      paymentMethod: paymentMethod.value,
+      // couponCode: couponCode.value || undefined,
     })
     if (error) {
       showErrorToast(error)
@@ -107,7 +108,7 @@ async function handlePlaceOrder() {
 async function handleCodOrder() {
   const { data, error } = await createOrder({
     shippingAddressId: selectedAddressId.value!,
-    paymentMethod: 'cash_on_delivery',
+    paymentMethod: 'cod',
     couponCode: couponCode.value || undefined,
   })
   if (error) {
@@ -252,7 +253,7 @@ const breadcrumbs = [
         </button>
       </section>
 
-      <CheckoutOrderReviewPanel
+      <OrderReviewPanel
         :items="cartStore.items"
         :subtotal="cartStore.subtotal"
         :discount="displayDiscount"
