@@ -60,7 +60,7 @@ async function handleAdd(dto: CreateAddressDto) {
       body="Add your first shipping address below."
     />
 
-    <CheckoutAddressForm
+    <AddressForm
       v-if="showForm"
       class="addr-picker__form"
       @submit="handleAdd"

@@ -13,4 +13,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
     const { fetchUser } = useAuth()
     await fetchUser()
   }
+
+  if (authStore.isAdmin) {
+    return navigateTo('/admin')
+  }
 })
