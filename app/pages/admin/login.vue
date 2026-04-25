@@ -18,10 +18,10 @@ const errorMessage = ref('')
 async function handleSubmit() {
   errorMessage.value = ''
 
-  const success = await login(formData.value, true) // isAdmin = true
+  const { ok, error } = await login(formData.value, true) // isAdmin = true
 
-  if (!success) {
-    errorMessage.value = 'Invalid credentials or insufficient permissions'
+  if (!ok && error) {
+    errorMessage.value = error
   }
 }
 </script>

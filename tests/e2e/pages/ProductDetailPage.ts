@@ -20,7 +20,8 @@ export class ProductDetailPage extends BasePage {
   get wishlistButton() {
     return this.page
       .locator('button')
-      .filter({ has: this.page.locator('.material-symbols-outlined:text("favorite")') })
+      .filter({ has: this.page.locator('.material-symbols-outlined') })
+      .filter({ hasText: 'favorite' })
       .first()
   }
   get quantityIncrease() {

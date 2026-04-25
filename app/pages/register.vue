@@ -33,8 +33,8 @@ async function handleSubmit() {
     return
   }
 
-  const ok = await register(form.value)
-  if (!ok) serverError.value = 'Registration failed. Please try again.'
+  const { ok, error } = await register(form.value)
+  if (!ok && error) serverError.value = error
 }
 </script>
 

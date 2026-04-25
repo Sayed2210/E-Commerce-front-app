@@ -17,17 +17,17 @@ const { kpis, recentOrders, orderStatuses, pending } = useDashboardStats()
     </div>
 
     <!-- KPI Cards Grid -->
-    <AdminDashboardKPIGrid :kpis="kpis" :loading="pending" />
+    <DashboardKPIGrid :kpis="kpis" :loading="pending" />
 
     <!-- Two-column layout: Recent Orders + Status -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Recent Orders -->
-      <AdminDashboardRecentOrders :orders="recentOrders" :loading="pending" />
+      <DashboardRecentOrders :orders="recentOrders" :loading="pending" />
 
       <!-- Status Breakdown + Quick Actions -->
       <div class="space-y-4">
-        <AdminDashboardOrderStatus :statuses="orderStatuses" :loading="pending" />
-        <AdminDashboardQuickActions />
+        <DashboardOrderStatus :statuses="orderStatuses" :loading="pending" />
+        <DashboardQuickActions />
       </div>
     </div>
   </div>

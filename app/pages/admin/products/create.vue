@@ -418,10 +418,27 @@ useSeoMeta({ title: 'Add Product — Admin' })
 
 <style scoped>
 .field-label {
-  @apply text-xs font-bold uppercase tracking-wider text-secondary block mb-1.5;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-secondary);
+  display: block;
+  margin-bottom: 0.375rem;
 }
 
 .field-input {
-  @apply w-full bg-surface-container-low border-none rounded py-2.5 px-4 text-sm outline-none focus:ring-1 focus:ring-primary transition-colors;
+  width: 100%;
+  background-color: var(--color-surface-container-low);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: box-shadow 200ms ease;
+}
+
+.field-input:focus {
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 </style>

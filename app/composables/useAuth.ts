@@ -1,7 +1,7 @@
 import type { LoginCredentials, RegisterData, AuthResponse, User } from '~/types/auth'
 import { UserRole } from '~/types/auth'
 import { setTokens, clearTokens, getAccessToken, getRefreshToken } from '~/utils/token'
-import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
+import { parseApiError, showErrorToast, showSuccessToast } from '~/utils/errorHandler'
 
 export function useAuth() {
   const config = useRuntimeConfig()
@@ -9,7 +9,10 @@ export function useAuth() {
   const authStore = useAuthStore()
   const router = useRouter()
 
-  async function login(credentials: LoginCredentials, isAdmin = false) {
+  async function login(
+    credentials: LoginCredentials,
+    isAdmin = false
+  ): Promise<{ ok: boolean; error?: string }> {
     authStore.setLoading(true)
     try {
       const response = await $fetch<AuthResponse>(`${baseURL}/auth/login`, {
@@ -19,7 +22,7 @@ export function useAuth() {
 
       if (isAdmin && response.user.role !== UserRole.ADMIN) {
         showErrorToast({ message: 'Access denied. Admin privileges required.' })
-        return false
+        return { ok: false, error: 'Access denied. Admin privileges required.' }
       }
 
       setTokens(response.tokens.accessToken, response.tokens.refreshToken)
@@ -27,16 +30,17 @@ export function useAuth() {
       showSuccessToast('Login successful!')
 
       await router.push(isAdmin ? '/admin' : '/')
-      return true
+      return { ok: true }
     } catch (err) {
+      const message = parseApiError(err)
       showErrorToast(err)
-      return false
+      return { ok: false, error: message }
     } finally {
       authStore.setLoading(false)
     }
   }
 
-  async function register(data: RegisterData) {
+  async function register(data: RegisterData): Promise<{ ok: boolean; error?: string }> {
     authStore.setLoading(true)
     try {
       const response = await $fetch<AuthResponse>(`${baseURL}/auth/register`, {
@@ -48,10 +52,11 @@ export function useAuth() {
       authStore.setUser(response.user)
       showSuccessToast('Registration successful! Please verify your email.')
       await router.push('/verify-email?sent=true')
-      return true
+      return { ok: true }
     } catch (err) {
+      const message = parseApiError(err)
       showErrorToast(err)
-      return false
+      return { ok: false, error: message }
     } finally {
       authStore.setLoading(false)
     }
