@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDashboardStats } from '~/composables/admin/useDashboardStats'
 
-const { kpis, recentOrders, orderStatuses, pending } = useDashboardStats()
+const { kpis, recentOrders, orderStatuses, pending } = await useDashboardStats()
 </script>
 
 <template>

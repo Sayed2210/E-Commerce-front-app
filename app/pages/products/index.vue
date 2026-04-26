@@ -61,10 +61,12 @@ const [{ data: rawCategories }, { data: rawBrands }, { data, pending, refresh }]
 
 const categories = computed<Category[]>(() => rawCategories.value ?? [])
 const brands = computed<Brand[]>(() => rawBrands.value ?? [])
+
 const products = computed<Product[]>(() => {
   const response = data.value as { data?: Product[] } | Product[] | null
   return (response && 'data' in response ? response.data : response) ?? []
 })
+
 const total = computed<number>(() => {
   const response = data.value as { total?: number } | null
   return (

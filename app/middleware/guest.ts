@@ -1,9 +1,9 @@
 export default defineNuxtRouteMiddleware(async () => {
-  const token = useCookie('access_token')
+  const token = getAccessToken()
   const authStore = useAuthStore()
 
   // If authenticated, redirect based on role
-  if (token.value) {
+  if (token) {
     // Load user data if not already loaded
     if (!authStore.user) {
       const { fetchUser } = useAuth()

@@ -46,7 +46,17 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxt/ui',
     '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
   ],
+
+  piniaPluginPersistedstate: {
+    storage: 'cookies',
+    cookieOptions: {
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    },
+  },
 
   components: {
     dirs: [

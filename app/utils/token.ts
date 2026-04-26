@@ -6,32 +6,34 @@ const REFRESH_TOKEN_KEY = 'refresh_token'
 // Until the backend issues tokens via a server-side endpoint with Set-Cookie: ...; HttpOnly; Secure; SameSite=Strict,
 // any XSS on this origin can read both the access token and refresh token from document.cookie.
 function setCookie(name: string, value: string, maxAge: number) {
-  if (import.meta.client) {
-    // Secure is intentionally omitted in non-production: browsers reject Secure cookies on http://localhost.
-    // Consequence: tokens travel over plain HTTP in dev/staging. Acceptable until those environments use HTTPS.
-    const secure = process.env.NODE_ENV === 'production' ? ';Secure' : ''
-    document.cookie = `${name}=${encodeURIComponent(value)};path=/;max-age=${maxAge};SameSite=Lax${secure}`
-  }
+  const cookie = useCookie<string | null>(name, {
+    path: '/',
+    maxAge,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  })
+  cookie.value = value
 }
 
 /**
  * Helper to get a cookie value
  */
 function getCookie(name: string): string | null {
-  if (import.meta.client) {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
-    return match && match[2] ? decodeURIComponent(match[2]) : null
-  }
-  return null
+  const cookie = useCookie<string | null>(name)
+  return cookie.value ?? null
 }
 
 /**
  * Helper to delete a cookie
  */
 function deleteCookie(name: string) {
-  if (import.meta.client) {
-    document.cookie = `${name}=;path=/;max-age=0`
-  }
+  const cookie = useCookie<string | null>(name, {
+    path: '/',
+    maxAge: 0,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  })
+  cookie.value = null
 }
 
 /**
