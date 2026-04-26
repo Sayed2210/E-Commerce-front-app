@@ -4,5 +4,5 @@ useSeoMeta({ title: 'Returns — Admin' })
 </script>
 
 <template>
-  <AdminReturnsList />
+  <ReturnsList />
 </template>

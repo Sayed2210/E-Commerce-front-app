@@ -54,7 +54,7 @@ function handleDelete() {
       >
     </td>
     <td class="px-6 py-4">
-      <AdminSharedStatusBadge :status="product.isActive ? 'active' : 'inactive'" size="sm" />
+      <StatusBadge :status="product.isActive ? 'active' : 'inactive'" size="sm" />
     </td>
     <td class="px-6 py-4">
       <div class="flex items-center gap-3">

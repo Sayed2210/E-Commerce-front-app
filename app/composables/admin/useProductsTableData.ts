@@ -1,6 +1,6 @@
 import type { Product } from '~/types/api'
 
-export function useProductsTableData() {
+export async function useProductsTableData() {
   const { listProducts, deleteProduct: apiDelete } = useProducts()
 
   // State

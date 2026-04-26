@@ -7,7 +7,10 @@ export default defineNuxtRouteMiddleware(async () => {
     // Load user data if not already loaded
     if (!authStore.user) {
       const { fetchUser } = useAuth()
-      await fetchUser()
+      const user = await fetchUser()
+      if (!user) {
+        return
+      }
     }
 
     // Redirect admins to dashboard, users to homepage

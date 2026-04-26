@@ -9,7 +9,10 @@ export default defineNuxtRouteMiddleware(async () => {
   // Ensure user data is loaded
   if (!authStore.user) {
     const { fetchUser } = useAuth()
-    await fetchUser()
+    const user = await fetchUser()
+    if (!user) {
+      return navigateTo('/admin/login')
+    }
   }
 
   // Check if user has admin role

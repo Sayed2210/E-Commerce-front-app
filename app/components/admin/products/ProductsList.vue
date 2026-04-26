@@ -10,7 +10,7 @@ const {
   totalPages,
   pending,
   deleteProduct,
-} = useProductsTableData()
+} = await useProductsTableData()
 
 function handlePageChange(page: number) {
   currentPage.value = page
@@ -39,7 +39,7 @@ function handleDelete(id: string) {
     </div>
 
     <!-- Filters -->
-    <AdminProductsToolbar
+    <ProductsToolbar
       :search="search"
       :status-filter="statusFilter"
       :loading="pending"
@@ -50,10 +50,10 @@ function handleDelete(id: string) {
     <!-- Table -->
     <div class="bg-surface-container-lowest rounded shadow-sm overflow-hidden">
       <table class="w-full">
-        <AdminProductsTableHeader />
-        <AdminSharedDataTableSkeleton v-if="pending" :rows="8" :columns="6" />
+        <ProductsTableHeader />
+        <DataTableSkeleton v-if="pending" :rows="8" :columns="6" />
         <tbody v-else class="divide-y divide-outline-variant/10">
-          <AdminProductsTableRow
+          <ProductsTableRow
             v-for="product in filteredProducts"
             :key="product.id"
             :product="product"
@@ -68,7 +68,7 @@ function handleDelete(id: string) {
       </table>
 
       <!-- Pagination -->
-      <AdminSharedDataTablePagination
+      <DataTablePagination
         v-if="totalPages > 1"
         :current-page="currentPage"
         :total-pages="totalPages"

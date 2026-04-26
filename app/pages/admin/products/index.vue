@@ -5,5 +5,5 @@ useSeoMeta({ title: 'Inventory — Admin' })
 </script>
 
 <template>
-  <AdminProductsList />
+  <ProductsList />
 </template>

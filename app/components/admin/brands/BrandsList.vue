@@ -90,7 +90,7 @@ async function handleDelete(id: string) {
         </thead>
       </template>
 
-      <AdminBrandsTableRow
+      <BrandsTableRow
         v-for="brand in brands"
         :key="brand.id"
         :brand="brand"

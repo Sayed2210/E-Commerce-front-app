@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const headers = [
   { label: 'Product', hiddenOn: '' },
-  { label: 'Category', hiddenOn: 'md:hidden' },
+  { label: 'Category', hiddenOn: '' },
   { label: 'Price', hiddenOn: '' },
-  { label: 'Stock', hiddenOn: 'sm:hidden' },
+  { label: 'Stock', hiddenOn: '' },
   { label: 'Status', hiddenOn: '' },
   { label: 'Actions', hiddenOn: '' },
 ]

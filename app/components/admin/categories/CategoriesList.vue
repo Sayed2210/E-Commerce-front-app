@@ -4,7 +4,7 @@ import { useCategoriesAdmin } from '~/composables/useCategoriesAdmin'
 
 const { listCategories, createCategory, deleteCategory } = useCategoriesAdmin()
 
-const { data: categoriesData, pending, refresh } = listCategories({ limit: 100 })
+const { data: categoriesData, pending, refresh } = listCategories({ page: 1, limit: 100 })
 const categories = computed<Category[]>(() => categoriesData.value ?? [])
 
 const showCreate = ref(false)
@@ -99,7 +99,7 @@ async function handleDelete(id: string) {
         </thead>
       </template>
 
-      <AdminCategoriesTableRow
+      <CategoriesTableRow
         v-for="category in categories"
         :key="category.id"
         :category="category"

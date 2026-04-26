@@ -4,5 +4,5 @@ useSeoMeta({ title: 'Coupons — Admin' })
 </script>
 
 <template>
-  <AdminCouponsList />
+  <CouponsList />
 </template>

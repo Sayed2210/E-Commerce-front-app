@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const config = useRuntimeConfig()
 const baseURL = config.public.apiBaseUrl as string
-const { getAccessToken } = useToken()
+// const token = getAccessToken()
 
 const reindexing = ref(false)
 const result = ref<string | null>(null)
