@@ -21,7 +21,7 @@ const addresses = computed(() => addressData.value ?? [])
 const selectedAddressId = ref<string | null>(
   addresses.value.find((a) => a.isDefault)?.id ?? addresses.value[0]?.id ?? null
 )
-const paymentMethod = ref<PaymentMethod>('cash_on_delivery')
+const paymentMethod = ref<PaymentMethod>('cod')
 const couponCode = ref('')
 const couponDiscount = ref(0)
 const freeShipping = ref(false)
@@ -30,7 +30,7 @@ const emailNotVerified = ref(false)
 const resendingVerification = ref(false)
 const validatedTotals = ref<ValidateCheckoutResponse | null>(null)
 
-const stripeCardRef = useTemplateRef<InstanceType<typeof CheckoutStripeCardElement>>('stripeCard')
+const stripeCardRef = useTemplateRef<InstanceType<typeof StripeCardElement>>('stripeCard')
 const stripePublishableKey = config.public.stripePublishableKey as string
 
 function handleCouponApplied(result: ApplyCouponResponse & { code: string }) {
@@ -52,7 +52,8 @@ async function runValidate() {
   if (!selectedAddressId.value) return
   const { data } = await validateCheckout({
     shippingAddressId: selectedAddressId.value,
-    couponCode: couponCode.value || undefined,
+    paymentMethod: paymentMethod.value,
+    // couponCode: couponCode.value || undefined,
   })
   if (data) validatedTotals.value = data
 }
@@ -84,7 +85,8 @@ async function handlePlaceOrder() {
   if (!validatedTotals.value) {
     const { data, error } = await validateCheckout({
       shippingAddressId: selectedAddressId.value,
-      couponCode: couponCode.value || undefined,
+      paymentMethod: paymentMethod.value,
+      // couponCode: couponCode.value || undefined,
     })
     if (error) {
       showErrorToast(error)
@@ -107,7 +109,7 @@ async function handlePlaceOrder() {
 async function handleCodOrder() {
   const { data, error } = await createOrder({
     shippingAddressId: selectedAddressId.value!,
-    paymentMethod: 'cash_on_delivery',
+    paymentMethod: 'cod',
     couponCode: couponCode.value || undefined,
   })
   if (error) {
@@ -228,7 +230,7 @@ const breadcrumbs = [
 
         <div class="checkout-page__section">
           <PaymentMethodSelector v-model="paymentMethod" />
-          <CheckoutStripeCardElement
+          <StripeCardElement
             v-if="paymentMethod === 'stripe' && stripePublishableKey"
             ref="stripeCard"
             :publishable-key="stripePublishableKey"
@@ -252,7 +254,7 @@ const breadcrumbs = [
         </button>
       </section>
 
-      <CheckoutOrderReviewPanel
+      <OrderReviewPanel
         :items="cartStore.items"
         :subtotal="cartStore.subtotal"
         :discount="displayDiscount"

@@ -39,7 +39,7 @@ function variantLabel(item: OrderItem) {
           <p class="line-items__qty">Qty: {{ item.quantity }}</p>
         </div>
         <div class="line-items__right">
-          <p class="line-items__price">${{ item.totalPrice.toFixed(2) }}</p>
+          <p class="line-items__price">${{ item.totalPrice }}</p>
           <button
             v-if="canReturn"
             type="button"

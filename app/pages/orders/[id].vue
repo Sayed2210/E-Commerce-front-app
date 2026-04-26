@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { Order, ReturnReason } from '~/types/api'
 import { useReturns } from '~/composables/useReturns'
-import type { ReturnReason } from '~/types/api'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
 useSeoMeta({ title: 'Order Details — ArchitectMarket', robots: 'noindex, nofollow' })
@@ -13,15 +13,8 @@ const { createReturn } = useReturns()
 
 useSeoMeta({ title: `Order Details — ArchitectMarket` })
 
-const { data: order, pending, error, refresh: refreshOrder } = await getOrder(id)
-
-const { $orderSocket } = useNuxtApp()
-watch(
-  () => $orderSocket.lastOrderUpdate.value,
-  (updated) => {
-    if (updated?.id === id) refreshOrder()
-  }
-)
+const { data: orderData, pending } = await getOrder(id)
+const order = computed<Order | null>(() => orderData.value ?? null)
 
 const returnModal = reactive({
   open: false,
@@ -68,6 +61,7 @@ const breadcrumbs = computed(() => [
 </script>
 
 <template>
+  <!-- {{ order }} -->
   <div class="order-detail">
     <AppBreadcrumb :items="breadcrumbs" />
 
@@ -76,7 +70,7 @@ const breadcrumbs = computed(() => [
     </div>
 
     <AppEmptyState
-      v-else-if="error || !order"
+      v-else-if="!order"
       icon="error"
       title="Order not found"
       body="We couldn't load this order."
@@ -87,12 +81,12 @@ const breadcrumbs = computed(() => [
     </AppEmptyState>
 
     <template v-else>
-      <OrdersOrderHeader :order="order" class="order-detail__header" />
+      <OrderHeader :order="order" class="order-detail__header" />
 
       <div class="order-detail__body">
         <div class="order-detail__main">
           <div class="order-detail__card">
-            <OrdersOrderLineItems
+            <OrderLineItems
               :items="order.items"
               :can-return="canReturn"
               @request-return="openReturn"
@@ -118,7 +112,7 @@ const breadcrumbs = computed(() => [
 
         <aside class="order-detail__sidebar">
           <div class="order-detail__card">
-            <OrdersOrderTotals :order="order" />
+            <OrderTotals :order="order" />
           </div>
         </aside>
       </div>

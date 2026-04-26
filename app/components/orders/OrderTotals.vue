@@ -10,25 +10,25 @@ defineProps<{ order: Order }>()
     <dl class="order-totals__list">
       <div class="order-totals__row">
         <dt>Subtotal</dt>
-        <dd>${{ order.subtotal.toFixed(2) }}</dd>
+        <dd>${{ order.subtotal }}</dd>
       </div>
       <div v-if="order.discountAmount > 0" class="order-totals__row order-totals__row--positive">
         <dt>Discount</dt>
-        <dd>-${{ order.discountAmount.toFixed(2) }}</dd>
+        <dd>-${{ order.discountAmount }}</dd>
       </div>
       <div class="order-totals__row">
         <dt>Shipping</dt>
         <dd :class="{ 'order-totals__val--free': order.shippingAmount === 0 }">
-          {{ order.shippingAmount === 0 ? 'FREE' : `$${order.shippingAmount.toFixed(2)}` }}
+          {{ order.shippingAmount === 0 ? 'FREE' : `$${order.shippingAmount}` }}
         </dd>
       </div>
       <div v-if="order.taxAmount > 0" class="order-totals__row">
         <dt>Tax</dt>
-        <dd>${{ order.taxAmount.toFixed(2) }}</dd>
+        <dd>${{ order.taxAmount }}</dd>
       </div>
       <div class="order-totals__row order-totals__row--total">
         <dt>Total</dt>
-        <dd>${{ order.totalAmount.toFixed(2) }}</dd>
+        <dd>${{ order.totalAmount }}</dd>
       </div>
     </dl>
     <div class="order-totals__method">
@@ -36,7 +36,7 @@ defineProps<{ order: Order }>()
         {{ order.paymentMethod === 'stripe' ? 'credit_card' : 'local_shipping' }}
       </span>
       <span>
-        {{ order.paymentMethod === 'cash_on_delivery' ? 'Cash on Delivery' : 'Paid by Card' }}
+        {{ order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Paid by Card' }}
         —
         <span
           :class="['order-totals__pay-status', `order-totals__pay-status--${order.paymentStatus}`]"
