@@ -50,7 +50,10 @@ async function handleApply() {
     </div>
     <p v-if="result" class="coupon__msg coupon__msg--ok">
       <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-      Coupon applied — {{ result.type === 'percentage' ? `${result.discountValue}% off` : `$${result.discountValue} off` }}
+      Coupon applied —
+      <template v-if="result.type === 'free_shipping'">free shipping</template>
+      <template v-else-if="result.type === 'percentage'">{{ result.value }}% off</template>
+      <template v-else>${{ result.value }} off</template>
     </p>
     <p v-if="error" class="coupon__msg coupon__msg--err">{{ error }}</p>
   </div>
@@ -87,7 +90,9 @@ async function handleApply() {
   font-size: 0.875rem;
   color: var(--color-on-surface);
   outline: none;
-  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .coupon__input:focus {
@@ -109,7 +114,9 @@ async function handleApply() {
   font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
-  transition: box-shadow var(--transition-base), opacity var(--transition-fast);
+  transition:
+    box-shadow var(--transition-base),
+    opacity var(--transition-fast);
   white-space: nowrap;
 }
 

@@ -1,5 +1,11 @@
 import { getAccessToken } from '~/utils/token'
-import type { Order, ApplyCouponResponse, CreateOrderDto } from '~/types/api'
+import type {
+  Order,
+  ApplyCouponResponse,
+  CreateOrderDto,
+  ValidateCheckoutDto,
+  ValidateCheckoutResponse,
+} from '~/types/api'
 
 function authH(): Record<string, string> {
   const t = getAccessToken()
@@ -23,9 +29,22 @@ export function useCheckout() {
     }
   }
 
+  async function validateCheckout(dto: ValidateCheckoutDto) {
+    try {
+      const data = await $fetch<ValidateCheckoutResponse>(`${baseURL}/checkout/validate`, {
+        method: 'POST',
+        body: dto,
+        headers: authH(),
+      })
+      return { data, error: null }
+    } catch (err) {
+      return { data: null, error: err }
+    }
+  }
+
   async function createOrder(dto: CreateOrderDto) {
     try {
-      const data = await $fetch<{ order: Order; clientSecret?: string }>(
+      const data = await $fetch<{ order: Order; paymentIntentId?: string }>(
         `${baseURL}/checkout/create-order`,
         { method: 'POST', body: dto, headers: authH() }
       )
@@ -35,5 +54,5 @@ export function useCheckout() {
     }
   }
 
-  return { applyCoupon, createOrder }
+  return { applyCoupon, validateCheckout, createOrder }
 }

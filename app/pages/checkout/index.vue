@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { useAddresses } from '~/composables/useAddresses'
 import { useCheckout } from '~/composables/useCheckout'
-import type { PaymentMethod, ApplyCouponResponse } from '~/types/api'
+import type { PaymentMethod, ApplyCouponResponse, ValidateCheckoutResponse } from '~/types/api'
 import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
-import { SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from '~/utils/constants'
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
 useSeoMeta({ title: 'Checkout — ArchitectMarket', robots: 'noindex, nofollow' })
 
+const config = useRuntimeConfig()
 const router = useRouter()
 const cartStore = useCartStore()
 
 const { getAddresses, createAddress } = useAddresses()
-const { createOrder } = useCheckout()
+const { validateCheckout, createOrder } = useCheckout()
 const { resendVerification } = useAuth()
 
 const { data: addressData, refresh: refreshAddresses } = await getAddresses()
@@ -21,23 +21,59 @@ const addresses = computed(() => addressData.value ?? [])
 const selectedAddressId = ref<string | null>(
   addresses.value.find((a) => a.isDefault)?.id ?? addresses.value[0]?.id ?? null
 )
-const paymentMethod = ref<PaymentMethod>('cash_on_delivery')
-const couponDiscount = ref(0)
+const paymentMethod = ref<PaymentMethod>('cod')
 const couponCode = ref('')
+const couponDiscount = ref(0)
+const freeShipping = ref(false)
 const placingOrder = ref(false)
 const emailNotVerified = ref(false)
 const resendingVerification = ref(false)
+const validatedTotals = ref<ValidateCheckoutResponse | null>(null)
+
+const stripeCardRef = useTemplateRef<InstanceType<typeof StripeCardElement>>('stripeCard')
+const stripePublishableKey = config.public.stripePublishableKey as string
 
 function handleCouponApplied(result: ApplyCouponResponse & { code: string }) {
   couponCode.value = result.code
-  couponDiscount.value =
-    result.type === 'fixed'
-      ? result.discountValue
-      : (cartStore.subtotal * result.discountValue) / 100
+  if (result.type === 'free_shipping') {
+    freeShipping.value = true
+    couponDiscount.value = 0
+  } else if (result.type === 'percentage') {
+    freeShipping.value = false
+    couponDiscount.value = (cartStore.subtotal * result.value) / 100
+  } else {
+    freeShipping.value = false
+    couponDiscount.value = result.value
+  }
+  validatedTotals.value = null
 }
 
-const shippingFee = computed(() =>
-  cartStore.subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE
+async function runValidate() {
+  if (!selectedAddressId.value) return
+  const { data } = await validateCheckout({
+    shippingAddressId: selectedAddressId.value,
+    paymentMethod: paymentMethod.value,
+    // couponCode: couponCode.value || undefined,
+  })
+  if (data) validatedTotals.value = data
+}
+
+watch(selectedAddressId, () => {
+  validatedTotals.value = null
+})
+
+const displayShipping = computed(() => {
+  if (freeShipping.value) return 0
+  if (validatedTotals.value) return validatedTotals.value.shippingAmount
+  return null
+})
+const displayDiscount = computed(() => {
+  if (validatedTotals.value) return validatedTotals.value.discountAmount
+  return couponDiscount.value + cartStore.discount
+})
+const displayTax = computed(() => (validatedTotals.value ? validatedTotals.value.taxAmount : null))
+const displayTotal = computed(() =>
+  validatedTotals.value ? validatedTotals.value.totalAmount : null
 )
 
 async function handlePlaceOrder() {
@@ -45,35 +81,89 @@ async function handlePlaceOrder() {
     showErrorToast({ message: 'Please select a shipping address.' })
     return
   }
+
+  if (!validatedTotals.value) {
+    const { data, error } = await validateCheckout({
+      shippingAddressId: selectedAddressId.value,
+      paymentMethod: paymentMethod.value,
+      // couponCode: couponCode.value || undefined,
+    })
+    if (error) {
+      showErrorToast(error)
+      return
+    }
+    validatedTotals.value = data
+  }
+
   placingOrder.value = true
+
+  if (paymentMethod.value === 'stripe') {
+    await handleStripeOrder()
+  } else {
+    await handleCodOrder()
+  }
+
+  placingOrder.value = false
+}
+
+async function handleCodOrder() {
   const { data, error } = await createOrder({
-    shippingAddressId: selectedAddressId.value,
-    paymentMethod: paymentMethod.value,
+    shippingAddressId: selectedAddressId.value!,
+    paymentMethod: 'cod',
     couponCode: couponCode.value || undefined,
   })
-  placingOrder.value = false
+  if (error) {
+    handleOrderError(error)
+    return
+  }
+  if (data?.order) {
+    cartStore.clearCart()
+    router.push(`/orders/${data.order.id}`)
+  }
+}
+
+async function handleStripeOrder() {
+  const stripeCard = stripeCardRef.value
+  if (!stripeCard?.ready) {
+    showErrorToast({ message: 'Card element is not ready. Please wait a moment and try again.' })
+    return
+  }
+
+  const { data, error } = await createOrder({
+    shippingAddressId: selectedAddressId.value!,
+    paymentMethod: 'stripe',
+    couponCode: couponCode.value || undefined,
+  })
 
   if (error) {
-    const status =
-      (error as { response?: { status: number }; statusCode?: number })?.response?.status ??
-      (error as { statusCode?: number })?.statusCode
-    if (status === 403) {
-      emailNotVerified.value = true
-      showErrorToast({ message: 'Please verify your email before placing an order.' })
-    } else {
-      showErrorToast(error)
-    }
+    handleOrderError(error)
     return
   }
 
-  if (data?.clientSecret) {
-    showErrorToast({ message: 'Stripe payment is not yet available. Please use Cash on Delivery.' })
+  const paymentIntentId = data?.paymentIntentId ?? data?.order?.paymentIntentId
+  if (!paymentIntentId) {
+    showErrorToast({ message: 'No payment intent returned. Please try again.' })
     return
   }
 
-  if (data?.order) {
-    cartStore.$reset?.()
-    router.push(`/orders/${data.order.id}`)
+  try {
+    await stripeCard.confirmCard(paymentIntentId)
+    cartStore.clearCart()
+    router.push(`/orders/${data!.order.id}`)
+  } catch (err) {
+    showErrorToast({ message: (err as Error).message ?? 'Payment failed. Please try again.' })
+  }
+}
+
+function handleOrderError(error: unknown) {
+  const status =
+    (error as { response?: { status: number }; statusCode?: number })?.response?.status ??
+    (error as { statusCode?: number })?.statusCode
+  if (status === 403) {
+    emailNotVerified.value = true
+    showErrorToast({ message: 'Please verify your email before placing an order.' })
+  } else {
+    showErrorToast(error)
   }
 }
 
@@ -113,7 +203,6 @@ const breadcrumbs = [
 
     <CheckoutStepper :step="1" />
 
-    <!-- Email not verified banner -->
     <div v-if="emailNotVerified" class="checkout-page__verify-banner" role="alert">
       <span class="material-symbols-outlined" aria-hidden="true">mail</span>
       <span class="checkout-page__verify-text">
@@ -141,20 +230,38 @@ const breadcrumbs = [
 
         <div class="checkout-page__section">
           <PaymentMethodSelector v-model="paymentMethod" />
+          <StripeCardElement
+            v-if="paymentMethod === 'stripe' && stripePublishableKey"
+            ref="stripeCard"
+            :publishable-key="stripePublishableKey"
+            class="checkout-page__stripe"
+          />
         </div>
 
         <div class="checkout-page__section">
           <h2 class="checkout-page__section-title">Coupon</h2>
           <CouponInput @applied="handleCouponApplied" />
         </div>
+
+        <button
+          v-if="selectedAddressId && !validatedTotals"
+          type="button"
+          class="checkout-page__validate-btn"
+          @click="runValidate"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">calculate</span>
+          Calculate Final Totals
+        </button>
       </section>
 
-      <CheckoutOrderReviewPanel
+      <OrderReviewPanel
         :items="cartStore.items"
         :subtotal="cartStore.subtotal"
-        :discount="cartStore.discount"
-        :coupon-discount="couponDiscount"
-        :shipping-fee="shippingFee"
+        :discount="displayDiscount"
+        :coupon-discount="0"
+        :shipping-fee="displayShipping ?? (freeShipping ? 0 : 9.99)"
+        :tax="displayTax"
+        :total-override="displayTotal"
         :loading="placingOrder"
         :email-not-verified="emailNotVerified"
         @place-order="handlePlaceOrder"
@@ -237,6 +344,9 @@ const breadcrumbs = [
   background: var(--color-surface-container-low);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .checkout-page__section-title {
@@ -244,6 +354,36 @@ const breadcrumbs = [
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--color-on-surface);
-  margin: 0 0 1rem;
+  margin: 0;
+}
+
+.checkout-page__stripe {
+  border-top: 1px solid color-mix(in srgb, var(--color-outline-variant) 15%, transparent);
+  padding-top: 1.25rem;
+}
+
+.checkout-page__validate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--color-outline) 30%, transparent);
+  border-radius: var(--radius-DEFAULT);
+  padding: 0.625rem 1.25rem;
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.checkout-page__validate-btn:hover {
+  background: var(--color-surface-container-low);
+}
+
+.checkout-page__validate-btn .material-symbols-outlined {
+  font-size: 1rem;
 }
 </style>

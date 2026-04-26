@@ -7,21 +7,33 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 const navLinks = [
   { to: '/admin', icon: 'dashboard', label: 'Dashboard' },
   { to: '/admin/products', icon: 'inventory_2', label: 'Inventory' },
+  { to: '/admin/categories', icon: 'category', label: 'Categories' },
+  { to: '/admin/brands', icon: 'business', label: 'Brands' },
+  { to: '/admin/tags', icon: 'sell', label: 'Tags' },
   { to: '/admin/orders', icon: 'shopping_bag', label: 'Orders' },
+  { to: '/admin/staff', icon: 'admin_panel_settings', label: 'Staff' },
   { to: '/admin/users', icon: 'group', label: 'Customers' },
   { to: '/admin/analytics', icon: 'leaderboard', label: 'Analytics' },
   { to: '/admin/coupons', icon: 'local_offer', label: 'Coupons' },
   { to: '/admin/returns', icon: 'assignment_return', label: 'Returns' },
+  { to: '/admin/newsletter', icon: 'mail', label: 'Newsletter' },
+  { to: '/admin/search', icon: 'manage_search', label: 'Search' },
 ]
 
 const pageTitles: Record<string, string> = {
   '/admin': 'Dashboard',
   '/admin/products': 'Inventory',
+  '/admin/categories': 'Categories',
+  '/admin/brands': 'Brands',
+  '/admin/tags': 'Tags',
   '/admin/orders': 'Orders',
+  '/admin/staff': 'Staff',
   '/admin/users': 'Customers',
   '/admin/analytics': 'Analytics',
   '/admin/coupons': 'Coupons',
   '/admin/returns': 'Returns',
+  '/admin/newsletter': 'Newsletter',
+  '/admin/search': 'Search',
 }
 
 const pageTitle = computed(() => pageTitles[route.path] ?? 'Admin')

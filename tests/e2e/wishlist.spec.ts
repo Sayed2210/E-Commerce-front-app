@@ -81,7 +81,7 @@ test.describe('Wishlist', () => {
       await page.goto('/wishlist')
       await page.waitForLoadState('networkidle')
       const count = await page.locator('ul[role="list"] li').count()
-      expect(count).toBeGreaterThanOrEqual(0) // At minimum the page loads correctly
+      expect(count).toBeGreaterThan(0) // Verify item was actually added
     }
   })
 
@@ -116,7 +116,7 @@ test.describe('Wishlist', () => {
         .first()
         .isVisible()
         .catch(() => false)
-      expect(priceText || true).toBeTruthy() // page renders correctly
+      expect(priceText).toBeTruthy() // Price should be visible
     }
   })
 

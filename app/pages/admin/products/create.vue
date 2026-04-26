@@ -1,15 +1,27 @@
 <script setup lang="ts">
-import type { CreateVariantDto } from '~/types/api'
+import type { Brand, Category, CreateVariantDto } from '~/types/api'
 
 definePageMeta({ layout: 'admin', middleware: 'admin' })
 
 const { createProduct } = useProducts()
+const { uploadImage } = useProductImages()
+const { listCategories } = useCategories()
+const { listBrands } = useBrands()
 const router = useRouter()
+
+const [{ data: categoriesData }, { data: brandsData }] = await Promise.all([
+  listCategories({ limit: 100 }),
+  listBrands({ limit: 100 }),
+])
+
+const categories = computed<Category[]>(() => categoriesData.value ?? [])
+const brands = computed<Brand[]>(() => brandsData.value ?? [])
 
 const submitting = ref(false)
 const error = ref('')
 const success = ref(false)
 const newImageUrl = ref('')
+const selectedFiles = ref<File[]>([])
 
 interface VariantForm {
   variantName: { en: string; ar?: string }
@@ -56,6 +68,11 @@ function removeImage(i: number) {
   form.images.splice(i, 1)
 }
 
+function handleImageFiles(event: Event) {
+  const input = event.target as HTMLInputElement
+  selectedFiles.value = Array.from(input.files ?? [])
+}
+
 function optionValuesToString(obj: Record<string, string>) {
   return Object.entries(obj)
     .map(([k, v]) => `${k}=${v}`)
@@ -99,6 +116,14 @@ async function submit() {
   if (apiError || !data) {
     error.value = (apiError as any)?.message ?? 'Failed to create product'
     return
+  }
+
+  for (const file of selectedFiles.value) {
+    const { error: uploadError } = await uploadImage(data.id, file)
+    if (uploadError) {
+      error.value = 'Product created, but one or more images failed to upload.'
+      return
+    }
   }
 
   success.value = true
@@ -205,10 +230,25 @@ useSeoMeta({ title: 'Add Product — Admin' })
               <div
                 class="aspect-square border-2 border-dashed border-outline-variant/40 rounded flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary-container transition-colors text-secondary hover:text-primary"
               >
-                <span class="material-symbols-outlined text-2xl">add_photo_alternate</span>
-                <span class="text-xs font-medium">Add Image</span>
+                <label
+                  class="flex flex-col items-center justify-center gap-2 cursor-pointer p-3 text-center"
+                >
+                  <span class="material-symbols-outlined text-2xl">add_photo_alternate</span>
+                  <span class="text-xs font-medium">Upload Images</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    class="sr-only"
+                    @change="handleImageFiles"
+                  />
+                </label>
               </div>
             </div>
+            <p v-if="selectedFiles.length" class="text-xs text-secondary">
+              {{ selectedFiles.length }} file{{ selectedFiles.length === 1 ? '' : 's' }} selected
+              for upload after product creation.
+            </p>
             <div>
               <label class="field-label">Or paste image URL</label>
               <div class="flex gap-2">
@@ -354,24 +394,22 @@ useSeoMeta({ title: 'Add Product — Admin' })
               Organization
             </h3>
             <div>
-              <label class="field-label">Category ID</label>
-              <input
-                v-model="form.categoryId"
-                required
-                type="text"
-                placeholder="Category UUID"
-                class="field-input"
-              />
+              <label class="field-label">Category</label>
+              <select v-model="form.categoryId" required class="field-input">
+                <option value="" disabled>Select category</option>
+                <option v-for="category in categories" :key="category.id" :value="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
             </div>
             <div>
-              <label class="field-label">Brand ID</label>
-              <input
-                v-model="form.brandId"
-                required
-                type="text"
-                placeholder="Brand UUID"
-                class="field-input"
-              />
+              <label class="field-label">Brand</label>
+              <select v-model="form.brandId" required class="field-input">
+                <option value="" disabled>Select brand</option>
+                <option v-for="brand in brands" :key="brand.id" :value="brand.id">
+                  {{ brand.name }}
+                </option>
+              </select>
             </div>
             <div class="flex items-center gap-3 pt-1">
               <input
@@ -399,10 +437,7 @@ useSeoMeta({ title: 'Add Product — Admin' })
           </button>
 
           <p v-if="error" class="text-error text-xs text-center">{{ error }}</p>
-          <p
-            v-if="success"
-            class="text-green-600 text-xs text-center flex items-center justify-center gap-1"
-          >
+          <p v-if="success" class="success-message">
             <span
               class="material-symbols-outlined text-sm"
               style="font-variation-settings: 'FILL' 1"
@@ -418,10 +453,37 @@ useSeoMeta({ title: 'Add Product — Admin' })
 
 <style scoped>
 .field-label {
-  @apply text-xs font-bold uppercase tracking-wider text-secondary block mb-1.5;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-secondary);
+  display: block;
+  margin-bottom: 0.375rem;
 }
 
 .field-input {
-  @apply w-full bg-surface-container-low border-none rounded py-2.5 px-4 text-sm outline-none focus:ring-1 focus:ring-primary transition-colors;
+  width: 100%;
+  background-color: var(--color-surface-container-low);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: box-shadow 200ms ease;
+}
+
+.field-input:focus {
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.success-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  color: var(--color-on-success-container);
+  font-size: 0.75rem;
+  text-align: center;
 }
 </style>

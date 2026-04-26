@@ -7,26 +7,50 @@ interface Props {
 }
 
 type Emits = {
-  submit: []
+  submit: [form: CreateCouponDto]
   cancel: []
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 defineEmits<Emits>()
+
+const localForm = reactive<CreateCouponDto>({
+  code: '',
+  type: 'percentage',
+  value: 0,
+  minOrderValue: 0,
+  startDate: new Date().toISOString().slice(0, 10),
+  endDate: undefined,
+  isActive: true,
+})
+
+watch(
+  () => props.form,
+  (newForm) => {
+    Object.assign(localForm, newForm)
+  },
+  { deep: true, immediate: true }
+)
 </script>
 
 <template>
   <div class="coupon-form">
     <h2 class="coupon-form__title">New Coupon</h2>
-    <form class="coupon-form__form" @submit.prevent="$emit('submit')">
+    <form class="coupon-form__form" @submit="emitForm">
       <div class="coupon-form__row">
         <div class="coupon-form__field">
           <label class="coupon-form__label">Code *</label>
-          <input :value="form.code" type="text" class="coupon-form__input" required placeholder="SUMMER20" @input="form.code = $event.target.value" />
+          <input
+            v-model="localForm.code"
+            type="text"
+            class="coupon-form__input"
+            required
+            placeholder="SUMMER20"
+          />
         </div>
         <div class="coupon-form__field">
           <label class="coupon-form__label">Type *</label>
-          <select :value="form.type" class="coupon-form__input" @change="form.type = $event.target.value">
+          <select v-model="localForm.type" class="coupon-form__input">
             <option value="percentage">Percentage</option>
             <option value="fixed">Fixed Amount</option>
             <option value="free_shipping">Free Shipping</option>
@@ -36,27 +60,37 @@ defineEmits<Emits>()
       <div class="coupon-form__row">
         <div class="coupon-form__field">
           <label class="coupon-form__label">Value</label>
-          <input :value="form.value" type="number" min="0" class="coupon-form__input" placeholder="20" @input="form.value = +$event.target.value" />
+          <input
+            v-model.number="localForm.value"
+            type="number"
+            min="0"
+            class="coupon-form__input"
+            placeholder="20"
+          />
         </div>
         <div class="coupon-form__field">
           <label class="coupon-form__label">Min Order Value</label>
-          <input :value="form.minOrderValue" type="number" min="0" class="coupon-form__input" placeholder="0" @input="form.minOrderValue = +$event.target.value" />
+          <input
+            v-model.number="localForm.minOrderValue"
+            type="number"
+            min="0"
+            class="coupon-form__input"
+            placeholder="0"
+          />
         </div>
         <div class="coupon-form__field">
           <label class="coupon-form__label">Start Date *</label>
-          <input :value="form.startDate" type="date" class="coupon-form__input" required @input="form.startDate = $event.target.value" />
+          <input v-model="localForm.startDate" type="date" class="coupon-form__input" required />
         </div>
         <div class="coupon-form__field">
           <label class="coupon-form__label">End Date</label>
-          <input :value="form.endDate" type="date" class="coupon-form__input" @input="form.endDate = $event.target.value" />
+          <input v-model="localForm.endDate" type="date" class="coupon-form__input" />
         </div>
       </div>
       <label class="coupon-form__check">
-        <input :checked="form.isActive" type="checkbox" @change="form.isActive = $event.target.checked" /> Active
+        <input v-model="localForm.isActive" type="checkbox" /> Active
       </label>
-      <button type="submit" class="coupon-form__submit" :disabled="loading">
-        Create Coupon
-      </button>
+      <button type="submit" class="coupon-form__submit" :disabled="loading">Create Coupon</button>
     </form>
   </div>
 </template>
@@ -132,7 +166,7 @@ defineEmits<Emits>()
   color: var(--color-on-surface);
 }
 
-.coupon-form__check input[type="checkbox"] {
+.coupon-form__check input[type='checkbox'] {
   cursor: pointer;
 }
 

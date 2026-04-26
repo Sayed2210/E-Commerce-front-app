@@ -5,5 +5,5 @@ useSeoMeta({ title: 'Dashboard — Admin' })
 </script>
 
 <template>
-  <AdminDashboardDashboard />
+  <Dashboard />
 </template>

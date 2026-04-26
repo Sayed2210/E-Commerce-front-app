@@ -143,7 +143,6 @@ test.describe('Checkout Page', () => {
 
       // Currently the app shows: "Stripe payment is not yet available. Please use Cash on Delivery."
       // OR it redirects to an order page if Stripe backend integration is done
-      const url = page.url()
       const errorMsg = await page
         .getByRole('alert')
         .or(page.locator('text=/not yet available|cash on delivery/i'))
@@ -151,8 +150,8 @@ test.describe('Checkout Page', () => {
         .isVisible()
         .catch(() => false)
 
-      // Either shows error (current state) or processes order
-      expect(url.includes('/orders') || errorMsg).toBeTruthy()
+      // Pass only if Stripe error is shown (expected in current state)
+      expect(errorMsg).toBeTruthy()
     })
 
     test('Stripe iframe appears when card payment is selected (if integrated)', async ({

@@ -11,7 +11,7 @@ const showForm = ref(false)
 const { createAddress } = useAddresses()
 
 function addressLabel(a: Address) {
-  const parts = [a.street, a.city, a.state, a.postalCode, a.country].filter(Boolean)
+  const parts = [a.streetAddress, a.city, a.state, a.postalCode, a.country].filter(Boolean)
   return parts.join(', ')
 }
 
@@ -60,19 +60,14 @@ async function handleAdd(dto: CreateAddressDto) {
       body="Add your first shipping address below."
     />
 
-    <CheckoutAddressForm
+    <AddressForm
       v-if="showForm"
       class="addr-picker__form"
       @submit="handleAdd"
       @cancel="showForm = false"
     />
 
-    <button
-      v-if="!showForm"
-      type="button"
-      class="addr-picker__add"
-      @click="showForm = true"
-    >
+    <button v-if="!showForm" type="button" class="addr-picker__add" @click="showForm = true">
       <span class="material-symbols-outlined" aria-hidden="true">add</span>
       Add New Address
     </button>
@@ -103,7 +98,9 @@ async function handleAdd(dto: CreateAddressDto) {
   border-radius: var(--radius-lg);
   padding: 1rem 1.25rem;
   cursor: pointer;
-  transition: background var(--transition-fast), box-shadow var(--transition-base);
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-base);
 }
 
 .addr-picker__card--selected {

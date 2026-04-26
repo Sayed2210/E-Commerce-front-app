@@ -139,7 +139,7 @@ test.describe('Product Detail Page', () => {
       .first()
       .isVisible()
       .catch(() => false)
-    expect(hasSuccess || true).toBeTruthy() // passes even if no toast — visual change
+    expect(hasSuccess).toBeTruthy() // Should see success toast or state change
   })
 
   test('product images gallery shows at least one image', async ({ page }) => {

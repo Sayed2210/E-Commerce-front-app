@@ -196,15 +196,18 @@ export type OrderStatus =
   | 'cancelled'
   | 'refunded'
 
-export type PaymentMethod = 'stripe' | 'paypal' | 'cash_on_delivery'
+export type PaymentMethod = 'stripe' | 'paypal' | 'cod'
 
 export type AddressLabel = 'home' | 'work' | 'other'
 
 export interface OrderItem {
   id: string
   productId: string
-  product: Product
+  productName: string
   variantId?: string
+  variantName?: string
+  sku?: string
+  product?: Product
   variant?: ProductVariant
   quantity: number
   unitPrice: number
@@ -213,10 +216,11 @@ export interface OrderItem {
 
 export interface Address {
   id: string
+  label?: AddressLabel
   firstName?: string
   lastName?: string
   phone?: string
-  street: string
+  streetAddress: string
   city: string
   state: string
   country: string
@@ -238,13 +242,16 @@ export interface CreateAddressDto {
 export type UpdateAddressDto = Partial<CreateAddressDto>
 
 export interface ApplyCouponResponse {
-  discountValue: number
-  type: 'percentage' | 'fixed'
-  couponId: string
+  valid: boolean
+  type: 'percentage' | 'fixed' | 'free_shipping'
+  value: number
+  maxDiscount?: number
+  minOrderValue?: number
 }
 
 export interface Order {
   id: string
+  orderNumber: string
   userId: string
   user?: User
   items: OrderItem[]
@@ -254,11 +261,29 @@ export interface Order {
   shippingAddress?: Address
   couponCode?: string
   subtotal: number
-  discount: number
-  shippingFee: number
-  total: number
+  taxAmount: number
+  shippingAmount: number
+  discountAmount: number
+  totalAmount: number
+  currency: string
+  paymentIntentId?: string
+  trackingNumber?: string
   createdAt: string
   updatedAt: string
+}
+
+export interface ValidateCheckoutDto {
+  shippingAddressId: string
+  paymentMethod: PaymentMethod
+}
+
+export interface ValidateCheckoutResponse {
+  subtotal: number
+  taxAmount: number
+  shippingAmount: number
+  discountAmount: number
+  totalAmount: number
+  currency: string
 }
 
 export interface CreateOrderDto {

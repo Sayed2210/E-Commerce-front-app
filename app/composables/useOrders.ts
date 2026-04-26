@@ -12,12 +12,13 @@ export function useOrders() {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
-  function listOrders(params?: { page?: number; limit?: number }) {
-    return useFetch<PaginatedResponse<Order>>('/orders', {
-      baseURL,
-      query: { page: params?.page ?? 1, limit: params?.limit ?? 10 },
-      headers: authH(),
-    })
+  function listOrders(params?: { page?: number; limit?: number; status?: string }) {
+    const query: Record<string, string | number> = {
+      page: params?.page ?? 1,
+      limit: params?.limit ?? 10,
+    }
+    if (params?.status) query.status = params.status
+    return useFetch<PaginatedResponse<Order>>('/orders', { baseURL, query, headers: authH() })
   }
 
   function getOrder(id: string) {

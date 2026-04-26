@@ -6,7 +6,7 @@ const emit = defineEmits<{ 'update:modelValue': [v: PaymentMethod] }>()
 
 const methods: { value: PaymentMethod; icon: string; label: string; description: string }[] = [
   {
-    value: 'cash_on_delivery',
+    value: 'cod',
     icon: 'local_shipping',
     label: 'Cash on Delivery',
     description: 'Pay when your order arrives',
@@ -73,7 +73,9 @@ const methods: { value: PaymentMethod; icon: string; label: string; description:
   border-radius: var(--radius-lg);
   padding: 1rem 1.25rem;
   cursor: pointer;
-  transition: background var(--transition-fast), box-shadow var(--transition-base);
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-base);
 }
 
 .payment__card--selected {

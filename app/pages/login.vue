@@ -21,8 +21,8 @@ async function handleSubmit() {
     return
   }
 
-  const ok = await login(form.value, false)
-  if (!ok) serverError.value = 'Invalid email or password. Please try again.'
+  const { ok, error } = await login(form.value, false)
+  if (!ok && error) serverError.value = error
 }
 </script>
 
