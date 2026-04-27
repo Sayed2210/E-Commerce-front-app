@@ -1,3 +1,4 @@
+import type { Ref } from 'vue'
 import { getAccessToken } from '~/utils/token'
 import type {
   DashboardStats,
@@ -26,11 +27,15 @@ export function useAdmin() {
     })
   }
 
-  function listUsers(params?: { page?: number; limit?: number }) {
+  function listUsers(params?: { page?: number | Ref<number>; limit?: number | Ref<number> }) {
+    const page = computed(() => unref(params?.page) ?? 1)
+    const limit = computed(() => unref(params?.limit) ?? 10)
+
     return useFetch<PaginatedResponse<User>>('/users', {
       baseURL,
-      query: { page: params?.page ?? 1, limit: params?.limit ?? 10 },
+      query: { page, limit },
       headers: authH(),
+      watch: [page, limit],
     })
   }
 
