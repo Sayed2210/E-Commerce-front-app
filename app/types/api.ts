@@ -135,6 +135,14 @@ export interface Category {
   children?: Category[]
 }
 
+export interface CategorySearchResult {
+  categories: Category[]
+  total: number
+  query: string
+  page: number
+  limit: number
+}
+
 export interface Brand {
   id: string
   name: string

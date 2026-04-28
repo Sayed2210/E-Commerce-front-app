@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Product, Category } from '~/types/api'
+import type { Product, CategorySearchResult } from '~/types/api'
 
 definePageMeta({ layout: 'default' })
 useSeoMeta({
@@ -30,7 +30,9 @@ const products = computed<Product[]>(() => {
   return d?.data ?? d ?? []
 })
 
-const categories = computed<Category[]>(() => rawCategories.value ?? [])
+const categories = computed<CategorySearchResult>(
+  () => rawCategories.value ?? { categories: [], total: 0, query: '', page: 1, limit: 8 }
+)
 
 async function quickAddToCart(productId: string) {
   await addItem({ productId, quantity: 1 })
@@ -48,7 +50,7 @@ async function quickAddToCart(productId: string) {
         subtitle="Explore our curated collections"
         link="/products"
       />
-      <HomeCategoryGrid :categories="categories" />
+      <HomeCategoryGrid :categories="categories.categories" />
     </section>
 
     <section class="section section--tinted" aria-labelledby="featured-heading">

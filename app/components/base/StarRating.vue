@@ -29,7 +29,9 @@ const ariaLabel = computed(() => {
       aria-hidden="true"
       >star</span
     >
-    <span v-if="count !== undefined" class="stars__count" aria-hidden="true">{{ count }}</span>
+    <span v-if="count !== undefined" class="stars__count" aria-hidden="true"
+      >{{ count }} reviews</span
+    >
   </div>
 </template>
 

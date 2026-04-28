@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Brand, Category } from '~/types/api'
+import type { Brand, CategorySearchResult } from '~/types/api'
 import { PRICE_RANGES } from '~/composables/useProductFilters'
 
 defineProps<{
-  categories: Category[]
+  categories: CategorySearchResult
   brands: Brand[]
   selectedCategory: string
   selectedBrand: string
@@ -40,7 +40,7 @@ const emit = defineEmits<{
     <div class="filter-group">
       <h3 id="dept-heading" class="filter-group__heading">Department</h3>
       <ul class="filter-group__list" role="list" aria-labelledby="dept-heading">
-        <li v-for="cat in categories" :key="cat.id">
+        <li v-for="cat in categories.categories" :key="cat.id">
           <button
             type="button"
             class="filter-btn"

@@ -1,4 +1,4 @@
-import type { Category } from '~/types/api'
+import type { CategorySearchResult } from '~/types/api'
 
 /** Map common category slugs to Material Symbols icon names. */
 const SLUG_ICON_MAP: Record<string, string> = {
@@ -30,7 +30,7 @@ export function useCategories() {
     const query: Record<string, number> = {}
     if (params?.page) query.page = params.page
     if (params?.limit) query.limit = params.limit
-    return useFetch<Category[]>('/categories', { baseURL, query, server: false })
+    return useFetch<CategorySearchResult>('/categories', { baseURL, query, server: false })
   }
 
   /** Return the icon name for a category slug, with a sensible fallback. */

@@ -25,7 +25,7 @@ export function useAuth() {
         return { ok: false, error: 'Access denied. Admin privileges required.' }
       }
 
-      setTokens(response.tokens.accessToken, response.tokens.refreshToken)
+      setTokens(response.accessToken, response.refreshToken)
       authStore.setUser(response.user)
       showSuccessToast('Login successful!')
 

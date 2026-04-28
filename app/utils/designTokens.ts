@@ -79,6 +79,20 @@ export const space = {
   '2xl': '3rem',
 } as const
 
+export const zIndex = {
+  nav: 'var(--z-nav)',
+  dropdown: 'var(--z-dropdown)',
+  modal: 'var(--z-modal)',
+  popover: 'var(--z-popover)',
+  toast: 'var(--z-toast)',
+} as const
+
+export const shadow = {
+  sm: '0 1px 2px rgba(0, 0, 0, 0.05)',
+  md: '0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)',
+  lg: '0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05)',
+} as const
+
 export type ColorToken =
   | 'primary'
   | 'primaryContainer'
@@ -131,6 +145,8 @@ export type ColorToken =
 export type FontToken = keyof typeof font
 export type RadiusToken = keyof typeof radius
 export type SpaceToken = keyof typeof space
+export type ZIndexToken = keyof typeof zIndex
+export type ShadowToken = keyof typeof shadow
 
-export const tokens = { color, font, radius, space } as const
+export const tokens = { color, font, radius, space, zIndex, shadow } as const
 export type Tokens = typeof tokens

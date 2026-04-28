@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Brand, Product, Category } from '~/types/api'
+import type { Brand, Product, CategorySearchResult } from '~/types/api'
 
 definePageMeta({ layout: 'default' })
 useSeoMeta({
@@ -46,8 +46,8 @@ const selectedMaxPrice = computed(() => {
 
 const [{ data: rawCategories }, { data: rawBrands }, { data, pending, refresh }] =
   await Promise.all([
-    listCategories({ limit: 20 }),
-    listBrands({ limit: 50 }),
+    listCategories({ limit: 8 }),
+    listBrands({ limit: 8 }),
     listProducts({
       page: currentPage,
       limit: 24,
@@ -59,7 +59,9 @@ const [{ data: rawCategories }, { data: rawBrands }, { data, pending, refresh }]
     }),
   ])
 
-const categories = computed<Category[]>(() => rawCategories.value ?? [])
+const categories = computed<CategorySearchResult>(
+  () => rawCategories.value ?? { categories: [], total: 0, query: '', page: 1, limit: 8 }
+)
 const brands = computed<Brand[]>(() => rawBrands.value ?? [])
 
 const products = computed<Product[]>(() => {

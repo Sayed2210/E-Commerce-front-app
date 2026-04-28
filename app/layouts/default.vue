@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Category } from '~/types/api'
+import type { CategorySearchResult } from '~/types/api'
 
 const { isAuthenticated, logout } = useAuth()
 const cartStore = useCartStore()
@@ -18,7 +18,9 @@ function closeUserMenu() {
 
 const { listCategories, categoryIcon } = useCategories()
 const { data: rawCategories } = await listCategories({ limit: 20 })
-const categories = computed<Category[]>(() => rawCategories.value ?? [])
+const categories = computed<CategorySearchResult>(
+  () => rawCategories.value ?? { categories: [], total: 0, query: '', page: 1, limit: 20 }
+)
 
 function doSearch() {
   const q = searchQuery.value.trim()
@@ -141,7 +143,7 @@ onMounted(async () => {
       <div class="nav__cats" aria-label="Category navigation">
         <div class="nav__cats-inner" role="list">
           <NuxtLink
-            v-for="cat in categories"
+            v-for="cat in categories.categories"
             :key="cat.slug"
             :to="`/products?category=${cat.slug}`"
             class="nav__cat"
