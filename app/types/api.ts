@@ -293,6 +293,14 @@ export interface CreateOrderDto {
   paymentToken?: string
 }
 
+export interface UpdateOrderStatusDto {
+  status: OrderStatus
+}
+
+export interface ApplyCouponDto {
+  code: string
+}
+
 // ── Wishlist ──────────────────────────────────────────────────────────────
 
 export interface WishlistItem {
@@ -484,4 +492,8 @@ export interface NewsletterStats {
   totalSubscribers: number
   activeSubscribers: number
   unsubscribed: number
+}
+
+export interface UnsubscribeDto {
+  email: string
 }

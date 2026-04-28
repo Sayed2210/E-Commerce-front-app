@@ -3,9 +3,18 @@ import { getAccessToken, getRefreshToken, setTokens, clearTokens } from './token
 /**
  * Create an authenticated API client with automatic token refresh
  */
-export function useApiClient() {
+export function useApiClient(options?: { onUnauthorized?: () => void | Promise<void> }) {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
+
+  async function handleUnauthorized() {
+    clearTokens()
+    if (options?.onUnauthorized) {
+      await options.onUnauthorized()
+    } else {
+      await navigateTo('/login')
+    }
+  }
 
   /**
    * Private $fetch instance with interceptors
@@ -39,12 +48,10 @@ export function useApiClient() {
             }
           } catch (error) {
             console.error('Refresh token failed:', error)
-            clearTokens()
-            await navigateTo('/login')
+            await handleUnauthorized()
           }
         } else {
-          clearTokens()
-          await navigateTo('/login')
+          await handleUnauthorized()
         }
       }
     },
