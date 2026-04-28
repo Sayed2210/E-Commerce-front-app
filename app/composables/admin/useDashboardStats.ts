@@ -16,6 +16,7 @@ interface OrderStatusItem {
 }
 
 export async function useDashboardStats() {
+  const { t, locale } = useI18n()
   const { getDashboardStats } = useAdmin()
   const { data, pending } = await getDashboardStats()
 
@@ -24,7 +25,7 @@ export async function useDashboardStats() {
   // Transform stats into KPI cards
   const kpis = computed<KPICard[]>(() => [
     {
-      label: 'Total Revenue',
+      label: t('admin.dashboardPage.totalRevenue'),
       value: stats.value ? `$${Number(stats.value.totalRevenue ?? 0).toLocaleString()}` : '—',
       icon: 'payments',
       iconBg: 'bg-orange-50',
@@ -32,7 +33,7 @@ export async function useDashboardStats() {
       trend: 12.5,
     },
     {
-      label: 'Total Orders',
+      label: t('admin.dashboardPage.totalOrders'),
       value: stats.value ? Number(stats.value.totalOrders ?? 0).toLocaleString() : '—',
       icon: 'shopping_cart',
       iconBg: 'bg-blue-50',
@@ -40,7 +41,7 @@ export async function useDashboardStats() {
       trend: 8.1,
     },
     {
-      label: 'Customers',
+      label: t('admin.dashboardPage.customers'),
       value: stats.value ? Number(stats.value.totalUsers ?? 0).toLocaleString() : '—',
       icon: 'group',
       iconBg: 'bg-purple-50',
@@ -48,7 +49,7 @@ export async function useDashboardStats() {
       trend: 3.2,
     },
     {
-      label: 'Products',
+      label: t('admin.dashboardPage.products'),
       value: stats.value ? Number(stats.value.totalProducts ?? 0).toLocaleString() : '—',
       icon: 'inventory_2',
       iconBg: 'bg-green-50',
@@ -102,7 +103,7 @@ export async function useDashboardStats() {
 
   // Format date helper
   function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(locale.value, {
       month: 'short',
       day: 'numeric',
     })

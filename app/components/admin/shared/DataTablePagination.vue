@@ -31,25 +31,27 @@ function goToNext() {
 
 <template>
   <div class="flex items-center justify-between px-6 py-4 border-t border-outline-variant/10">
-    <p class="text-xs text-secondary">Page {{ currentPage }} of {{ totalPages }}</p>
+    <p class="text-xs text-secondary">
+      {{ $t('admin.common.page', { current: currentPage, total: totalPages }) }}
+    </p>
     <div class="flex gap-2">
       <button
         type="button"
         :disabled="!canGoPrev || loading"
         class="px-3 py-1.5 text-xs rounded border border-outline-variant/20 disabled:opacity-40 hover:bg-surface-container-low transition-colors"
-        aria-label="Previous page"
+        :aria-label="$t('admin.common.previousPageAria')"
         @click="goToPrev"
       >
-        Prev
+        {{ $t('admin.common.prev') }}
       </button>
       <button
         type="button"
         :disabled="!canGoNext || loading"
         class="px-3 py-1.5 text-xs rounded border border-outline-variant/20 disabled:opacity-40 hover:bg-surface-container-low transition-colors"
-        aria-label="Next page"
+        :aria-label="$t('admin.common.nextPageAria')"
         @click="goToNext"
       >
-        Next
+        {{ $t('admin.common.next') }}
       </button>
     </div>
   </div>

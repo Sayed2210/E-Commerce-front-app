@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useAddresses } from '~/composables/useAddresses'
 import type { Address, CreateAddressDto } from '~/types/api'
-import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
 
 const { getAddresses, createAddress, setDefault, deleteAddress } = useAddresses()
+const { showError, showSuccess } = useToasts()
 
 const { data, refresh } = await getAddresses()
 const addresses = computed<Address[]>(() => data.value ?? [])
@@ -12,6 +12,8 @@ const showForm = ref(false)
 const savingId = ref<string | null>(null)
 const deletingId = ref<string | null>(null)
 
+const { t } = useI18n()
+
 function addressLine(a: Address) {
   return [a.streetAddress, a.city, a.state, a.postalCode, a.country].filter(Boolean).join(', ')
 }
@@ -19,10 +21,10 @@ function addressLine(a: Address) {
 async function handleAdd(dto: CreateAddressDto) {
   const { error } = await createAddress(dto)
   if (error) {
-    showErrorToast(error)
+    showError(error)
     return
   }
-  showSuccessToast('Address added.')
+  showSuccess(t('toast.addressAdded'))
   showForm.value = false
   await refresh()
 }
@@ -32,10 +34,10 @@ async function handleSetDefault(id: string) {
   const { error } = await setDefault(id)
   savingId.value = null
   if (error) {
-    showErrorToast(error)
+    showError(error)
     return
   }
-  showSuccessToast('Default address updated.')
+  showSuccess(t('toast.defaultAddressUpdated'))
   await refresh()
 }
 
@@ -44,10 +46,10 @@ async function handleDelete(id: string) {
   const { error } = await deleteAddress(id)
   deletingId.value = null
   if (error) {
-    showErrorToast(error)
+    showError(error)
     return
   }
-  showSuccessToast('Address removed.')
+  showSuccess(t('toast.addressRemoved'))
   await refresh()
 }
 </script>
@@ -55,10 +57,10 @@ async function handleDelete(id: string) {
 <template>
   <section class="addr-tab">
     <div class="addr-tab__head">
-      <h2 class="addr-tab__title">Shipping Addresses</h2>
+      <h2 class="addr-tab__title">{{ $t('account.shippingAddresses') }}</h2>
       <button v-if="!showForm" type="button" class="addr-tab__add-btn" @click="showForm = true">
         <span class="material-symbols-outlined" aria-hidden="true">add</span>
-        Add Address
+        {{ $t('account.addAddress') }}
       </button>
     </div>
 
@@ -76,7 +78,7 @@ async function handleDelete(id: string) {
             {{ [addr.firstName, addr.lastName].filter(Boolean).join(' ') }}
           </p>
           <p class="addr-tab__line">{{ addressLine(addr) }}</p>
-          <span v-if="addr.isDefault" class="addr-tab__badge">Default</span>
+          <span v-if="addr.isDefault" class="addr-tab__badge">{{ $t('common.default') }}</span>
         </div>
         <div class="addr-tab__actions">
           <button
@@ -86,7 +88,7 @@ async function handleDelete(id: string) {
             :disabled="savingId === addr.id"
             @click="handleSetDefault(addr.id)"
           >
-            {{ savingId === addr.id ? '…' : 'Set Default' }}
+            {{ savingId === addr.id ? '…' : $t('account.setDefault') }}
           </button>
           <button
             type="button"
@@ -94,7 +96,7 @@ async function handleDelete(id: string) {
             :disabled="deletingId === addr.id"
             @click="handleDelete(addr.id)"
           >
-            {{ deletingId === addr.id ? '…' : 'Remove' }}
+            {{ deletingId === addr.id ? '…' : $t('account.remove') }}
           </button>
         </div>
       </li>
@@ -103,8 +105,8 @@ async function handleDelete(id: string) {
     <AppEmptyState
       v-else-if="!showForm"
       icon="location_on"
-      title="No saved addresses"
-      body="Add a shipping address to speed up checkout."
+      :title="$t('account.noSavedAddresses')"
+      :body="$t('account.addAddressBody')"
     />
   </section>
 </template>

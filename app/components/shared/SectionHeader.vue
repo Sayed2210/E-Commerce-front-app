@@ -7,7 +7,7 @@ withDefaults(
     link?: string
     linkText?: string
   }>(),
-  { linkText: 'View all' }
+  {}
 )
 </script>
 
@@ -21,9 +21,9 @@ withDefaults(
       v-if="link"
       :to="link"
       class="section-header__link"
-      :aria-label="`${linkText} — ${title}`"
+      :aria-label="`${linkText || $t('common.viewAll')} — ${title}`"
     >
-      {{ linkText }}
+      {{ linkText || $t('common.viewAll') }}
       <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
     </NuxtLink>
   </div>

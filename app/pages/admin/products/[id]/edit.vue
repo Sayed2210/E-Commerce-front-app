@@ -3,6 +3,7 @@ import type { Brand, Category, Product, UpdateProductDto } from '~/types/api'
 
 definePageMeta({ layout: 'admin', middleware: 'admin' })
 
+const { t } = useI18n()
 const route = useRoute()
 const productId = computed(() => route.params.id as string)
 
@@ -94,7 +95,7 @@ async function submit() {
   const { error: updateError } = await updateProduct(productId.value, dto)
 
   if (updateError) {
-    error.value = 'Failed to update product.'
+    error.value = t('admin.productsPage.failedUpdate')
     submitting.value = false
     return
   }
@@ -103,7 +104,7 @@ async function submit() {
     uploading.value = true
     for (const file of selectedFiles.value) {
       const { error: uploadError } = await uploadImage(productId.value, file)
-      if (uploadError) error.value = 'Product updated, but one or more images failed to upload.'
+      if (uploadError) error.value = t('admin.productsPage.imageUploadFailUpdate')
     }
     uploading.value = false
   }
@@ -114,22 +115,24 @@ async function submit() {
   await refresh()
 }
 
-useSeoMeta({ title: 'Edit Product — Admin' })
+useSeoMeta({ title: `${t('admin.productsPage.editProduct')} — ${t('admin.panel')}` })
 </script>
 
 <template>
   <div class="space-y-8 max-w-5xl">
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-bold font-headline text-on-surface">Edit Product</h2>
-        <p class="text-secondary text-sm">Update product details and image gallery</p>
+        <h2 class="text-2xl font-bold font-headline text-on-surface">
+          {{ $t('admin.productsPage.editProduct') }}
+        </h2>
+        <p class="text-secondary text-sm">{{ $t('admin.productsPage.editSubtitle') }}</p>
       </div>
       <NuxtLink
         to="/admin/products"
         class="text-secondary text-sm hover:text-on-surface flex items-center gap-1 transition-colors"
       >
         <span class="material-symbols-outlined text-sm">arrow_back</span>
-        Back to Inventory
+        {{ $t('admin.productsPage.backToInventory') }}
       </NuxtLink>
     </div>
 
@@ -142,22 +145,22 @@ useSeoMeta({ title: 'Edit Product — Admin' })
             <h3
               class="font-bold text-on-surface font-headline border-b border-outline-variant/10 pb-3"
             >
-              Product Details
+              {{ $t('admin.productsPage.productDetails') }}
             </h3>
             <div>
-              <label class="field-label">Product Name (English)</label>
+              <label class="field-label">{{ $t('admin.productsPage.productNameEn') }}</label>
               <input v-model="form.name.en" required type="text" class="field-input" />
             </div>
             <div>
-              <label class="field-label">Product Name (Arabic)</label>
+              <label class="field-label">{{ $t('admin.productsPage.productNameAr') }}</label>
               <input v-model="form.name.ar" type="text" dir="rtl" class="field-input" />
             </div>
             <div>
-              <label class="field-label">Description (English)</label>
+              <label class="field-label">{{ $t('admin.productsPage.descriptionEn') }}</label>
               <textarea v-model="form.description.en" rows="4" class="field-input resize-none" />
             </div>
             <div>
-              <label class="field-label">Description (Arabic)</label>
+              <label class="field-label">{{ $t('admin.productsPage.descriptionAr') }}</label>
               <textarea
                 v-model="form.description.ar"
                 rows="3"
@@ -171,7 +174,7 @@ useSeoMeta({ title: 'Edit Product — Admin' })
             <h3
               class="font-bold text-on-surface font-headline border-b border-outline-variant/10 pb-3"
             >
-              Image Gallery
+              {{ $t('admin.productsPage.imageGallery') }}
             </h3>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div
@@ -189,14 +192,14 @@ useSeoMeta({ title: 'Edit Product — Admin' })
                     :disabled="i === 0"
                     @click="setPrimary(i)"
                   >
-                    Primary
+                    {{ $t('admin.productsPage.primary') }}
                   </button>
                   <button
                     type="button"
                     class="gallery-btn gallery-btn--danger"
                     @click="removeImage(i)"
                   >
-                    Remove
+                    {{ $t('admin.productsPage.remove') }}
                   </button>
                 </div>
               </div>
@@ -204,7 +207,7 @@ useSeoMeta({ title: 'Edit Product — Admin' })
                 class="aspect-square border-2 border-dashed border-outline-variant/40 rounded flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary-container transition-colors text-secondary hover:text-primary p-3 text-center"
               >
                 <span class="material-symbols-outlined text-2xl">add_photo_alternate</span>
-                <span class="text-xs font-medium">Upload Images</span>
+                <span class="text-xs font-medium">{{ $t('admin.productsPage.uploadImages') }}</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -215,8 +218,7 @@ useSeoMeta({ title: 'Edit Product — Admin' })
               </label>
             </div>
             <p v-if="selectedFiles.length" class="text-xs text-secondary">
-              {{ selectedFiles.length }} file{{ selectedFiles.length === 1 ? '' : 's' }} selected
-              for upload on save.
+              {{ $t('admin.productsPage.filesSelectedSave', { count: selectedFiles.length }) }}
             </p>
           </div>
         </div>
@@ -226,10 +228,10 @@ useSeoMeta({ title: 'Edit Product — Admin' })
             <h3
               class="font-bold text-on-surface font-headline border-b border-outline-variant/10 pb-3"
             >
-              Pricing & Stock
+              {{ $t('admin.productsPage.pricingStock') }}
             </h3>
             <div>
-              <label class="field-label">Base Price ($)</label>
+              <label class="field-label">{{ $t('admin.productsPage.basePrice') }}</label>
               <input
                 v-model.number="form.basePrice"
                 required
@@ -240,7 +242,7 @@ useSeoMeta({ title: 'Edit Product — Admin' })
               />
             </div>
             <div>
-              <label class="field-label">Inventory Quantity</label>
+              <label class="field-label">{{ $t('admin.productsPage.inventoryQuantity') }}</label>
               <input
                 v-model.number="form.inventoryQuantity"
                 required
@@ -255,21 +257,21 @@ useSeoMeta({ title: 'Edit Product — Admin' })
             <h3
               class="font-bold text-on-surface font-headline border-b border-outline-variant/10 pb-3"
             >
-              Organization
+              {{ $t('admin.productsPage.organization') }}
             </h3>
             <div>
-              <label class="field-label">Category</label>
+              <label class="field-label">{{ $t('admin.productsPage.category') }}</label>
               <select v-model="form.categoryId" required class="field-input">
-                <option value="" disabled>Select category</option>
+                <option value="" disabled>{{ $t('admin.productsPage.selectCategory') }}</option>
                 <option v-for="category in categories" :key="category.id" :value="category.id">
                   {{ category.name }}
                 </option>
               </select>
             </div>
             <div>
-              <label class="field-label">Brand</label>
+              <label class="field-label">{{ $t('admin.productsPage.brand') }}</label>
               <select v-model="form.brandId" required class="field-input">
-                <option value="" disabled>Select brand</option>
+                <option value="" disabled>{{ $t('admin.productsPage.selectBrand') }}</option>
                 <option v-for="brand in brands" :key="brand.id" :value="brand.id">
                   {{ brand.name }}
                 </option>
@@ -282,9 +284,9 @@ useSeoMeta({ title: 'Edit Product — Admin' })
                 type="checkbox"
                 class="w-4 h-4 accent-primary-container rounded"
               />
-              <label for="isActive" class="text-sm text-on-surface font-medium cursor-pointer"
-                >Active</label
-              >
+              <label for="isActive" class="text-sm text-on-surface font-medium cursor-pointer">{{
+                $t('admin.productsPage.active')
+              }}</label>
             </div>
           </div>
 
@@ -296,11 +298,17 @@ useSeoMeta({ title: 'Edit Product — Admin' })
             <span class="material-symbols-outlined text-sm">{{
               submitting || uploading ? 'hourglass_empty' : 'save'
             }}</span>
-            {{ submitting || uploading ? 'Saving...' : 'Save Product' }}
+            {{
+              submitting || uploading
+                ? $t('admin.productsPage.saving')
+                : $t('admin.productsPage.saveProduct')
+            }}
           </button>
 
           <p v-if="error" class="text-error text-xs text-center">{{ error }}</p>
-          <p v-if="success" class="success-message">Product updated.</p>
+          <p v-if="success" class="success-message">
+            {{ $t('admin.productsPage.productUpdated') }}
+          </p>
         </div>
       </div>
     </form>

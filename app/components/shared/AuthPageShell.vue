@@ -1,6 +1,8 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 defineProps<{
-  label: string
+  label?: string
   cardWidth?: string
 }>()
 </script>
@@ -13,8 +15,8 @@ defineProps<{
     </div>
 
     <header class="auth-nav" role="banner">
-      <NuxtLink to="/" class="auth-nav__logo" aria-label="ArchitectMarket — home">
-        ArchitectMarket
+      <NuxtLink to="/" class="auth-nav__logo" :aria-label="t('brand.name') + ' — home'">
+        {{ t('brand.name') }}
       </NuxtLink>
     </header>
 

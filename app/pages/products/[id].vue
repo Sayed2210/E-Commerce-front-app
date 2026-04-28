@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Product, ProductVariant, Review } from '~/types/api'
 
+const { t, locale } = useI18n()
+
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
@@ -121,7 +123,7 @@ async function submitReview() {
 }
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString(locale.value, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -129,26 +131,20 @@ function formatDate(date: string) {
 }
 
 useSeoMeta({
-  title: computed(() => productName.value || 'Product'),
-  description: computed(
-    () =>
-      productDescription.value?.slice(0, 155) ||
-      'View product details, pricing, and reviews on ArchitectMarket.'
-  ),
-  ogTitle: computed(() => `${productName.value || 'Product'} — ArchitectMarket`),
-  ogDescription: computed(
-    () =>
-      productDescription.value?.slice(0, 155) ||
-      'View product details, pricing, and reviews on ArchitectMarket.'
-  ),
+  title: () => productName.value || t('product.titleFallback'),
+  description: () =>
+    productDescription.value?.slice(0, 155) || t('product.metaDescriptionFallback'),
+  ogTitle: () => `${productName.value || t('product.titleFallback')} — ArchitectMarket`,
+  ogDescription: () =>
+    productDescription.value?.slice(0, 155) || t('product.metaDescriptionFallback'),
   ogType: 'product',
-  ogImage: computed(() => product.value?.images?.[0] || '/og-products.jpg'),
+  ogImage: () => product.value?.images?.[0] || '/og-products.jpg',
   twitterCard: 'summary_large_image',
 })
 
 const { origin } = useRequestURL()
 useHead({
-  link: [{ rel: 'canonical', href: computed(() => `${origin}/products/${id}`) }],
+  link: [{ rel: 'canonical', href: () => `${origin}/products/${id}` }],
   script: [
     {
       type: 'application/ld+json',
@@ -189,13 +185,13 @@ useHead({
       <NuxtLink
         to="/"
         class="text-[10px] font-medium tracking-wide uppercase text-secondary hover:text-primary transition-colors"
-        >Home</NuxtLink
+        >{{ $t('common.home') }}</NuxtLink
       >
       <span class="material-symbols-outlined text-secondary text-[12px]">chevron_right</span>
       <NuxtLink
         to="/products"
         class="text-[10px] font-medium tracking-wide uppercase text-secondary hover:text-primary transition-colors"
-        >Products</NuxtLink
+        >{{ $t('common.products') }}</NuxtLink
       >
       <span class="material-symbols-outlined text-secondary text-[12px]">chevron_right</span>
       <span class="text-[10px] font-medium tracking-wide uppercase text-on-surface">{{
@@ -275,10 +271,8 @@ useHead({
               >
             </div>
             <span class="text-xs text-secondary"
-              >{{ product.averageRating?.toFixed(1) ?? '0.0' }} ({{
-                product.reviewCount ?? 0
-              }}
-              reviews)</span
+              >{{ product.averageRating?.toFixed(1) ?? '0.0' }} ({{ product.reviewCount ?? 0 }}
+              {{ product.reviewCount === 1 ? $t('product.review') : $t('product.reviews') }})</span
             >
           </div>
         </div>
@@ -326,7 +320,9 @@ useHead({
         <!-- Quantity + Add to cart -->
         <div class="space-y-3">
           <div class="flex items-center gap-3">
-            <label class="text-xs font-bold uppercase tracking-widest text-secondary">Qty</label>
+            <label class="text-xs font-bold uppercase tracking-widest text-secondary">{{
+              $t('common.qty')
+            }}</label>
             <div class="flex items-center border border-outline-variant/30 rounded">
               <button
                 type="button"
@@ -345,7 +341,7 @@ useHead({
               </button>
             </div>
             <span class="text-xs text-secondary micro-chip bg-surface-container-low">
-              {{ product.inventoryQuantity }} in stock
+              {{ $t('product.inStockCount', { count: product.inventoryQuantity }) }}
             </span>
           </div>
 
@@ -357,7 +353,7 @@ useHead({
               @click="addToCart"
             >
               <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
-              {{ addingToCart ? 'Adding…' : 'Add to Cart' }}
+              {{ addingToCart ? $t('product.adding') : $t('product.addToCart') }}
             </button>
             <button
               type="button"
@@ -390,7 +386,7 @@ useHead({
           <span
             v-if="selectedVariant.sku"
             class="micro-chip bg-surface-container-low text-secondary"
-            >SKU: {{ selectedVariant.sku }}</span
+            >{{ $t('product.sku') }}: {{ selectedVariant.sku }}</span
           >
         </div>
       </div>
@@ -399,10 +395,10 @@ useHead({
       <div class="lg:col-span-3">
         <div class="bg-surface-container-lowest rounded p-6 space-y-4 sticky top-24">
           <p class="text-2xl font-bold text-on-surface font-headline">${{ effectivePrice }}</p>
-          <p class="text-xs text-secondary">FREE delivery on orders over $99</p>
+          <p class="text-xs text-secondary">{{ $t('product.freeDeliveryOver') }}</p>
           <div class="flex items-center gap-2 text-xs">
             <span class="material-symbols-outlined text-sm text-green-600">check_circle</span>
-            <span class="text-green-700 font-semibold">In Stock</span>
+            <span class="text-green-700 font-semibold">{{ $t('product.inStockLabel') }}</span>
           </div>
           <button
             type="button"
@@ -410,21 +406,23 @@ useHead({
             class="w-full bg-primary-container text-on-primary-container py-3 rounded font-bold text-sm hover:bg-primary hover:text-on-primary transition-all disabled:opacity-60"
             @click="addToCart"
           >
-            {{ addingToCart ? 'Adding…' : 'Add to Cart' }}
+            {{ addingToCart ? $t('product.adding') : $t('product.addToCart') }}
           </button>
           <button
             type="button"
             class="w-full border border-outline-variant/30 text-on-surface py-3 rounded font-bold text-sm hover:bg-surface-container-low transition-all"
             @click="buyNow"
           >
-            Buy Now
+            {{ $t('product.buyNow') }}
           </button>
           <div class="text-xs text-secondary space-y-1 pt-2 border-t border-outline-variant/15">
             <p class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">lock</span> Secure checkout
+              <span class="material-symbols-outlined text-sm">lock</span>
+              {{ $t('product.secureCheckout') }}
             </p>
             <p class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">autorenew</span> 30-day returns
+              <span class="material-symbols-outlined text-sm">autorenew</span>
+              {{ $t('product.returns30Day') }}
             </p>
           </div>
         </div>
@@ -434,20 +432,22 @@ useHead({
     <!-- Reviews section -->
     <section v-if="product" class="mt-16 border-t border-outline-variant/15 pt-12">
       <div class="flex items-end justify-between mb-8">
-        <h2 class="text-2xl font-bold text-on-surface font-headline">Customer Reviews</h2>
+        <h2 class="text-2xl font-bold text-on-surface font-headline">
+          {{ $t('product.customerReviews') }}
+        </h2>
         <button
           v-if="isAuthenticated"
           type="button"
           class="bg-primary-container text-on-primary-container px-5 py-2 rounded text-sm font-semibold hover:bg-primary hover:text-on-primary transition-all"
           @click="showReviewForm = !showReviewForm"
         >
-          Write a Review
+          {{ $t('product.writeReview') }}
         </button>
       </div>
 
       <!-- Review form -->
       <div v-if="showReviewForm" class="bg-surface-container-lowest rounded p-6 mb-8 space-y-4">
-        <h3 class="font-bold text-on-surface">Your Review</h3>
+        <h3 class="font-bold text-on-surface">{{ $t('product.yourReview') }}</h3>
         <div class="flex gap-2">
           <button
             v-for="s in 5"
@@ -464,12 +464,12 @@ useHead({
         <input
           v-model="newReview.title"
           type="text"
-          placeholder="Review title"
+          :placeholder="$t('product.reviewTitlePlaceholder')"
           class="w-full bg-surface-container-low border-none rounded py-2 px-4 text-sm outline-none focus:ring-1 focus:ring-primary"
         />
         <textarea
           v-model="newReview.comment"
-          placeholder="Share your experience…"
+          :placeholder="$t('product.reviewCommentPlaceholder')"
           rows="4"
           class="w-full bg-surface-container-low border-none rounded py-2 px-4 text-sm outline-none focus:ring-1 focus:ring-primary resize-none"
         ></textarea>
@@ -479,14 +479,14 @@ useHead({
             class="bg-primary-container text-on-primary-container px-6 py-2 rounded text-sm font-semibold hover:bg-primary hover:text-on-primary transition-all"
             @click="submitReview"
           >
-            Submit
+            {{ $t('product.submit') }}
           </button>
           <button
             type="button"
             class="text-sm text-secondary hover:text-on-surface transition-colors"
             @click="showReviewForm = false"
           >
-            Cancel
+            {{ $t('product.cancel') }}
           </button>
         </div>
       </div>
@@ -524,10 +524,12 @@ useHead({
                 <span
                   v-if="review.isVerifiedPurchase"
                   class="micro-chip bg-surface-container-low text-secondary"
-                  >Verified</span
+                  >{{ $t('product.verified') }}</span
                 >
               </div>
-              <h4 class="font-bold text-on-surface text-sm">{{ review.title ?? 'Review' }}</h4>
+              <h4 class="font-bold text-on-surface text-sm">
+                {{ review.title ?? $t('product.reviewFallback') }}
+              </h4>
             </div>
             <span class="text-xs text-secondary">{{ formatDate(review.createdAt) }}</span>
           </div>
@@ -538,7 +540,7 @@ useHead({
         </div>
       </div>
       <p v-else class="text-secondary text-sm">
-        No reviews yet. Be the first to review this product!
+        {{ $t('product.noReviewsYet') }}
       </p>
     </section>
   </div>

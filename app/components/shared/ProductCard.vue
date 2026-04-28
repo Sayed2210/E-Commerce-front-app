@@ -17,6 +17,8 @@ const emit = defineEmits<{
   'toggle-wish': [productId: string]
 }>()
 
+const { t } = useI18n()
+
 const isGrid = computed(() => props.variant === 'grid')
 
 const name = computed(() => {
@@ -38,15 +40,19 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
     :aria-label="`${name}, $${product.basePrice}`"
   >
     <div class="card__img-wrap" :class="isGrid ? 'card__img-wrap--grid' : 'card__img-wrap--list'">
-      <span v-if="isLowStock" class="card__badge card__badge--warn" aria-label="Low stock">
-        Low Stock
+      <span
+        v-if="isLowStock"
+        class="card__badge card__badge--warn"
+        :aria-label="$t('products.lowStock')"
+      >
+        {{ $t('products.lowStock') }}
       </span>
       <span
         v-else-if="isOutOfStock"
         class="card__badge card__badge--error"
-        aria-label="Out of stock"
+        :aria-label="$t('products.soldOut')"
       >
-        Sold Out
+        {{ $t('products.soldOut') }}
       </span>
 
       <img
@@ -65,7 +71,7 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
         v-if="isGrid && wishlist"
         type="button"
         class="card__wish"
-        :aria-label="`Add ${name} to wishlist`"
+        :aria-label="t('products.addToWishlistAria', { name })"
         @click.prevent="emit('toggle-wish', product.id)"
       >
         <span class="material-symbols-outlined" aria-hidden="true">favorite_border</span>
@@ -95,14 +101,14 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
           type="button"
           class="card__cta"
           :class="isGrid ? 'card__cta--icon' : 'card__cta--full'"
-          :aria-label="isGrid ? `Add ${name} to cart` : undefined"
+          :aria-label="isGrid ? t('products.addToCartAria', { name }) : undefined"
           :disabled="isOutOfStock"
           @click.prevent="emit('add-to-cart', product.id)"
         >
           <span v-if="isGrid" class="material-symbols-outlined" aria-hidden="true">
             add_shopping_cart
           </span>
-          <template v-else>Add to Cart</template>
+          <template v-else>{{ $t('products.addToCart') }}</template>
         </button>
       </div>
     </div>

@@ -12,12 +12,12 @@ defineEmits<{ 'add-to-cart': [productId: string] }>()
 <template>
   <SectionHeader
     id="featured-heading"
-    title="Featured Products"
-    subtitle="Editor's picks for the season"
+    :title="$t('home.featuredTitle')"
+    :subtitle="$t('home.featuredSubtitle')"
     link="/products"
   />
 
-  <ul class="featured__grid" role="list" aria-label="Featured products">
+  <ul class="featured__grid" role="list" :aria-label="$t('home.featuredAriaLabel')">
     <template v-if="loading">
       <li v-for="i in 8" :key="i"><ProductSkeleton /></li>
     </template>
@@ -34,7 +34,7 @@ defineEmits<{ 'add-to-cart': [productId: string] }>()
 
   <div v-if="!loading" class="featured__footer">
     <NuxtLink to="/products" class="featured__see-all">
-      View all products
+      {{ $t('home.viewAllProducts') }}
       <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
     </NuxtLink>
   </div>

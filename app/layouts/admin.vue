@@ -1,42 +1,43 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const { logout, user } = useAuth()
 const route = useRoute()
 
 useSeoMeta({ robots: 'noindex, nofollow' })
 
-const navLinks = [
-  { to: '/admin', icon: 'dashboard', label: 'Dashboard' },
-  { to: '/admin/products', icon: 'inventory_2', label: 'Inventory' },
-  { to: '/admin/categories', icon: 'category', label: 'Categories' },
-  { to: '/admin/brands', icon: 'business', label: 'Brands' },
-  { to: '/admin/tags', icon: 'sell', label: 'Tags' },
-  { to: '/admin/orders', icon: 'shopping_bag', label: 'Orders' },
-  { to: '/admin/staff', icon: 'admin_panel_settings', label: 'Staff' },
-  { to: '/admin/users', icon: 'group', label: 'Customers' },
-  { to: '/admin/analytics', icon: 'leaderboard', label: 'Analytics' },
-  { to: '/admin/coupons', icon: 'local_offer', label: 'Coupons' },
-  { to: '/admin/returns', icon: 'assignment_return', label: 'Returns' },
-  { to: '/admin/newsletter', icon: 'mail', label: 'Newsletter' },
-  { to: '/admin/search', icon: 'manage_search', label: 'Search' },
-]
+const navLinks = computed(() => [
+  { to: '/admin', icon: 'dashboard', label: t('admin.dashboard') },
+  { to: '/admin/products', icon: 'inventory_2', label: t('admin.inventory') },
+  { to: '/admin/categories', icon: 'category', label: t('admin.categories') },
+  { to: '/admin/brands', icon: 'business', label: t('admin.brands') },
+  { to: '/admin/tags', icon: 'sell', label: t('admin.tags') },
+  { to: '/admin/orders', icon: 'shopping_bag', label: t('admin.orders') },
+  { to: '/admin/staff', icon: 'admin_panel_settings', label: t('admin.staff') },
+  { to: '/admin/users', icon: 'group', label: t('admin.customers') },
+  { to: '/admin/analytics', icon: 'leaderboard', label: t('admin.analytics') },
+  { to: '/admin/coupons', icon: 'local_offer', label: t('admin.coupons') },
+  { to: '/admin/returns', icon: 'assignment_return', label: t('admin.returns') },
+  { to: '/admin/newsletter', icon: 'mail', label: t('admin.newsletter') },
+  { to: '/admin/search', icon: 'manage_search', label: t('admin.search') },
+])
 
-const pageTitles: Record<string, string> = {
-  '/admin': 'Dashboard',
-  '/admin/products': 'Inventory',
-  '/admin/categories': 'Categories',
-  '/admin/brands': 'Brands',
-  '/admin/tags': 'Tags',
-  '/admin/orders': 'Orders',
-  '/admin/staff': 'Staff',
-  '/admin/users': 'Customers',
-  '/admin/analytics': 'Analytics',
-  '/admin/coupons': 'Coupons',
-  '/admin/returns': 'Returns',
-  '/admin/newsletter': 'Newsletter',
-  '/admin/search': 'Search',
-}
+const pageTitles = computed<Record<string, string>>(() => ({
+  '/admin': t('admin.dashboard'),
+  '/admin/products': t('admin.inventory'),
+  '/admin/categories': t('admin.categories'),
+  '/admin/brands': t('admin.brands'),
+  '/admin/tags': t('admin.tags'),
+  '/admin/orders': t('admin.orders'),
+  '/admin/staff': t('admin.staff'),
+  '/admin/users': t('admin.customers'),
+  '/admin/analytics': t('admin.analytics'),
+  '/admin/coupons': t('admin.coupons'),
+  '/admin/returns': t('admin.returns'),
+  '/admin/newsletter': t('admin.newsletter'),
+  '/admin/search': t('admin.search'),
+}))
 
-const pageTitle = computed(() => pageTitles[route.path] ?? 'Admin')
+const pageTitle = computed(() => pageTitles.value[route.path] ?? t('admin.breadcrumb'))
 const userInitial = computed(() => {
   const name = user.value?.firstName ?? user.value?.email ?? 'A'
   return name.charAt(0).toUpperCase()
@@ -51,8 +52,10 @@ const userInitial = computed(() => {
     >
       <!-- Brand -->
       <div class="px-6 py-8 border-b border-outline-variant/10">
-        <h1 class="text-lg font-black text-on-surface tracking-tight font-headline">Admin Panel</h1>
-        <p class="text-xs text-secondary mt-0.5">ArchitectMarket</p>
+        <h1 class="text-lg font-black text-on-surface tracking-tight font-headline">
+          {{ t('admin.panel') }}
+        </h1>
+        <p class="text-xs text-secondary mt-0.5">{{ t('brand.name') }}</p>
       </div>
 
       <!-- Nav links -->
@@ -77,7 +80,7 @@ const userInitial = computed(() => {
           class="w-full flex items-center justify-center gap-2 bg-primary-container text-on-primary-container py-2.5 rounded text-sm font-semibold hover:brightness-95 transition-all"
         >
           <span class="material-symbols-outlined text-sm" aria-hidden="true">add</span>
-          New Product
+          {{ t('admin.newProduct') }}
         </NuxtLink>
         <button
           type="button"
@@ -85,7 +88,7 @@ const userInitial = computed(() => {
           @click="logout"
         >
           <span class="material-symbols-outlined text-xl" aria-hidden="true">logout</span>
-          <span class="font-label">Logout</span>
+          <span class="font-label">{{ t('admin.logout') }}</span>
         </button>
       </div>
     </nav>
@@ -96,7 +99,8 @@ const userInitial = computed(() => {
       <header class="sticky top-0 z-30 glass flex items-center justify-between px-8 py-3 shadow-sm">
         <!-- Breadcrumb -->
         <div class="text-xs text-secondary font-label">
-          Admin / <span class="text-on-surface font-medium">{{ pageTitle }}</span>
+          {{ t('admin.breadcrumb') }} /
+          <span class="text-on-surface font-medium">{{ pageTitle }}</span>
         </div>
 
         <!-- Search + user -->
@@ -109,15 +113,16 @@ const userInitial = computed(() => {
             >
             <input
               type="text"
-              placeholder="Search…"
+              :placeholder="t('admin.searchPlaceholder')"
               class="bg-surface-container-low border-none rounded pl-9 pr-4 py-1.5 text-sm w-56 focus:ring-1 focus:ring-primary outline-none"
             />
           </div>
           <div class="flex items-center gap-3">
+            <LangSwitcher />
             <button
               type="button"
               class="text-secondary hover:text-primary transition-colors"
-              aria-label="Notifications"
+              :aria-label="t('admin.notifications')"
             >
               <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
             </button>
@@ -126,7 +131,7 @@ const userInitial = computed(() => {
                 <p class="text-xs font-bold text-on-surface">
                   {{ user?.firstName ?? user?.email }}
                 </p>
-                <p class="text-[10px] text-secondary">Administrator</p>
+                <p class="text-[10px] text-secondary">{{ t('admin.administrator') }}</p>
               </div>
               <div
                 class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-sm font-bold"

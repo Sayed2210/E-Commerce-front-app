@@ -1,20 +1,13 @@
 <script setup lang="ts">
-export interface BreadcrumbItem {
-  label: string
-  to?: string
-}
-
-withDefaults(
-  defineProps<{
-    items: BreadcrumbItem[]
-    glass?: boolean
-  }>(),
-  { glass: false }
-)
+const { t } = useI18n()
 </script>
 
 <template>
-  <nav class="breadcrumb" :class="{ 'breadcrumb--glass': glass }" aria-label="Breadcrumb">
+  <nav
+    class="breadcrumb"
+    :class="{ 'breadcrumb--glass': glass }"
+    :aria-label="t('common.breadcrumbAria')"
+  >
     <template v-for="(item, i) in items" :key="i">
       <NuxtLink v-if="item.to" :to="item.to" class="breadcrumb__item">{{ item.label }}</NuxtLink>
       <span

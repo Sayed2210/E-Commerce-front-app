@@ -4,25 +4,27 @@ import type { PaymentMethod } from '~/types/api'
 defineProps<{ modelValue: PaymentMethod }>()
 const emit = defineEmits<{ 'update:modelValue': [v: PaymentMethod] }>()
 
-const methods: { value: PaymentMethod; icon: string; label: string; description: string }[] = [
+const { t } = useI18n()
+
+const methods = computed(() => [
   {
-    value: 'cod',
+    value: 'cod' as PaymentMethod,
     icon: 'local_shipping',
-    label: 'Cash on Delivery',
-    description: 'Pay when your order arrives',
+    label: t('checkout.paymentCod'),
+    description: t('checkout.paymentCodDesc'),
   },
   {
-    value: 'stripe',
+    value: 'stripe' as PaymentMethod,
     icon: 'credit_card',
-    label: 'Credit / Debit Card',
-    description: 'Secure payment via Stripe',
+    label: t('checkout.paymentCard'),
+    description: t('checkout.paymentCardDesc'),
   },
-]
+])
 </script>
 
 <template>
   <section class="payment">
-    <h2 class="payment__title">Payment Method</h2>
+    <h2 class="payment__title">{{ $t('checkout.paymentMethod') }}</h2>
     <div class="payment__list">
       <label
         v-for="m in methods"

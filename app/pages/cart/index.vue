@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from '~/utils/constants'
 
+const { t } = useI18n()
+
 definePageMeta({ layout: 'default', middleware: 'auth' })
-useSeoMeta({ title: 'Shopping Cart — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({ title: () => t('cart.title'), robots: 'noindex, nofollow' })
 
 const cartStore = useCartStore()
 const { fetchCart, updateItem, removeItem } = useCart()
@@ -38,7 +40,7 @@ function handleSaveForLater(_id: string) {
   // TODO: move to wishlist
 }
 
-const breadcrumbs = [{ label: 'Marketplace', to: '/' }, { label: 'Shopping Cart' }]
+const breadcrumbs = [{ label: t('common.marketplace'), to: '/' }, { label: t('cart.shoppingCart') }]
 </script>
 
 <template>
@@ -48,20 +50,22 @@ const breadcrumbs = [{ label: 'Marketplace', to: '/' }, { label: 'Shopping Cart'
     <AppEmptyState
       v-if="isEmpty && !loading"
       icon="shopping_cart"
-      title="Your cart is empty"
-      body="Looks like you haven't added anything yet."
+      :title="$t('cart.emptyTitle')"
+      :body="$t('cart.emptyBody')"
     >
       <template #cta>
-        <NuxtLink to="/products" class="cart-page__empty-cta">Start Shopping</NuxtLink>
+        <NuxtLink to="/products" class="cart-page__empty-cta">{{
+          $t('cart.startShopping')
+        }}</NuxtLink>
       </template>
     </AppEmptyState>
 
     <div v-else class="cart-page__layout">
-      <section class="cart-section" aria-label="Cart items">
+      <section class="cart-section" :aria-label="$t('cart.cartItemsAria')">
         <div class="cart-section__header">
-          <h1 class="cart-section__title">Shopping Cart</h1>
+          <h1 class="cart-section__title">{{ $t('cart.shoppingCart') }}</h1>
           <span class="cart-section__count"
-            >{{ itemCount }} item{{ itemCount !== 1 ? 's' : '' }}</span
+            >{{ itemCount }} {{ itemCount === 1 ? $t('cart.item') : $t('cart.items') }}</span
           >
         </div>
 
@@ -70,12 +74,17 @@ const breadcrumbs = [{ label: 'Marketplace', to: '/' }, { label: 'Shopping Cart'
           class="cart-section__list"
           role="list"
           aria-busy="true"
-          aria-label="Loading cart"
+          :aria-label="$t('cart.loadingCart')"
         >
           <li v-for="i in 3" :key="i"><ProductSkeleton variant="list" /></li>
         </ul>
 
-        <ul v-else class="cart-section__list" role="list" :aria-label="`${itemCount} cart items`">
+        <ul
+          v-else
+          class="cart-section__list"
+          role="list"
+          :aria-label="$t('cart.cartItemsCountAria', { count: itemCount })"
+        >
           <CartItem
             v-for="item in items"
             :key="item.id"
@@ -88,11 +97,11 @@ const breadcrumbs = [{ label: 'Marketplace', to: '/' }, { label: 'Shopping Cart'
 
         <NuxtLink to="/products" class="cart-section__continue">
           <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
-          Continue Shopping
+          {{ $t('cart.continueShopping') }}
         </NuxtLink>
       </section>
 
-      <aside class="cart-sidebar" aria-label="Order summary">
+      <aside class="cart-sidebar" :aria-label="$t('cart.orderSummary')">
         <CartOrderSummary :subtotal="subtotal" :discount="discount" :total="cartTotal" />
       </aside>
     </div>

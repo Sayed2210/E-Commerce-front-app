@@ -39,14 +39,14 @@ async function handleDelete(id: string) {
 
 <template>
   <div class="space-y-6">
-    <AdminPageHeader title="Brands">
+    <AdminPageHeader :title="$t('admin.brandsPage.title')">
       <button
         type="button"
         class="bg-primary-container text-on-primary-container px-4 py-2 text-xs font-bold rounded flex items-center gap-2 hover:brightness-95 transition-all"
         @click="showCreate = !showCreate"
       >
         <span class="material-symbols-outlined text-sm">{{ showCreate ? 'close' : 'add' }}</span>
-        {{ showCreate ? 'Cancel' : 'New Brand' }}
+        {{ showCreate ? $t('admin.brandsPage.cancel') : $t('admin.brandsPage.newBrand') }}
       </button>
     </AdminPageHeader>
 
@@ -54,7 +54,7 @@ async function handleDelete(id: string) {
       <form class="space-y-4" @submit.prevent="handleCreate">
         <div class="grid grid-cols-2 gap-4">
           <div class="form__field">
-            <label class="form__label">Brand Name</label>
+            <label class="form__label">{{ $t('admin.brandsPage.brandName') }}</label>
             <input
               v-model="form.name"
               type="text"
@@ -64,16 +64,18 @@ async function handleDelete(id: string) {
             />
           </div>
           <div class="form__field">
-            <label class="form__label">Slug (optional)</label>
+            <label class="form__label">{{ $t('admin.brandsPage.slugOptional') }}</label>
             <input v-model="form.slug" type="text" class="form__input" placeholder="e.g. apple" />
           </div>
         </div>
         <div class="form__field">
-          <label class="form__label">Logo URL (optional)</label>
+          <label class="form__label">{{ $t('admin.brandsPage.logoUrlOptional') }}</label>
           <input v-model="form.logo" type="url" class="form__input" placeholder="https://..." />
         </div>
         <div class="flex justify-end">
-          <button type="submit" class="form__submit">Create Brand</button>
+          <button type="submit" class="form__submit">
+            {{ $t('admin.brandsPage.createBrand') }}
+          </button>
         </div>
       </form>
     </AdminFormPanel>
@@ -82,10 +84,10 @@ async function handleDelete(id: string) {
       <template #header>
         <thead class="bg-surface-container">
           <tr>
-            <th class="table__th">Name</th>
-            <th class="table__th">Slug</th>
-            <th class="table__th">Logo</th>
-            <th class="table__th">Actions</th>
+            <th class="table__th">{{ $t('admin.brandsPage.name') }}</th>
+            <th class="table__th">{{ $t('admin.brandsPage.slug') }}</th>
+            <th class="table__th">{{ $t('admin.brandsPage.logo') }}</th>
+            <th class="table__th">{{ $t('admin.brandsPage.actions') }}</th>
           </tr>
         </thead>
       </template>
@@ -101,8 +103,8 @@ async function handleDelete(id: string) {
       <template #empty>
         <AppEmptyState
           icon="business"
-          title="No brands yet"
-          body="Create your first brand above."
+          :title="$t('admin.brandsPage.noBrands')"
+          :body="$t('admin.brandsPage.noBrandsBody')"
         />
       </template>
     </AdminDataTable>

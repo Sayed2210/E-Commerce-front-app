@@ -1,4 +1,3 @@
-import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
 import { getAccessToken } from '~/utils/token'
 
 function authH(): Record<string, string> {
@@ -9,6 +8,8 @@ function authH(): Record<string, string> {
 }
 
 export function useProductImages() {
+  const { t } = useI18n()
+  const { showError, showSuccess } = useToasts()
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
@@ -22,10 +23,10 @@ export function useProductImages() {
         body: formData,
         headers: authH(),
       })
-      showSuccessToast('Image uploaded.')
+      showSuccess(t('admin.productsPage.uploadImages'))
       return { data, error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { data: null, error: err }
     }
   }
@@ -36,10 +37,10 @@ export function useProductImages() {
         method: 'DELETE',
         headers: authH(),
       })
-      showSuccessToast('Image deleted.')
+      showSuccess(t('admin.productsPage.remove'))
       return { error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { error: err }
     }
   }
@@ -50,10 +51,10 @@ export function useProductImages() {
         method: 'PATCH',
         headers: authH(),
       })
-      showSuccessToast('Primary image set.')
+      showSuccess(t('admin.productsPage.primary'))
       return { error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { error: err }
     }
   }

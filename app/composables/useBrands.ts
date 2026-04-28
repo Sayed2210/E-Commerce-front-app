@@ -1,5 +1,4 @@
 import type { Brand } from '~/types/api'
-import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
 import { getAccessToken } from '~/utils/token'
 
 function authH(): Record<string, string> {
@@ -10,6 +9,8 @@ function authH(): Record<string, string> {
 }
 
 export function useBrands() {
+  const { t } = useI18n()
+  const { showError, showSuccess } = useToasts()
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
@@ -31,10 +32,10 @@ export function useBrands() {
         body: form,
         headers: authH(),
       })
-      showSuccessToast('Brand created.')
+      showSuccess(t('admin.brandsPage.created'))
       return { data, error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { data: null, error: err }
     }
   }
@@ -46,10 +47,10 @@ export function useBrands() {
         body: form,
         headers: authH(),
       })
-      showSuccessToast('Brand updated.')
+      showSuccess(t('admin.brandsPage.updated'))
       return { data, error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { data: null, error: err }
     }
   }
@@ -57,10 +58,10 @@ export function useBrands() {
   async function deleteBrand(id: string) {
     try {
       await $fetch(`${baseURL}/brands/${id}`, { method: 'DELETE', headers: authH() })
-      showSuccessToast('Brand deleted.')
+      showSuccess(t('admin.brandsPage.deleted'))
       return { error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { error: err }
     }
   }

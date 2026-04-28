@@ -62,15 +62,15 @@ function handleDelete() {
           :to="`/admin/products/${product.id}/edit`"
           class="text-primary hover:underline text-xs font-semibold"
         >
-          Edit
+          {{ $t('admin.productsPage.edit') }}
         </NuxtLink>
         <button
           type="button"
           class="text-error hover:underline text-xs font-semibold"
-          aria-label="Delete product"
+          :aria-label="$t('admin.common.deleteAria')"
           @click="handleDelete"
         >
-          Delete
+          {{ $t('admin.productsPage.delete') }}
         </button>
       </div>
     </td>

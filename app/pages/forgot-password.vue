@@ -1,25 +1,27 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 definePageMeta({ layout: false, middleware: 'guest' })
-useSeoMeta({ title: 'Forgot Password — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({
+  title: () => `${t('auth.forgotTitle')} — ${t('brand.name')}`,
+  robots: 'noindex, nofollow',
+})
 
 const { form, errors, loading, submitted, serverError, handleSubmit } = useForgotPassword()
 </script>
 
 <template>
-  <AuthPageShell label="Forgot password page">
+  <AuthPageShell :label="t('auth.forgotTitle')">
     <template v-if="submitted">
       <div class="fp-success">
         <div class="fp-success__icon-wrap" aria-hidden="true">
           <span class="material-symbols-outlined fp-success__icon">mark_email_read</span>
         </div>
-        <h1 class="auth-card__title">Check your inbox</h1>
-        <p class="auth-card__sub">
-          We sent a reset link to <strong>{{ form.email }}</strong
-          >. It may take a few minutes to arrive.
-        </p>
+        <h1 class="auth-card__title">{{ t('auth.checkInbox') }}</h1>
+        <p class="auth-card__sub" v-html="t('auth.resetLinkSent', { email: form.email })" />
         <NuxtLink to="/login" class="fp-success__back">
           <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
-          Back to Sign In
+          {{ t('auth.backToSignIn') }}
         </NuxtLink>
       </div>
     </template>
@@ -29,8 +31,8 @@ const { form, errors, loading, submitted, serverError, handleSubmit } = useForgo
         <div class="auth-card__icon-wrap" aria-hidden="true">
           <span class="material-symbols-outlined auth-card__icon">lock_reset</span>
         </div>
-        <h1 class="auth-card__title">Forgot your password?</h1>
-        <p class="auth-card__sub">Enter your email and we'll send you a reset link.</p>
+        <h1 class="auth-card__title">{{ t('auth.forgotTitle') }}</h1>
+        <p class="auth-card__sub">{{ t('auth.forgotSubtitle') }}</p>
       </header>
 
       <div v-if="serverError" class="auth-alert" role="alert" aria-live="assertive">
@@ -41,29 +43,29 @@ const { form, errors, loading, submitted, serverError, handleSubmit } = useForgo
       <form
         class="auth-form"
         novalidate
-        aria-label="Forgot password form"
+        :aria-label="t('auth.forgotTitle')"
         @submit.prevent="handleSubmit"
       >
         <AppInput
           id="forgot-email"
           v-model="form.email"
-          label="Email address"
+          :label="t('auth.emailAddress')"
           type="email"
-          placeholder="you@example.com"
+          :placeholder="t('auth.emailPlaceholder')"
           autocomplete="email"
           :required="true"
           :error="errors.email"
         />
         <AppButton type="submit" :loading="loading" :block="true" size="lg">
           <span class="material-symbols-outlined" aria-hidden="true">send</span>
-          Send Reset Link
+          {{ t('auth.sendResetLink') }}
         </AppButton>
       </form>
 
       <footer class="auth-card__foot">
         <p>
-          Remember your password?
-          <NuxtLink to="/login" class="auth-card__switch">Sign in</NuxtLink>
+          {{ t('auth.rememberPassword') }}
+          <NuxtLink to="/login" class="auth-card__switch">{{ t('auth.signIn') }}</NuxtLink>
         </p>
       </footer>
     </template>

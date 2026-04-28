@@ -7,7 +7,7 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   search: '',
-  searchPlaceholder: 'Search...',
+  searchPlaceholder: '',
   loading: false,
 })
 
@@ -26,7 +26,7 @@ const emit = defineEmits<{
       <input
         :value="search"
         type="text"
-        :placeholder="searchPlaceholder"
+        :placeholder="searchPlaceholder || $t('admin.common.searchPlaceholder')"
         class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded pl-9 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
         :disabled="loading"
         @input="emit('update:search', ($event.target as HTMLInputElement).value)"

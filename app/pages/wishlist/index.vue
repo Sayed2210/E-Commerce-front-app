@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { WishlistItem } from '~/types/api'
 
+const { t } = useI18n()
+
 definePageMeta({ layout: 'default', middleware: 'auth' })
-useSeoMeta({ title: 'My Wishlist — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({ title: () => t('wishlist.title'), robots: 'noindex, nofollow' })
 
 const { getWishlist, removeFromWishlist, clearWishlist } = useWishlist()
 const { addItem } = useCart()
@@ -26,8 +28,6 @@ async function moveToCart(productId: string) {
   await removeFromWishlist(productId)
   await refresh()
 }
-
-useSeoMeta({ title: 'My Wishlist — ArchitectMarket' })
 </script>
 
 <template>
@@ -35,14 +35,15 @@ useSeoMeta({ title: 'My Wishlist — ArchitectMarket' })
     <!-- Header -->
     <div class="wishlist-page__header">
       <div>
-        <h1 class="wishlist-page__title">My Wishlist</h1>
+        <h1 class="wishlist-page__title">{{ $t('wishlist.myWishlist') }}</h1>
         <p class="wishlist-page__count">
-          {{ items.length }} saved item{{ items.length !== 1 ? 's' : '' }}
+          {{ items.length }}
+          {{ items.length === 1 ? $t('wishlist.savedItem') : $t('wishlist.savedItems') }}
         </p>
       </div>
       <button v-if="items.length" type="button" class="wishlist-page__clear" @click="clearAll">
         <span class="material-symbols-outlined" aria-hidden="true">delete_sweep</span>
-        Clear all
+        {{ $t('wishlist.clearAll') }}
       </button>
     </div>
 
@@ -51,7 +52,7 @@ useSeoMeta({ title: 'My Wishlist — ArchitectMarket' })
       v-if="pending"
       class="wishlist-page__grid"
       role="list"
-      aria-label="Loading wishlist"
+      :aria-label="$t('wishlist.loadingWishlist')"
       aria-busy="true"
     >
       <li v-for="i in 8" :key="i">
@@ -64,7 +65,7 @@ useSeoMeta({ title: 'My Wishlist — ArchitectMarket' })
       v-else-if="items.length"
       class="wishlist-page__grid"
       role="list"
-      :aria-label="`${items.length} saved products`"
+      :aria-label="$t('wishlist.savedProductsCount', { count: items.length })"
     >
       <li v-for="item in items" :key="item.id">
         <ProductCard
@@ -86,9 +87,11 @@ useSeoMeta({ title: 'My Wishlist — ArchitectMarket' })
         style="font-variation-settings: 'FILL' 0"
         >favorite_border</span
       >
-      <h2 class="wishlist-page__empty-title">Your wishlist is empty</h2>
-      <p class="wishlist-page__empty-body">Save items you love to buy them later.</p>
-      <NuxtLink to="/products" class="wishlist-page__empty-cta">Explore Products</NuxtLink>
+      <h2 class="wishlist-page__empty-title">{{ $t('wishlist.emptyTitle') }}</h2>
+      <p class="wishlist-page__empty-body">{{ $t('wishlist.emptyBody') }}</p>
+      <NuxtLink to="/products" class="wishlist-page__empty-cta">{{
+        $t('wishlist.exploreProducts')
+      }}</NuxtLink>
     </div>
   </div>
 </template>

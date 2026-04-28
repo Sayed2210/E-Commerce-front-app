@@ -35,31 +35,31 @@ watch(
 
 <template>
   <div class="coupon-form">
-    <h2 class="coupon-form__title">New Coupon</h2>
+    <h2 class="coupon-form__title">{{ $t('admin.couponsPage.newCouponTitle') }}</h2>
     <form class="coupon-form__form" @submit="emitForm">
       <div class="coupon-form__row">
         <div class="coupon-form__field">
-          <label class="coupon-form__label">Code *</label>
+          <label class="coupon-form__label">{{ $t('admin.couponsPage.couponCode') }}</label>
           <input
             v-model="localForm.code"
             type="text"
             class="coupon-form__input"
             required
-            placeholder="SUMMER20"
+            :placeholder="$t('admin.couponsPage.couponCodePlaceholder')"
           />
         </div>
         <div class="coupon-form__field">
-          <label class="coupon-form__label">Type *</label>
+          <label class="coupon-form__label">{{ $t('admin.couponsPage.couponType') }}</label>
           <select v-model="localForm.type" class="coupon-form__input">
-            <option value="percentage">Percentage</option>
-            <option value="fixed">Fixed Amount</option>
-            <option value="free_shipping">Free Shipping</option>
+            <option value="percentage">{{ $t('admin.couponsPage.percentage') }}</option>
+            <option value="fixed">{{ $t('admin.couponsPage.fixedAmount') }}</option>
+            <option value="free_shipping">{{ $t('admin.couponsPage.freeShipping') }}</option>
           </select>
         </div>
       </div>
       <div class="coupon-form__row">
         <div class="coupon-form__field">
-          <label class="coupon-form__label">Value</label>
+          <label class="coupon-form__label">{{ $t('admin.couponsPage.couponValue') }}</label>
           <input
             v-model.number="localForm.value"
             type="number"
@@ -69,7 +69,7 @@ watch(
           />
         </div>
         <div class="coupon-form__field">
-          <label class="coupon-form__label">Min Order Value</label>
+          <label class="coupon-form__label">{{ $t('admin.couponsPage.minOrderValue') }}</label>
           <input
             v-model.number="localForm.minOrderValue"
             type="number"
@@ -79,18 +79,21 @@ watch(
           />
         </div>
         <div class="coupon-form__field">
-          <label class="coupon-form__label">Start Date *</label>
+          <label class="coupon-form__label">{{ $t('admin.couponsPage.startDate') }}</label>
           <input v-model="localForm.startDate" type="date" class="coupon-form__input" required />
         </div>
         <div class="coupon-form__field">
-          <label class="coupon-form__label">End Date</label>
+          <label class="coupon-form__label">{{ $t('admin.couponsPage.endDate') }}</label>
           <input v-model="localForm.endDate" type="date" class="coupon-form__input" />
         </div>
       </div>
       <label class="coupon-form__check">
-        <input v-model="localForm.isActive" type="checkbox" /> Active
+        <input v-model="localForm.isActive" type="checkbox" />
+        {{ $t('admin.couponsPage.couponActive') }}
       </label>
-      <button type="submit" class="coupon-form__submit" :disabled="loading">Create Coupon</button>
+      <button type="submit" class="coupon-form__submit" :disabled="loading">
+        {{ $t('admin.couponsPage.createCoupon') }}
+      </button>
     </form>
   </div>
 </template>

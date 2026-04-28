@@ -11,14 +11,13 @@ function authH(): Record<string, string> {
 export function useNotifications() {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
+  const { t } = useI18n()
 
   async function listNotifications() {
     try {
       const data = await $fetch<PaginatedResponse<Notification>>(`${baseURL}/notifications`, {
         headers: authH(),
       })
-      // console.log('Created notification:', data)
-
       return { data, error: null }
     } catch (err) {
       return { data: null, error: err }
@@ -74,5 +73,23 @@ export function useNotifications() {
     }
   }
 
-  return { listNotifications, createNotification, markAsRead, markAllAsRead, deleteNotification }
+  function formatTimeAgo(dateStr: string) {
+    const diff = Date.now() - new Date(dateStr).getTime()
+    const m = Math.floor(diff / 60000)
+    if (m < 1) return t('notifications.timeAgoJustNow')
+    if (m < 60) return t('notifications.timeAgoMinutes', m, { n: m })
+    const h = Math.floor(m / 60)
+    if (h < 24) return t('notifications.timeAgoHours', h, { n: h })
+    const d = Math.floor(h / 24)
+    return t('notifications.timeAgoDays', d, { n: d })
+  }
+
+  return {
+    listNotifications,
+    createNotification,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    formatTimeAgo,
+  }
 }

@@ -72,7 +72,7 @@ const ariaDescribedby = computed(() => {
         v-if="type === 'password'"
         type="button"
         class="field__toggle"
-        :aria-label="showPassword ? 'Hide password' : 'Show password'"
+        :aria-label="showPassword ? $t('common.hidePassword') : $t('common.showPassword')"
         :aria-controls="id"
         :aria-pressed="showPassword"
         tabindex="0"

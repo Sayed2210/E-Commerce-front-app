@@ -27,10 +27,10 @@ withDefaults(defineProps<Props>(), {
       <input
         :value="search"
         type="text"
-        placeholder="Search by ID or customer…"
+        :placeholder="$t('admin.ordersPage.searchPlaceholder')"
         class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded pl-9 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
         :disabled="loading"
-        aria-label="Search orders"
+        :aria-label="$t('admin.ordersPage.searchPlaceholder')"
         @input="emit('update:search', ($event.target as HTMLInputElement).value)"
       />
     </div>
@@ -38,10 +38,10 @@ withDefaults(defineProps<Props>(), {
       :value="statusFilter"
       class="bg-surface-container-lowest border border-outline-variant/20 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none text-on-surface"
       :disabled="loading"
-      aria-label="Filter by status"
+      :aria-label="$t('admin.ordersPage.allStatuses')"
       @change="emit('update:statusFilter', ($event.target as HTMLSelectElement).value)"
     >
-      <option value="">All Statuses</option>
+      <option value="">{{ $t('admin.ordersPage.allStatuses') }}</option>
       <option v-for="s in statuses" :key="s" :value="s" class="capitalize">
         {{ s }}
       </option>
@@ -53,7 +53,7 @@ withDefaults(defineProps<Props>(), {
       @click="emit('export')"
     >
       <span class="material-symbols-outlined text-sm">download</span>
-      Export
+      {{ $t('admin.ordersPage.export') }}
     </button>
   </div>
 </template>

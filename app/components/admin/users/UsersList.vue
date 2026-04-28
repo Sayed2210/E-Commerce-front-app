@@ -30,8 +30,13 @@ function handlePageChange(page: number) {
 
 <template>
   <div class="space-y-6">
-    <AdminPageHeader title="Customers" description="View and manage registered customer accounts">
-      <p class="text-xs text-secondary">{{ totalUsers }} total users</p>
+    <AdminPageHeader
+      :title="$t('admin.customersPage.title')"
+      :description="$t('admin.customersPage.description')"
+    >
+      <p class="text-xs text-secondary">
+        {{ $t('admin.customersPage.totalUsers', { count: totalUsers }) }}
+      </p>
     </AdminPageHeader>
 
     <AdminDataTable
@@ -41,17 +46,17 @@ function handlePageChange(page: number) {
       :pagination="totalPages > 1"
       :current-page="currentPage"
       :total-pages="totalPages"
-      empty-text="No customers found"
+      :empty-text="$t('admin.customersPage.noCustomers')"
       @update:current-page="handlePageChange"
     >
       <template #header>
         <thead class="bg-surface-container">
           <tr>
-            <th class="table-th">Name</th>
-            <th class="table-th">Email</th>
-            <th class="table-th">Role</th>
-            <th class="table-th">Joined</th>
-            <th class="table-th">Actions</th>
+            <th class="table-th">{{ $t('admin.customersPage.name') }}</th>
+            <th class="table-th">{{ $t('admin.customersPage.email') }}</th>
+            <th class="table-th">{{ $t('admin.customersPage.role') }}</th>
+            <th class="table-th">{{ $t('admin.customersPage.joined') }}</th>
+            <th class="table-th">{{ $t('admin.customersPage.actions') }}</th>
           </tr>
         </thead>
       </template>

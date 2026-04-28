@@ -1,11 +1,13 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 const headers = [
-  { label: 'Product', hiddenOn: '' },
-  { label: 'Category', hiddenOn: '' },
-  { label: 'Price', hiddenOn: '' },
-  { label: 'Stock', hiddenOn: '' },
-  { label: 'Status', hiddenOn: '' },
-  { label: 'Actions', hiddenOn: '' },
+  { label: t('admin.productsPage.product'), hiddenOn: '' },
+  { label: t('admin.productsPage.category'), hiddenOn: '' },
+  { label: t('admin.productsPage.price'), hiddenOn: '' },
+  { label: t('admin.productsPage.stock'), hiddenOn: '' },
+  { label: t('admin.productsPage.status'), hiddenOn: '' },
+  { label: t('admin.productsPage.actions'), hiddenOn: '' },
 ]
 </script>
 

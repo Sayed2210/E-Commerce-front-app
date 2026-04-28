@@ -1,29 +1,36 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 definePageMeta({ layout: false, middleware: 'guest' })
-useSeoMeta({ title: 'Reset Password — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({
+  title: () => `${t('auth.setNewPassword')} — ${t('brand.name')}`,
+  robots: 'noindex, nofollow',
+})
 
 const { form, errors, loading, success, serverError, invalidToken, handleSubmit } =
   useResetPassword()
 </script>
 
 <template>
-  <AuthPageShell label="Reset password page">
+  <AuthPageShell :label="t('auth.setNewPassword')">
     <div v-if="invalidToken" class="rp-state">
       <div class="rp-state__icon-wrap rp-state__icon-wrap--error" aria-hidden="true">
         <span class="material-symbols-outlined rp-state__icon">link_off</span>
       </div>
-      <h1 class="auth-card__title">Invalid reset link</h1>
-      <p class="auth-card__sub">This link is missing a reset token. Please request a new one.</p>
-      <NuxtLink to="/forgot-password" class="auth-btn-link">Request new link</NuxtLink>
+      <h1 class="auth-card__title">{{ t('auth.invalidResetLink') }}</h1>
+      <p class="auth-card__sub">{{ t('auth.missingResetToken') }}</p>
+      <NuxtLink to="/forgot-password" class="auth-btn-link">{{
+        t('auth.requestNewLink')
+      }}</NuxtLink>
     </div>
 
     <div v-else-if="success" class="rp-state">
       <div class="rp-state__icon-wrap rp-state__icon-wrap--success" aria-hidden="true">
         <span class="material-symbols-outlined rp-state__icon">check_circle</span>
       </div>
-      <h1 class="auth-card__title">Password updated!</h1>
-      <p class="auth-card__sub">Your password has been reset. Redirecting you to sign in&hellip;</p>
-      <NuxtLink to="/login" class="auth-btn-link">Sign in now</NuxtLink>
+      <h1 class="auth-card__title">{{ t('auth.passwordUpdated') }}</h1>
+      <p class="auth-card__sub">{{ t('auth.passwordUpdatedSubtitle') }}</p>
+      <NuxtLink to="/login" class="auth-btn-link">{{ t('auth.signInNow') }}</NuxtLink>
     </div>
 
     <template v-else>
@@ -31,8 +38,8 @@ const { form, errors, loading, success, serverError, invalidToken, handleSubmit 
         <div class="auth-card__icon-wrap" aria-hidden="true">
           <span class="material-symbols-outlined auth-card__icon">lock_open</span>
         </div>
-        <h1 class="auth-card__title">Set new password</h1>
-        <p class="auth-card__sub">Choose a strong password for your account.</p>
+        <h1 class="auth-card__title">{{ t('auth.setNewPassword') }}</h1>
+        <p class="auth-card__sub">{{ t('auth.newPasswordSubtitle') }}</p>
       </header>
 
       <div v-if="serverError" class="auth-alert" role="alert" aria-live="assertive">
@@ -43,15 +50,15 @@ const { form, errors, loading, success, serverError, invalidToken, handleSubmit 
       <form
         class="auth-form"
         novalidate
-        aria-label="Reset password form"
+        :aria-label="t('auth.setNewPassword')"
         @submit.prevent="handleSubmit"
       >
         <AppInput
           id="reset-password"
           v-model="form.newPassword"
-          label="New password"
+          :label="t('auth.newPassword')"
           type="password"
-          placeholder="Min. 6 characters"
+          :placeholder="t('auth.passwordPlaceholder')"
           autocomplete="new-password"
           :required="true"
           :error="errors.newPassword"
@@ -59,21 +66,23 @@ const { form, errors, loading, success, serverError, invalidToken, handleSubmit 
         <AppInput
           id="reset-confirm"
           v-model="form.confirmPassword"
-          label="Confirm new password"
+          :label="t('auth.confirmNewPassword')"
           type="password"
-          placeholder="Repeat your new password"
+          :placeholder="t('auth.confirmPasswordPlaceholder')"
           autocomplete="new-password"
           :required="true"
           :error="errors.confirmPassword"
         />
         <AppButton type="submit" :loading="loading" :block="true" size="lg">
           <span class="material-symbols-outlined" aria-hidden="true">lock_reset</span>
-          Reset Password
+          {{ t('auth.resetPassword') }}
         </AppButton>
       </form>
 
       <footer class="auth-card__foot">
-        <p><NuxtLink to="/login" class="auth-card__switch">Back to Sign In</NuxtLink></p>
+        <p>
+          <NuxtLink to="/login" class="auth-card__switch">{{ t('auth.backToSignIn') }}</NuxtLink>
+        </p>
       </footer>
     </template>
   </AuthPageShell>

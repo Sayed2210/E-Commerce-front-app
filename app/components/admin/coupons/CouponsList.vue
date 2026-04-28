@@ -50,12 +50,12 @@ async function handleDelete(id: string) {
 <template>
   <section class="coupons-list">
     <div class="coupons-list__head">
-      <h1 class="coupons-list__title">Coupons</h1>
+      <h1 class="coupons-list__title">{{ $t('admin.couponsPage.title') }}</h1>
       <button type="button" class="coupons-list__create-btn" @click="showCreate = !showCreate">
         <span class="material-symbols-outlined" aria-hidden="true">{{
           showCreate ? 'close' : 'add'
         }}</span>
-        {{ showCreate ? 'Cancel' : 'New Coupon' }}
+        {{ showCreate ? $t('admin.couponsPage.cancel') : $t('admin.couponsPage.newCoupon') }}
       </button>
     </div>
 
@@ -73,8 +73,8 @@ async function handleDelete(id: string) {
     <AppEmptyState
       v-else-if="!coupons.length"
       icon="local_offer"
-      title="No coupons yet"
-      body="Create your first discount coupon above."
+      :title="$t('admin.couponsPage.noCoupons')"
+      :body="$t('admin.couponsPage.noCouponsBody')"
     />
 
     <CouponTable

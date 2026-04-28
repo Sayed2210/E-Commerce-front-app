@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { loginSchema } from '~/utils/validation'
+const { t } = useI18n()
+const { loginSchema } = useValidation()
 
 definePageMeta({ layout: false, middleware: 'guest' })
-useSeoMeta({ title: 'Sign In — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({
+  title: () => `${t('auth.signIn')} — ${t('brand.name')}`,
+  robots: 'noindex, nofollow',
+})
 
 const { login, loading } = useAuth()
 const form = ref({ email: '', password: '' })
@@ -27,10 +31,10 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <AuthPageShell label="Sign in page">
+  <AuthPageShell :label="t('auth.signIn')">
     <header class="auth-card__head">
-      <h1 class="auth-card__title">Welcome back</h1>
-      <p class="auth-card__sub">Sign in to your account to continue</p>
+      <h1 class="auth-card__title">{{ t('auth.welcomeBack') }}</h1>
+      <p class="auth-card__sub">{{ t('auth.signInToContinue') }}</p>
     </header>
 
     <div v-if="serverError" class="auth-alert" role="alert" aria-live="assertive">
@@ -38,13 +42,18 @@ async function handleSubmit() {
       {{ serverError }}
     </div>
 
-    <form class="auth-form" novalidate aria-label="Sign in form" @submit.prevent="handleSubmit">
+    <form
+      class="auth-form"
+      novalidate
+      :aria-label="t('auth.signIn')"
+      @submit.prevent="handleSubmit"
+    >
       <AppInput
         id="login-email"
         v-model="form.email"
-        label="Email address"
+        :label="t('auth.emailAddress')"
         type="email"
-        placeholder="you@example.com"
+        :placeholder="t('auth.emailPlaceholder')"
         autocomplete="email"
         :required="true"
         :error="errors.email"
@@ -52,9 +61,9 @@ async function handleSubmit() {
       <AppInput
         id="login-password"
         v-model="form.password"
-        label="Password"
+        :label="t('auth.password')"
         type="password"
-        placeholder="Your password"
+        :placeholder="t('auth.password')"
         autocomplete="current-password"
         :required="true"
         :error="errors.password"
@@ -62,20 +71,22 @@ async function handleSubmit() {
       <div class="auth-form__row">
         <label class="auth-check">
           <input type="checkbox" class="auth-check__input" />
-          <span class="auth-check__label">Remember me</span>
+          <span class="auth-check__label">{{ t('auth.rememberMe') }}</span>
         </label>
-        <NuxtLink to="/forgot-password" class="auth-form__forgot">Forgot password?</NuxtLink>
+        <NuxtLink to="/forgot-password" class="auth-form__forgot">{{
+          t('auth.forgotPassword')
+        }}</NuxtLink>
       </div>
       <AppButton type="submit" :loading="loading" :block="true" size="lg">
         <span class="material-symbols-outlined" aria-hidden="true">login</span>
-        Sign In
+        {{ t('auth.signIn') }}
       </AppButton>
     </form>
 
     <footer class="auth-card__foot">
       <p>
-        Don't have an account?
-        <NuxtLink to="/register" class="auth-card__switch">Create one</NuxtLink>
+        {{ t('auth.noAccount') }}
+        <NuxtLink to="/register" class="auth-card__switch">{{ t('auth.createOne') }}</NuxtLink>
       </p>
     </footer>
   </AuthPageShell>

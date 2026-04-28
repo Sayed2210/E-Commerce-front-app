@@ -1,5 +1,4 @@
 import type { NewsletterStats, SendCampaignDto } from '~/types/api'
-import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
 import { getAccessToken } from '~/utils/token'
 
 function authH(): Record<string, string> {
@@ -10,6 +9,8 @@ function authH(): Record<string, string> {
 }
 
 export function useNewsletterAdmin() {
+  const { t } = useI18n()
+  const { showError, showSuccess } = useToasts()
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
@@ -24,10 +25,10 @@ export function useNewsletterAdmin() {
         body: form,
         headers: authH(),
       })
-      showSuccessToast('Campaign sent.')
+      showSuccess(t('admin.newsletterPage.campaignSent'))
       return { data, error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { data: null, error: err }
     }
   }
@@ -39,10 +40,10 @@ export function useNewsletterAdmin() {
         body: { email },
         headers: authH(),
       })
-      showSuccessToast('Unsubscribed.')
+      showSuccess(t('admin.newsletterPage.unsubscribed'))
       return { data, error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { data: null, error: err }
     }
   }

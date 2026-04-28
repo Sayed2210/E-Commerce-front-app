@@ -9,6 +9,8 @@ const loading = ref(false)
 const result = ref<ApplyCouponResponse | null>(null)
 const error = ref('')
 
+const { t } = useI18n()
+
 async function handleApply() {
   if (!code.value.trim()) return
   loading.value = true
@@ -20,21 +22,21 @@ async function handleApply() {
     result.value = data
     emit('applied', { ...data, code: code.value.trim() })
   } else {
-    error.value = 'Invalid or expired coupon code.'
+    error.value = t('checkout.invalidCoupon')
   }
 }
 </script>
 
 <template>
   <div class="coupon">
-    <label class="coupon__label" for="coupon-code">Coupon Code</label>
+    <label class="coupon__label" for="coupon-code">{{ $t('checkout.couponCode') }}</label>
     <div class="coupon__row">
       <input
         id="coupon-code"
         v-model="code"
         type="text"
         class="coupon__input"
-        placeholder="Enter code"
+        :placeholder="t('checkout.enterCode')"
         autocomplete="off"
         :disabled="!!result"
         @keyup.enter="handleApply"
@@ -45,15 +47,17 @@ async function handleApply() {
         :disabled="loading || !!result"
         @click="handleApply"
       >
-        {{ loading ? '…' : result ? 'Applied' : 'Apply' }}
+        {{ loading ? '…' : result ? $t('checkout.applied') : $t('common.apply') }}
       </button>
     </div>
     <p v-if="result" class="coupon__msg coupon__msg--ok">
       <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-      Coupon applied —
-      <template v-if="result.type === 'free_shipping'">free shipping</template>
-      <template v-else-if="result.type === 'percentage'">{{ result.value }}% off</template>
-      <template v-else>${{ result.value }} off</template>
+      {{ $t('checkout.couponApplied') }}
+      <template v-if="result.type === 'free_shipping'">{{ $t('checkout.freeShipping') }}</template>
+      <template v-else-if="result.type === 'percentage'">{{
+        $t('checkout.percentageOff', { value: result.value })
+      }}</template>
+      <template v-else>{{ $t('checkout.fixedOff', { value: result.value }) }}</template>
     </p>
     <p v-if="error" class="coupon__msg coupon__msg--err">{{ error }}</p>
   </div>

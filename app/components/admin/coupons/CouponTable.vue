@@ -15,11 +15,23 @@ defineProps<Props>()
 defineEmits<Emits>()
 
 function formatValue(c: Coupon) {
-  return c.type === 'percentage' ? `${c.value}%` : c.type === 'fixed' ? `$${c.value}` : 'Free shipping'
+  return c.type === 'percentage'
+    ? `${c.value}%`
+    : c.type === 'fixed'
+      ? `$${c.value}`
+      : 'Free shipping'
 }
 
+const { locale } = useI18n()
+
 function formatDate(date: string | null | undefined) {
-  return date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'
+  return date
+    ? new Date(date).toLocaleDateString(locale.value, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : '—'
 }
 </script>
 
@@ -28,20 +40,22 @@ function formatDate(date: string | null | undefined) {
     <table class="coupon-table">
       <thead>
         <tr>
-          <th>Code</th>
-          <th>Type</th>
-          <th>Value</th>
-          <th>Min Order</th>
-          <th>Usage</th>
-          <th>Expires</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th>{{ $t('admin.couponsPage.code') }}</th>
+          <th>{{ $t('admin.couponsPage.type') }}</th>
+          <th>{{ $t('admin.couponsPage.value') }}</th>
+          <th>{{ $t('admin.couponsPage.minOrder') }}</th>
+          <th>{{ $t('admin.couponsPage.usage') }}</th>
+          <th>{{ $t('admin.couponsPage.expires') }}</th>
+          <th>{{ $t('admin.couponsPage.status') }}</th>
+          <th>{{ $t('admin.couponsPage.actions') }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="c in coupons" :key="c.id">
           <td class="coupon-table__code">{{ c.code }}</td>
-          <td class="coupon-table__type">{{ c.type.replace(/_/g, ' ') }}</td>
+          <td class="coupon-table__type">
+            {{ $t(`admin.couponsPage.${c.type}`) || c.type.replace(/_/g, ' ') }}
+          </td>
           <td>{{ formatValue(c) }}</td>
           <td>${{ c.minOrderValue }}</td>
           <td class="coupon-table__usage">
@@ -49,8 +63,11 @@ function formatDate(date: string | null | undefined) {
           </td>
           <td class="coupon-table__date">{{ formatDate(c.endDate) }}</td>
           <td>
-            <span class="coupon-table__badge" :class="c.isActive ? 'badge--active' : 'badge--inactive'">
-              {{ c.isActive ? 'Active' : 'Inactive' }}
+            <span
+              class="coupon-table__badge"
+              :class="c.isActive ? 'badge--active' : 'badge--inactive'"
+            >
+              {{ c.isActive ? $t('admin.couponsPage.active') : $t('admin.couponsPage.inactive') }}
             </span>
           </td>
           <td>
@@ -61,7 +78,9 @@ function formatDate(date: string | null | undefined) {
                 :disabled="processingId === c.id"
                 @click="$emit('toggle', c)"
               >
-                {{ c.isActive ? 'Deactivate' : 'Activate' }}
+                {{
+                  c.isActive ? $t('admin.couponsPage.deactivate') : $t('admin.couponsPage.activate')
+                }}
               </button>
               <button
                 type="button"
@@ -69,7 +88,7 @@ function formatDate(date: string | null | undefined) {
                 :disabled="processingId === c.id"
                 @click="$emit('delete', c.id)"
               >
-                Delete
+                {{ $t('admin.couponsPage.delete') }}
               </button>
             </div>
           </td>

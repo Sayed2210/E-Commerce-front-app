@@ -46,7 +46,7 @@ const roleLabel = computed(() => {
         :disabled="processing"
         @click="emit('delete')"
       >
-        Delete
+        {{ $t('admin.customersPage.delete') }}
       </button>
     </AdminTableActions>
   </tr>

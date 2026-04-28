@@ -42,15 +42,17 @@ const emit = defineEmits<{
       <td class="table-td text-secondary">{{ member.email }}</td>
       <td class="table-td">
         <select v-model="editForm!.role" class="form__input">
-          <option value="staff">Staff</option>
-          <option value="admin">Admin</option>
+          <option value="staff">{{ $t('admin.staffPage.staff') }}</option>
+          <option value="admin">{{ $t('admin.staffPage.admin') }}</option>
         </select>
       </td>
       <AdminTableActions>
         <button type="button" class="table-action" :disabled="processing" @click="emit('update')">
-          Save
+          {{ $t('admin.staffPage.save') }}
         </button>
-        <button type="button" class="table-action" @click="emit('cancel-edit')">Cancel</button>
+        <button type="button" class="table-action" @click="emit('cancel-edit')">
+          {{ $t('admin.staffPage.cancel') }}
+        </button>
       </AdminTableActions>
     </template>
     <template v-else>
@@ -60,14 +62,16 @@ const emit = defineEmits<{
       <td class="table-td text-secondary">{{ member.email }}</td>
       <td class="table-td"><AdminSharedStatusBadge :status="member.role" size="sm" /></td>
       <AdminTableActions>
-        <button type="button" class="table-action" @click="emit('start-edit')">Edit</button>
+        <button type="button" class="table-action" @click="emit('start-edit')">
+          {{ $t('admin.staffPage.edit') }}
+        </button>
         <button
           type="button"
           class="table-action table-action--danger"
           :disabled="processing"
           @click="emit('delete')"
         >
-          Delete
+          {{ $t('admin.staffPage.delete') }}
         </button>
       </AdminTableActions>
     </template>

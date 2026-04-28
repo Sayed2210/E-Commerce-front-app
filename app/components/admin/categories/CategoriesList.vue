@@ -45,10 +45,15 @@ async function handleDelete(id: string) {
 
 <template>
   <div class="space-y-6">
-    <AdminPageHeader title="Categories" description="Manage product catalog categories">
+    <AdminPageHeader
+      :title="$t('admin.categoriesPage.title')"
+      :description="$t('admin.categoriesPage.description')"
+    >
       <button type="button" class="admin-btn" @click="showCreate = !showCreate">
         <span class="material-symbols-outlined text-sm">{{ showCreate ? 'close' : 'add' }}</span>
-        {{ showCreate ? 'Cancel' : 'New Category' }}
+        {{
+          showCreate ? $t('admin.categoriesPage.cancel') : $t('admin.categoriesPage.newCategory')
+        }}
       </button>
     </AdminPageHeader>
 
@@ -56,21 +61,21 @@ async function handleDelete(id: string) {
       <form class="space-y-4" @submit.prevent="handleCreate">
         <div class="grid grid-cols-2 gap-4">
           <div class="form__field">
-            <label class="form__label">Name</label>
+            <label class="form__label">{{ $t('admin.categoriesPage.name') }}</label>
             <input v-model="form.name" required type="text" class="form__input" />
           </div>
           <div class="form__field">
-            <label class="form__label">Slug</label>
+            <label class="form__label">{{ $t('admin.categoriesPage.slug') }}</label>
             <input v-model="form.slug" type="text" class="form__input" />
           </div>
           <div class="form__field">
-            <label class="form__label">Image URL</label>
+            <label class="form__label">{{ $t('admin.categoriesPage.imageUrl') }}</label>
             <input v-model="form.image" type="url" class="form__input" />
           </div>
           <div class="form__field">
-            <label class="form__label">Parent Category</label>
+            <label class="form__label">{{ $t('admin.categoriesPage.parentCategory') }}</label>
             <select v-model="form.parentId" class="form__input">
-              <option value="">None</option>
+              <option value="">{{ $t('admin.categoriesPage.none') }}</option>
               <option v-for="cat in categories" :key="cat.id" :value="cat.id">
                 {{ cat.name }}
               </option>
@@ -78,11 +83,13 @@ async function handleDelete(id: string) {
           </div>
         </div>
         <div class="form__field">
-          <label class="form__label">Description</label>
+          <label class="form__label">{{ $t('admin.categoriesPage.description') }}</label>
           <textarea v-model="form.description" rows="3" class="form__input" />
         </div>
         <div class="flex justify-end">
-          <button type="submit" class="admin-btn">Create Category</button>
+          <button type="submit" class="admin-btn">
+            {{ $t('admin.categoriesPage.createCategory') }}
+          </button>
         </div>
       </form>
     </AdminFormPanel>
@@ -91,10 +98,10 @@ async function handleDelete(id: string) {
       <template #header>
         <thead class="bg-surface-container">
           <tr>
-            <th class="table-th">Name</th>
-            <th class="table-th">Slug</th>
-            <th class="table-th">Parent</th>
-            <th class="table-th">Actions</th>
+            <th class="table-th">{{ $t('admin.categoriesPage.name') }}</th>
+            <th class="table-th">{{ $t('admin.categoriesPage.slug') }}</th>
+            <th class="table-th">{{ $t('admin.categoriesPage.parentCategory') }}</th>
+            <th class="table-th">{{ $t('admin.categoriesPage.actions') }}</th>
           </tr>
         </thead>
       </template>
@@ -112,7 +119,7 @@ async function handleDelete(id: string) {
       <template #empty>
         <tr>
           <td colspan="4" class="px-6 py-12 text-center text-secondary text-sm">
-            No categories found
+            {{ $t('admin.categoriesPage.noCategories') }}
           </td>
         </tr>
       </template>

@@ -14,7 +14,7 @@ interface Props {
 const {
   pending = false,
   empty = false,
-  emptyText = 'No data available.',
+  emptyText = '',
   pagination = false,
   currentPage = 1,
   totalPages = 1,
@@ -46,7 +46,7 @@ function goToNext() {
       <tbody v-else-if="empty" class="divide-y divide-outline-variant/10">
         <tr>
           <td :colspan="columnCount" class="px-6 py-12 text-center text-secondary text-sm">
-            {{ emptyText }}
+            {{ emptyText || $t('admin.common.noData') }}
           </td>
         </tr>
       </tbody>
@@ -58,7 +58,9 @@ function goToNext() {
       v-if="pagination && totalPages > 1"
       class="flex items-center justify-between px-6 py-4 border-t border-outline-variant/10"
     >
-      <p class="text-xs text-secondary">Page {{ currentPage }} of {{ totalPages }}</p>
+      <p class="text-xs text-secondary">
+        {{ $t('admin.common.page', { current: currentPage, total: totalPages }) }}
+      </p>
       <div class="flex gap-2">
         <button
           type="button"
@@ -66,7 +68,7 @@ function goToNext() {
           class="px-3 py-1.5 text-xs rounded border border-outline-variant/20 disabled:opacity-40 hover:bg-surface-container-low transition-colors"
           @click="goToPrev"
         >
-          Prev
+          {{ $t('admin.common.prev') }}
         </button>
         <button
           type="button"
@@ -74,7 +76,7 @@ function goToNext() {
           class="px-3 py-1.5 text-xs rounded border border-outline-variant/20 disabled:opacity-40 hover:bg-surface-container-low transition-colors"
           @click="goToNext"
         >
-          Next
+          {{ $t('admin.common.next') }}
         </button>
       </div>
     </div>

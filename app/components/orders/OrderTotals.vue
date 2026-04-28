@@ -6,28 +6,28 @@ defineProps<{ order: Order }>()
 
 <template>
   <section class="order-totals">
-    <h2 class="order-totals__title">Payment Summary</h2>
+    <h2 class="order-totals__title">{{ $t('orders.paymentSummary') }}</h2>
     <dl class="order-totals__list">
       <div class="order-totals__row">
-        <dt>Subtotal</dt>
+        <dt>{{ $t('orders.subtotal') }}</dt>
         <dd>${{ order.subtotal }}</dd>
       </div>
       <div v-if="order.discountAmount > 0" class="order-totals__row order-totals__row--positive">
-        <dt>Discount</dt>
+        <dt>{{ $t('orders.discount') }}</dt>
         <dd>-${{ order.discountAmount }}</dd>
       </div>
       <div class="order-totals__row">
-        <dt>Shipping</dt>
+        <dt>{{ $t('orders.shipping') }}</dt>
         <dd :class="{ 'order-totals__val--free': order.shippingAmount === 0 }">
-          {{ order.shippingAmount === 0 ? 'FREE' : `$${order.shippingAmount}` }}
+          {{ order.shippingAmount === 0 ? $t('common.free') : `$${order.shippingAmount}` }}
         </dd>
       </div>
       <div v-if="order.taxAmount > 0" class="order-totals__row">
-        <dt>Tax</dt>
+        <dt>{{ $t('orders.tax') }}</dt>
         <dd>${{ order.taxAmount }}</dd>
       </div>
       <div class="order-totals__row order-totals__row--total">
-        <dt>Total</dt>
+        <dt>{{ $t('orders.total') }}</dt>
         <dd>${{ order.totalAmount }}</dd>
       </div>
     </dl>
@@ -36,7 +36,7 @@ defineProps<{ order: Order }>()
         {{ order.paymentMethod === 'stripe' ? 'credit_card' : 'local_shipping' }}
       </span>
       <span>
-        {{ order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Paid by Card' }}
+        {{ order.paymentMethod === 'cod' ? $t('orders.cod') : $t('orders.paidByCard') }}
         —
         <span
           :class="['order-totals__pay-status', `order-totals__pay-status--${order.paymentStatus}`]"

@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import type { Order } from '~/types/api'
 
+const { t } = useI18n()
+
 definePageMeta({ layout: 'default', middleware: 'auth' })
-useSeoMeta({ title: 'My Orders — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({ title: () => t('orders.title'), robots: 'noindex, nofollow' })
 
 const { listOrders } = useOrders()
 
 const activeTab = ref('all')
 
-const STATUS_TABS = [
-  { value: 'all', label: 'All Orders' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'processing', label: 'Processing' },
-  { value: 'shipped', label: 'Shipped' },
-  { value: 'delivered', label: 'Delivered' },
-]
+const STATUS_TABS = computed(() => [
+  { value: 'all', label: t('orders.allOrders') },
+  { value: 'pending', label: t('orders.pending') },
+  { value: 'processing', label: t('orders.processing') },
+  { value: 'shipped', label: t('orders.shipped') },
+  { value: 'delivered', label: t('orders.delivered') },
+])
 
 const { data, pending } = await listOrders({ limit: 20 })
 const orders = computed<Order[]>(() => {
@@ -38,14 +40,14 @@ const router = useRouter()
 <template>
   <div class="orders-page">
     <div class="orders-page__header">
-      <h1 class="orders-page__title">My Orders</h1>
-      <p class="orders-page__subtitle">Track and manage your purchases</p>
+      <h1 class="orders-page__title">{{ $t('orders.myOrders') }}</h1>
+      <p class="orders-page__subtitle">{{ $t('orders.trackPurchases') }}</p>
     </div>
 
     <AppTabBar
       v-model="activeTab"
       :tabs="STATUS_TABS"
-      aria-label="Filter orders by status"
+      :aria-label="$t('orders.filterByStatus')"
       class="orders-page__tabs"
     />
 
@@ -61,7 +63,7 @@ const router = useRouter()
       v-else-if="filteredOrders.length"
       class="orders-page__list"
       role="list"
-      :aria-label="`${filteredOrders.length} orders`"
+      :aria-label="$t('orders.ordersCount', { count: filteredOrders.length })"
     >
       <li v-for="order in filteredOrders" :key="order.id">
         <OrderCard :order="order" @request-return="openReturnDialog" @cancel-order="() => {}" />
@@ -71,11 +73,13 @@ const router = useRouter()
     <AppEmptyState
       v-else
       icon="shopping_bag"
-      title="No orders yet"
-      body="When you place an order, it will appear here."
+      :title="$t('orders.noOrdersYet')"
+      :body="$t('orders.noOrdersBody')"
     >
       <template #cta>
-        <NuxtLink to="/products" class="orders-page__cta">Start Shopping</NuxtLink>
+        <NuxtLink to="/products" class="orders-page__cta">{{
+          $t('orders.startShopping')
+        }}</NuxtLink>
       </template>
     </AppEmptyState>
   </div>

@@ -3,6 +3,8 @@ import type { Order } from '~/types/api'
 
 defineProps<{ order: Order }>()
 
+const { t, locale } = useI18n()
+
 const STATUS_COLOR: Record<string, string> = {
   pending: 'order-header__badge--pending',
   confirmed: 'order-header__badge--confirmed',
@@ -11,6 +13,11 @@ const STATUS_COLOR: Record<string, string> = {
   delivered: 'order-header__badge--delivered',
   cancelled: 'order-header__badge--cancelled',
   refunded: 'order-header__badge--refunded',
+}
+
+function statusLabel(status: string) {
+  const key = 'orders.status' + status.charAt(0).toUpperCase() + status.slice(1)
+  return t(key as any)
 }
 </script>
 
@@ -22,7 +29,7 @@ const STATUS_COLOR: Record<string, string> = {
       </h1>
       <time class="order-header__date" :datetime="order.createdAt">
         {{
-          new Date(order.createdAt).toLocaleDateString('en-US', {
+          new Date(order.createdAt).toLocaleDateString(locale, {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -31,7 +38,7 @@ const STATUS_COLOR: Record<string, string> = {
       </time>
     </div>
     <span class="order-header__badge" :class="STATUS_COLOR[order.status]">
-      {{ order.status }}
+      {{ statusLabel(order.status) }}
     </span>
   </div>
 </template>

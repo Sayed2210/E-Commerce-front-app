@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import type { Product, CategorySearchResult } from '~/types/api'
 
+const { t } = useI18n()
+
 definePageMeta({ layout: 'default' })
 useSeoMeta({
-  title: 'Precision Tools Marketplace',
-  description:
-    'Shop professional-grade architectural tools, materials, and equipment. Fast delivery, 30-day returns, and expert support.',
-  ogTitle: 'ArchitectMarket — Precision Tools Marketplace',
-  ogDescription:
-    'Shop professional-grade architectural tools, materials, and equipment. Fast delivery, 30-day returns, and expert support.',
+  title: () => t('home.title'),
+  description: () => t('home.metaDescription'),
+  ogTitle: () => t('home.ogTitle'),
+  ogDescription: () => t('home.metaDescription'),
   ogType: 'website',
   ogImage: '/og-home.jpg',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'ArchitectMarket — Precision Tools Marketplace',
-  twitterDescription: 'Shop professional-grade architectural tools, materials, and equipment.',
+  twitterTitle: () => t('home.ogTitle'),
+  twitterDescription: () => t('home.metaDescription'),
 })
 
 const { listProducts } = useProducts()
@@ -46,8 +46,8 @@ async function quickAddToCart(productId: string) {
     <section class="section" aria-labelledby="cats-heading">
       <SectionHeader
         id="cats-heading"
-        title="Shop by Category"
-        subtitle="Explore our curated collections"
+        :title="$t('home.shopByCategory')"
+        :subtitle="$t('home.exploreCollections')"
         link="/products"
       />
       <HomeCategoryGrid :categories="categories.categories" />

@@ -2,16 +2,16 @@
 import type { Order, ReturnReason } from '~/types/api'
 import { useReturns } from '~/composables/useReturns'
 
+const { t } = useI18n()
+
 definePageMeta({ layout: 'default', middleware: 'auth' })
-useSeoMeta({ title: 'Order Details — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({ title: () => t('orders.orderDetails'), robots: 'noindex, nofollow' })
 
 const route = useRoute()
 const id = route.params.id as string
 
 const { getOrder } = useOrders()
 const { createReturn } = useReturns()
-
-useSeoMeta({ title: `Order Details — ArchitectMarket` })
 
 const { data: orderData, pending } = await getOrder(id)
 const order = computed<Order | null>(() => orderData.value ?? null)
@@ -24,12 +24,12 @@ const returnModal = reactive({
   loading: false,
 })
 
-const RETURN_REASONS: { value: ReturnReason; label: string }[] = [
-  { value: 'changed_mind', label: 'Changed my mind' },
-  { value: 'defective', label: 'Item is defective' },
-  { value: 'wrong_item', label: 'Wrong item received' },
-  { value: 'not_as_described', label: 'Not as described' },
-]
+const RETURN_REASONS = computed<{ value: ReturnReason; label: string }[]>(() => [
+  { value: 'changed_mind', label: t('orders.changedMind') },
+  { value: 'defective', label: t('orders.defective') },
+  { value: 'wrong_item', label: t('orders.wrongItem') },
+  { value: 'not_as_described', label: t('orders.notAsDescribed') },
+])
 
 function openReturn(itemId: string) {
   returnModal.itemId = itemId
@@ -54,8 +54,8 @@ const canReturn = computed(() => order.value?.status === 'delivered')
 const shippingAddr = computed(() => order.value?.shippingAddress)
 
 const breadcrumbs = computed(() => [
-  { label: 'Marketplace', to: '/' },
-  { label: 'My Orders', to: '/orders' },
+  { label: t('common.marketplace'), to: '/' },
+  { label: t('orders.myOrders'), to: '/orders' },
   { label: `#${id.slice(-8).toUpperCase()}` },
 ])
 </script>
@@ -65,18 +65,23 @@ const breadcrumbs = computed(() => [
   <div class="order-detail">
     <AppBreadcrumb :items="breadcrumbs" />
 
-    <div v-if="pending" class="order-detail__skeleton" aria-busy="true" aria-label="Loading order">
+    <div
+      v-if="pending"
+      class="order-detail__skeleton"
+      aria-busy="true"
+      :aria-label="$t('orders.loadingOrder')"
+    >
       <div v-for="i in 4" :key="i" class="order-detail__skel-line" />
     </div>
 
     <AppEmptyState
       v-else-if="!order"
       icon="error"
-      title="Order not found"
-      body="We couldn't load this order."
+      :title="$t('orders.orderNotFound')"
+      :body="$t('orders.orderNotFoundBody')"
     >
       <template #cta>
-        <NuxtLink to="/orders" class="order-detail__back">Back to Orders</NuxtLink>
+        <NuxtLink to="/orders" class="order-detail__back">{{ $t('orders.backToOrders') }}</NuxtLink>
       </template>
     </AppEmptyState>
 
@@ -94,7 +99,7 @@ const breadcrumbs = computed(() => [
           </div>
 
           <div v-if="shippingAddr" class="order-detail__card">
-            <h2 class="order-detail__section-title">Shipping Address</h2>
+            <h2 class="order-detail__section-title">{{ $t('orders.shippingAddress') }}</h2>
             <address class="order-detail__address">
               <span
                 v-if="shippingAddr.firstName || shippingAddr.lastName"
@@ -124,25 +129,27 @@ const breadcrumbs = computed(() => [
         class="return-modal-overlay"
         role="dialog"
         aria-modal="true"
-        aria-label="Request return"
+        :aria-label="$t('orders.requestReturn')"
       >
         <div class="return-modal">
-          <h2 class="return-modal__title">Request Return</h2>
+          <h2 class="return-modal__title">{{ $t('orders.requestReturn') }}</h2>
 
-          <label class="return-modal__label" for="return-reason">Reason</label>
+          <label class="return-modal__label" for="return-reason">{{ $t('orders.reason') }}</label>
           <select id="return-reason" v-model="returnModal.reason" class="return-modal__select">
             <option v-for="r in RETURN_REASONS" :key="r.value" :value="r.value">
               {{ r.label }}
             </option>
           </select>
 
-          <label class="return-modal__label" for="return-notes">Additional Notes</label>
+          <label class="return-modal__label" for="return-notes">{{
+            $t('orders.additionalNotes')
+          }}</label>
           <textarea
             id="return-notes"
             v-model="returnModal.notes"
             class="return-modal__textarea"
             rows="3"
-            placeholder="Optional details…"
+            :placeholder="$t('orders.optionalDetailsPlaceholder')"
           />
 
           <div class="return-modal__actions">
@@ -151,7 +158,7 @@ const breadcrumbs = computed(() => [
               class="return-modal__btn return-modal__btn--ghost"
               @click="returnModal.open = false"
             >
-              Cancel
+              {{ $t('orders.cancel') }}
             </button>
             <button
               type="button"
@@ -159,7 +166,7 @@ const breadcrumbs = computed(() => [
               :disabled="returnModal.loading"
               @click="submitReturn"
             >
-              {{ returnModal.loading ? 'Submitting…' : 'Submit Request' }}
+              {{ returnModal.loading ? $t('orders.submitting') : $t('orders.submitRequest') }}
             </button>
           </div>
         </div>

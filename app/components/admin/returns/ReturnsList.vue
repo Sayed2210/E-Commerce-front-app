@@ -1,15 +1,25 @@
 <script setup lang="ts">
 import type { Return, ReturnStatus } from '~/types/api'
-import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
+import { useToasts } from '~/composables/useToasts'
 import { getAccessToken } from '~/utils/token'
 
+const { t, locale } = useI18n()
+const { showError, showSuccess } = useToasts()
+
+function formatDate(dateString: string): string {
+  return new Date(dateString).toLocaleDateString(locale.value, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
 const config = useRuntimeConfig()
 const baseURL = config.public.apiBaseUrl as string
 
 function authH(): Record<string, string> {
-  const t = getAccessToken()
+  const token = getAccessToken()
   const h: Record<string, string> = {}
-  if (t) h['Authorization'] = `Bearer ${t}`
+  if (token) h['Authorization'] = `Bearer ${token}`
   return h
 }
 
@@ -36,10 +46,14 @@ async function process(id: string, status: 'approved' | 'rejected') {
       body: { status },
       headers: authH(),
     })
-    showSuccessToast(`Return ${status}.`)
+    showSuccess(
+      status === 'approved'
+        ? t('admin.returnsPage.returnApproved')
+        : t('admin.returnsPage.returnRejected')
+    )
     await refresh()
   } catch (err) {
-    showErrorToast(err)
+    showError(err)
   } finally {
     processingId.value = null
   }
@@ -49,7 +63,7 @@ async function process(id: string, status: 'approved' | 'rejected') {
 <template>
   <section class="returns-list">
     <div class="returns-list__head">
-      <h1 class="returns-list__title">Return Requests</h1>
+      <h1 class="returns-list__title">{{ $t('admin.returnsPage.title') }}</h1>
     </div>
 
     <div v-if="pending" class="returns-list__loading" aria-busy="true">
@@ -59,19 +73,19 @@ async function process(id: string, status: 'approved' | 'rejected') {
     <AppEmptyState
       v-else-if="!returns.length"
       icon="assignment_return"
-      title="No return requests"
-      body="Return requests from customers will appear here."
+      :title="$t('admin.returnsPage.noReturns')"
+      :body="$t('admin.returnsPage.noReturnsBody')"
     />
 
     <div v-else class="returns-list__table-wrap">
       <table class="returns-list__table">
         <thead>
           <tr>
-            <th>Order</th>
-            <th>Reason</th>
-            <th>Status</th>
-            <th>Submitted</th>
-            <th>Actions</th>
+            <th>{{ $t('admin.returnsPage.order') }}</th>
+            <th>{{ $t('admin.returnsPage.reason') }}</th>
+            <th>{{ $t('admin.returnsPage.status') }}</th>
+            <th>{{ $t('admin.returnsPage.submitted') }}</th>
+            <th>{{ $t('admin.returnsPage.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -84,17 +98,11 @@ async function process(id: string, status: 'approved' | 'rejected') {
             <td class="returns-list__reason">{{ ret.reason.replace(/_/g, ' ') }}</td>
             <td>
               <span class="returns-list__badge" :class="STATUS_CLASS[ret.status]">
-                {{ ret.status }}
+                {{ $t(`admin.orderStatus.${ret.status}`) || ret.status }}
               </span>
             </td>
             <td class="returns-list__date">
-              {{
-                new Date(ret.createdAt).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })
-              }}
+              {{ formatDate(ret.createdAt) }}
             </td>
             <td>
               <div v-if="ret.status === 'pending'" class="returns-list__actions">
@@ -104,7 +112,7 @@ async function process(id: string, status: 'approved' | 'rejected') {
                   :disabled="processingId === ret.id"
                   @click="process(ret.id, 'approved')"
                 >
-                  Approve
+                  {{ $t('admin.returnsPage.approve') }}
                 </button>
                 <button
                   type="button"
@@ -112,10 +120,12 @@ async function process(id: string, status: 'approved' | 'rejected') {
                   :disabled="processingId === ret.id"
                   @click="process(ret.id, 'rejected')"
                 >
-                  Reject
+                  {{ $t('admin.returnsPage.reject') }}
                 </button>
               </div>
-              <span v-else class="returns-list__resolved">—</span>
+              <span v-else class="returns-list__resolved">{{
+                $t('admin.returnsPage.resolved')
+              }}</span>
             </td>
           </tr>
         </tbody>

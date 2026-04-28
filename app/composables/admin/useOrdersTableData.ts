@@ -1,6 +1,7 @@
 import type { Order } from '~/types/api'
 
 export async function useOrdersTableData() {
+  const { locale } = useI18n()
   const { listOrders, updateOrderStatus: apiUpdateStatus } = useOrders()
 
   // State
@@ -69,7 +70,7 @@ export async function useOrdersTableData() {
 
   // Format date helper
   function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(locale.value, {
       month: 'short',
       day: 'numeric',
       year: 'numeric',

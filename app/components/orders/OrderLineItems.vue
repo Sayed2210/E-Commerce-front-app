@@ -20,7 +20,7 @@ function variantLabel(item: OrderItem) {
 
 <template>
   <section class="line-items">
-    <h2 class="line-items__title">Items</h2>
+    <h2 class="line-items__title">{{ $t('orders.itemsTitle') }}</h2>
     <ul class="line-items__list" role="list">
       <li v-for="item in items" :key="item.id" class="line-items__row">
         <div class="line-items__img-wrap">
@@ -36,7 +36,7 @@ function variantLabel(item: OrderItem) {
         <div class="line-items__info">
           <p class="line-items__name">{{ productName(item) }}</p>
           <p v-if="variantLabel(item)" class="line-items__variant">{{ variantLabel(item) }}</p>
-          <p class="line-items__qty">Qty: {{ item.quantity }}</p>
+          <p class="line-items__qty">{{ $t('orders.qty', { qty: item.quantity }) }}</p>
         </div>
         <div class="line-items__right">
           <p class="line-items__price">${{ item.totalPrice }}</p>
@@ -46,7 +46,7 @@ function variantLabel(item: OrderItem) {
             class="line-items__return"
             @click="emit('request-return', item.id)"
           >
-            Return
+            {{ $t('orders.returnItem') }}
           </button>
         </div>
       </li>

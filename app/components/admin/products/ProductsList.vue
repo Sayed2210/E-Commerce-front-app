@@ -26,15 +26,19 @@ function handleDelete(id: string) {
     <!-- Header -->
     <div class="flex justify-between items-end">
       <div>
-        <h2 class="text-2xl font-bold font-headline text-on-surface">Inventory</h2>
-        <p class="text-secondary text-sm">{{ total }} products in catalog</p>
+        <h2 class="text-2xl font-bold font-headline text-on-surface">
+          {{ $t('admin.productsPage.title') }}
+        </h2>
+        <p class="text-secondary text-sm">
+          {{ $t('admin.productsPage.productsCount', { count: total }) }}
+        </p>
       </div>
       <NuxtLink
         to="/admin/products/create"
         class="bg-primary-container text-on-primary-container px-5 py-2.5 rounded font-bold text-sm flex items-center gap-2 hover:brightness-95 transition-all"
       >
         <span class="material-symbols-outlined text-sm">add</span>
-        New Product
+        {{ $t('admin.productsPage.newProduct') }}
       </NuxtLink>
     </div>
 
@@ -61,7 +65,7 @@ function handleDelete(id: string) {
           />
           <tr v-if="!filteredProducts.length">
             <td colspan="6" class="px-6 py-12 text-center text-secondary text-sm">
-              No products found
+              {{ $t('admin.productsPage.noProducts') }}
             </td>
           </tr>
         </tbody>

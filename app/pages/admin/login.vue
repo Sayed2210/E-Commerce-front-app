@@ -31,9 +31,11 @@ async function handleSubmit() {
     <UCard class="w-full max-w-md">
       <template #header>
         <div class="text-center">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Admin Login</h1>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ $t('admin.loginPage.title') }}
+          </h1>
           <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to access the admin dashboard
+            {{ $t('admin.loginPage.subtitle') }}
           </p>
         </div>
       </template>
@@ -43,7 +45,7 @@ async function handleSubmit() {
         <UInput
           v-model="formData.email"
           type="email"
-          placeholder="admin@example.com"
+          :placeholder="$t('admin.loginPage.emailPlaceholder')"
           icon="i-heroicons-envelope"
           size="lg"
           required
@@ -55,7 +57,7 @@ async function handleSubmit() {
         <UInput
           v-model="formData.password"
           type="password"
-          placeholder="Enter your password"
+          :placeholder="$t('admin.loginPage.passwordPlaceholder')"
           icon="i-heroicons-lock-closed"
           size="lg"
           required
@@ -73,7 +75,7 @@ async function handleSubmit() {
 
         <!-- Submit Button -->
         <UButton type="submit" color="primary" size="lg" block :loading="loading">
-          Sign In
+          {{ $t('admin.loginPage.signIn') }}
         </UButton>
       </UForm>
 
@@ -83,7 +85,7 @@ async function handleSubmit() {
             to="/login"
             class="text-primary-600 hover:text-primary-500 dark:text-primary-400"
           >
-            User login instead
+            {{ $t('admin.loginPage.userLogin') }}
           </NuxtLink>
         </div>
       </template>

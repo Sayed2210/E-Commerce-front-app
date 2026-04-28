@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SORT_OPTIONS } from '~/composables/useProductFilters'
+import { useProductFilters } from '~/composables/useProductFilters'
 
 defineProps<{
   total: number
@@ -14,15 +14,19 @@ const emit = defineEmits<{
   'update:selectedSort': [value: string]
   'open-filters': []
 }>()
+
+const { sortOptions } = useProductFilters()
 </script>
 
 <template>
   <div class="results-bar">
     <div class="results-bar__left">
       <h1 class="results-bar__title">
-        {{ query ? `Results for "${query}"` : 'All Products' }}
+        {{ query ? $t('products.resultsFor', { query }) : $t('products.allProducts') }}
       </h1>
-      <p class="results-bar__count" aria-live="polite">{{ total.toLocaleString() }} items</p>
+      <p class="results-bar__count" aria-live="polite">
+        {{ $t('products.items', { count: total.toLocaleString() }) }}
+      </p>
     </div>
 
     <div class="results-bar__right">
@@ -34,31 +38,31 @@ const emit = defineEmits<{
         @click="emit('open-filters')"
       >
         <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
-        Filters
+        {{ $t('products.filters') }}
         <span v-if="activeFiltersCount > 0" class="results-bar__filter-badge">
           {{ activeFiltersCount }}
         </span>
       </button>
 
-      <label class="sr-only" for="sort-select">Sort products by</label>
+      <label class="sr-only" for="sort-select">{{ $t('products.sortBy') }}</label>
       <select
         id="sort-select"
         :value="selectedSort"
         class="results-bar__sort"
         @change="emit('update:selectedSort', ($event.target as HTMLSelectElement).value)"
       >
-        <option v-for="opt in SORT_OPTIONS" :key="opt.value" :value="opt.value">
+        <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
           {{ opt.label }}
         </option>
       </select>
 
-      <div class="view-toggle" role="group" aria-label="View mode">
+      <div class="view-toggle" role="group" :aria-label="$t('products.viewMode')">
         <button
           type="button"
           class="view-toggle__btn"
           :class="{ 'view-toggle__btn--active': viewMode === 'grid' }"
           :aria-pressed="viewMode === 'grid'"
-          aria-label="Grid view"
+          :aria-label="$t('products.gridView')"
           @click="emit('update:viewMode', 'grid')"
         >
           <span class="material-symbols-outlined" aria-hidden="true">grid_view</span>
@@ -68,7 +72,7 @@ const emit = defineEmits<{
           class="view-toggle__btn"
           :class="{ 'view-toggle__btn--active': viewMode === 'list' }"
           :aria-pressed="viewMode === 'list'"
-          aria-label="List view"
+          :aria-label="$t('products.listView')"
           @click="emit('update:viewMode', 'list')"
         >
           <span class="material-symbols-outlined" aria-hidden="true">view_list</span>

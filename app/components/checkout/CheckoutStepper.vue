@@ -1,15 +1,17 @@
 <script setup lang="ts">
 defineProps<{ step: 1 | 2 | 3 }>()
 
-const steps = [
-  { n: 1, label: 'Address' },
-  { n: 2, label: 'Payment' },
-  { n: 3, label: 'Review' },
-]
+const { t } = useI18n()
+
+const steps = computed(() => [
+  { n: 1, label: t('checkout.stepAddress') },
+  { n: 2, label: t('checkout.stepPayment') },
+  { n: 3, label: t('checkout.stepReview') },
+])
 </script>
 
 <template>
-  <nav class="stepper" aria-label="Checkout progress">
+  <nav class="stepper" :aria-label="$t('checkout.progressAria')">
     <ol class="stepper__list">
       <li
         v-for="(s, i) in steps"
@@ -61,7 +63,9 @@ const steps = [
   font-size: 0.8125rem;
   font-weight: 700;
   flex-shrink: 0;
-  transition: background var(--transition-base), color var(--transition-base);
+  transition:
+    background var(--transition-base),
+    color var(--transition-base);
 }
 
 .stepper__dot .material-symbols-outlined {

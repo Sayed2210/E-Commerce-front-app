@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { UserRole } from '~/types/auth'
-import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
+
+const { t, locale } = useI18n()
+const { showError, showSuccess } = useToasts()
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
-useSeoMeta({ title: 'My Account — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({ title: () => t('account.profileSettings'), robots: 'noindex, nofollow' })
 
 const { user, fetchUser } = useAuth()
 const { apiCall } = useApiClient()
@@ -41,17 +43,17 @@ const fullName = computed(() => {
 })
 const memberSince = computed(() => {
   if (!user.value?.createdAt) return ''
-  return new Date(user.value.createdAt).toLocaleDateString('en-US', {
+  return new Date(user.value.createdAt).toLocaleDateString(locale.value, {
     month: 'long',
     year: 'numeric',
   })
 })
 
-const accountLinks = [
-  { to: '/orders', icon: 'shopping_bag', label: 'My Orders' },
-  { to: '/wishlist', icon: 'favorite_border', label: 'Wishlist' },
-  { to: '/cart', icon: 'shopping_cart', label: 'Cart' },
-]
+const accountLinks = computed(() => [
+  { to: '/orders', icon: 'shopping_bag', label: t('account.myOrders') },
+  { to: '/wishlist', icon: 'favorite_border', label: t('account.wishlist') },
+  { to: '/cart', icon: 'shopping_cart', label: t('account.cart') },
+])
 
 const activeTab = ref<'profile' | 'addresses'>('profile')
 
@@ -71,7 +73,7 @@ async function saveProfile() {
 
 async function changePassword() {
   if (pwForm.newPw !== pwForm.confirm) {
-    showErrorToast({ message: 'Passwords do not match.' })
+    showError(null, t('account.passwordsDoNotMatch'))
     return
   }
   const { error } = await apiCall('/auth/change-password', {
@@ -79,24 +81,24 @@ async function changePassword() {
     body: { currentPassword: pwForm.current, newPassword: pwForm.newPw },
   })
   if (error) {
-    showErrorToast(error)
+    showError(error)
     return
   }
-  showSuccessToast('Password updated.')
+  showSuccess(t('account.passwordUpdated'))
   pwForm.current = ''
   pwForm.newPw = ''
   pwForm.confirm = ''
 }
-
-useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
 </script>
 
 <template>
   <div class="max-w-7xl mx-auto px-6 py-8">
     <div class="flex items-end justify-between mb-8">
       <div>
-        <h1 class="text-3xl font-bold text-on-surface font-headline">Profile Settings</h1>
-        <p class="text-secondary text-sm mt-1">Manage your account details and preferences</p>
+        <h1 class="text-3xl font-bold text-on-surface font-headline">
+          {{ $t('account.profileSettings') }}
+        </h1>
+        <p class="text-secondary text-sm mt-1">{{ $t('account.manageDetails') }}</p>
       </div>
     </div>
 
@@ -113,9 +115,13 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
           <h2 class="font-bold text-lg text-on-surface font-headline">{{ fullName }}</h2>
           <p class="text-secondary text-sm">{{ user?.email }}</p>
           <span class="mt-3 micro-chip bg-surface-container text-secondary">
-            {{ user?.role === UserRole.ADMIN ? 'Administrator' : 'Customer' }}
+            {{
+              user?.role === UserRole.ADMIN ? $t('account.administrator') : $t('account.customer')
+            }}
           </span>
-          <p class="text-xs text-secondary mt-3">Member since {{ memberSince }}</p>
+          <p class="text-xs text-secondary mt-3">
+            {{ $t('account.memberSince', { date: memberSince }) }}
+          </p>
         </div>
 
         <!-- Quick nav -->
@@ -149,7 +155,7 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
             "
             @click="activeTab = 'profile'"
           >
-            Profile
+            {{ $t('account.profile') }}
           </button>
           <button
             type="button"
@@ -161,7 +167,7 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
             "
             @click="activeTab = 'addresses'"
           >
-            Addresses
+            {{ $t('account.addresses') }}
           </button>
         </div>
         <!-- Addresses tab -->
@@ -171,53 +177,57 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
 
         <!-- Personal info -->
         <div v-if="activeTab === 'profile'" class="bg-surface-container-lowest rounded p-8">
-          <h2 class="font-bold text-on-surface font-headline mb-6">Personal Information</h2>
+          <h2 class="font-bold text-on-surface font-headline mb-6">
+            {{ $t('account.personalInfo') }}
+          </h2>
           <form class="space-y-5" @submit.prevent="saveProfile">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
-                  >First Name</label
+                <label
+                  class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                  >{{ $t('account.firstName') }}</label
                 >
                 <input
                   v-model="form.firstName"
                   type="text"
                   class="w-full bg-surface-container-low border-none border-b-2 border-b-outline/30 focus:border-b-primary rounded py-2.5 px-4 text-sm outline-none transition-colors"
-                  placeholder="John"
+                  :placeholder="$t('account.firstNamePlaceholder')"
                 />
               </div>
               <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
-                  >Last Name</label
+                <label
+                  class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                  >{{ $t('account.lastName') }}</label
                 >
                 <input
                   v-model="form.lastName"
                   type="text"
                   class="w-full bg-surface-container-low border-none border-b-2 border-b-outline/30 focus:border-b-primary rounded py-2.5 px-4 text-sm outline-none transition-colors"
-                  placeholder="Doe"
+                  :placeholder="$t('account.lastNamePlaceholder')"
                 />
               </div>
             </div>
             <div>
-              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
-                >Email Address</label
-              >
+              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">{{
+                $t('account.emailAddress')
+              }}</label>
               <input
                 :value="user?.email"
                 type="email"
                 readonly
                 class="w-full bg-surface-container border-none rounded py-2.5 px-4 text-sm text-secondary cursor-not-allowed"
               />
-              <p class="text-xs text-secondary mt-1">Email cannot be changed</p>
+              <p class="text-xs text-secondary mt-1">{{ $t('account.emailCannotChange') }}</p>
             </div>
             <div>
-              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
-                >Phone Number</label
-              >
+              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">{{
+                $t('account.phoneNumber')
+              }}</label>
               <input
                 v-model="form.phone"
                 type="tel"
                 class="w-full bg-surface-container-low border-none border-b-2 border-b-outline/30 focus:border-b-primary rounded py-2.5 px-4 text-sm outline-none transition-colors"
-                placeholder="+1 (555) 000-0000"
+                :placeholder="$t('account.phonePlaceholder')"
               />
             </div>
 
@@ -227,7 +237,7 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
                 :disabled="saving"
                 class="bg-primary-container text-on-primary-container px-8 py-2.5 rounded font-bold text-sm hover:bg-primary hover:text-on-primary transition-all disabled:opacity-60"
               >
-                {{ saving ? 'Saving…' : 'Save Changes' }}
+                {{ saving ? $t('account.saving') : $t('account.saveChanges') }}
               </button>
               <p v-if="saved" class="text-green-600 text-xs flex items-center gap-1">
                 <span
@@ -235,7 +245,7 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
                   style="font-variation-settings: 'FILL' 1"
                   >check_circle</span
                 >
-                Profile updated!
+                {{ $t('account.profileUpdated') }}
               </p>
             </div>
           </form>
@@ -243,12 +253,14 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
 
         <!-- Password change -->
         <div v-if="activeTab === 'profile'" class="bg-surface-container-lowest rounded p-8">
-          <h2 class="font-bold text-on-surface font-headline mb-6">Change Password</h2>
+          <h2 class="font-bold text-on-surface font-headline mb-6">
+            {{ $t('account.changePassword') }}
+          </h2>
           <form class="space-y-5" @submit.prevent="changePassword">
             <div>
-              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
-                >Current Password</label
-              >
+              <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2">{{
+                $t('account.currentPassword')
+              }}</label>
               <input
                 v-model="pwForm.current"
                 type="password"
@@ -257,8 +269,9 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
-                  >New Password</label
+                <label
+                  class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                  >{{ $t('account.newPassword') }}</label
                 >
                 <input
                   v-model="pwForm.newPw"
@@ -267,8 +280,9 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
                 />
               </div>
               <div>
-                <label class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
-                  >Confirm New Password</label
+                <label
+                  class="text-xs font-bold uppercase tracking-wider text-secondary block mb-2"
+                  >{{ $t('account.confirmNewPassword') }}</label
                 >
                 <input
                   v-model="pwForm.confirm"
@@ -281,7 +295,7 @@ useSeoMeta({ title: 'Profile Settings — ArchitectMarket' })
               type="submit"
               class="bg-primary-container text-on-primary-container px-8 py-2.5 rounded font-bold text-sm hover:bg-primary hover:text-on-primary transition-all"
             >
-              Update Password
+              {{ $t('account.updatePassword') }}
             </button>
           </form>
         </div>

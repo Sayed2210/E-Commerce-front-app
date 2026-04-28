@@ -1,14 +1,20 @@
 <script setup lang="ts">
-const perks = [
-  { icon: 'local_shipping', title: 'Free Shipping', body: 'On all orders over $99' },
-  { icon: 'verified', title: 'Authenticity Guaranteed', body: 'Every item curated and verified' },
-  { icon: 'replay', title: '30-Day Returns', body: 'Hassle-free return policy' },
-  { icon: 'headset_mic', title: '24/7 Support', body: 'Expert help whenever you need it' },
-]
+const { t } = useI18n()
+
+const perks = computed(() => [
+  { icon: 'local_shipping', title: t('home.perkShippingTitle'), body: t('home.perkShippingBody') },
+  {
+    icon: 'verified',
+    title: t('home.perkAuthenticityTitle'),
+    body: t('home.perkAuthenticityBody'),
+  },
+  { icon: 'replay', title: t('home.perkReturnsTitle'), body: t('home.perkReturnsBody') },
+  { icon: 'headset_mic', title: t('home.perkSupportTitle'), body: t('home.perkSupportBody') },
+])
 </script>
 
 <template>
-  <section class="perks" aria-label="Shopping benefits">
+  <section class="perks" :aria-label="$t('home.perksAriaLabel')">
     <div class="perks__inner">
       <div v-for="perk in perks" :key="perk.icon" class="perk">
         <span class="perk__icon material-symbols-outlined" aria-hidden="true">{{ perk.icon }}</span>

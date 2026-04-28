@@ -1,13 +1,15 @@
 import type { LoginCredentials, RegisterData, AuthResponse, User } from '~/types/auth'
 import { UserRole } from '~/types/auth'
 import { setTokens, clearTokens, getAccessToken, getRefreshToken } from '~/utils/token'
-import { parseApiError, showErrorToast, showSuccessToast } from '~/utils/errorHandler'
+import { parseApiError } from '~/utils/errorHandler'
 
 export function useAuth() {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
   const authStore = useAuthStore()
   const router = useRouter()
+  const { t } = useI18n()
+  const { showError, showSuccess } = useToasts()
 
   async function login(
     credentials: LoginCredentials,
@@ -21,19 +23,20 @@ export function useAuth() {
       })
 
       if (isAdmin && response.user.role !== UserRole.ADMIN) {
-        showErrorToast({ message: 'Access denied. Admin privileges required.' })
-        return { ok: false, error: 'Access denied. Admin privileges required.' }
+        const msg = t('toast.accessDenied')
+        showError({ message: msg })
+        return { ok: false, error: msg }
       }
 
       setTokens(response.accessToken, response.refreshToken)
       authStore.setUser(response.user)
-      showSuccessToast('Login successful!')
+      showSuccess(t('toast.loginSuccess'))
 
       await router.push(isAdmin ? '/admin' : '/')
       return { ok: true }
     } catch (err) {
       const message = parseApiError(err)
-      showErrorToast(err)
+      showError(err)
       return { ok: false, error: message }
     } finally {
       authStore.setLoading(false)
@@ -50,12 +53,12 @@ export function useAuth() {
 
       setTokens(response.tokens.accessToken, response.tokens.refreshToken)
       authStore.setUser(response.user)
-      showSuccessToast('Registration successful! Please verify your email.')
+      showSuccess(t('toast.registerSuccess'))
       await router.push('/verify-email?sent=true')
       return { ok: true }
     } catch (err) {
       const message = parseApiError(err)
-      showErrorToast(err)
+      showError(err)
       return { ok: false, error: message }
     } finally {
       authStore.setLoading(false)

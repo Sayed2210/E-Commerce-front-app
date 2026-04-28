@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const config = useRuntimeConfig()
 const baseURL = config.public.apiBaseUrl as string
 // const token = getAccessToken()
@@ -20,7 +21,7 @@ async function reindexSearch() {
     })
     result.value = res.message
   } catch (err: any) {
-    errorMsg.value = err.message || 'Reindex failed'
+    errorMsg.value = err.message || t('admin.searchPage.reindexFailed')
   } finally {
     reindexing.value = false
   }
@@ -29,19 +30,18 @@ async function reindexSearch() {
 
 <template>
   <div class="space-y-6">
-    <AdminPageHeader title="Search" />
+    <AdminPageHeader :title="$t('admin.searchPage.title')" />
 
     <div class="search-card">
       <div class="search-icon">
         <span class="material-symbols-outlined">search</span>
       </div>
-      <h3 class="search-subtitle">Reindex Search</h3>
+      <h3 class="search-subtitle">{{ $t('admin.searchPage.reindexSearch') }}</h3>
       <p class="search-desc">
-        Rebuild the search index to ensure all products are searchable. This may take a while for
-        large catalogs.
+        {{ $t('admin.searchPage.reindexDesc') }}
       </p>
       <button type="button" class="search-btn" :disabled="reindexing" @click="reindexSearch">
-        {{ reindexing ? 'Reindexing...' : 'Rebuild Search Index' }}
+        {{ reindexing ? $t('admin.searchPage.reindexing') : $t('admin.searchPage.rebuildIndex') }}
       </button>
 
       <div v-if="result" class="search-result">

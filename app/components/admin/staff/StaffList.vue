@@ -69,10 +69,13 @@ async function handleDelete(id: string) {
 
 <template>
   <div class="space-y-6">
-    <AdminPageHeader title="Staff" description="Manage admin and staff accounts">
+    <AdminPageHeader
+      :title="$t('admin.staffPage.title')"
+      :description="$t('admin.staffPage.description')"
+    >
       <button type="button" class="admin-btn" @click="showCreate = !showCreate">
         <span class="material-symbols-outlined text-sm">{{ showCreate ? 'close' : 'add' }}</span>
-        {{ showCreate ? 'Cancel' : 'New Staff' }}
+        {{ showCreate ? $t('admin.staffPage.cancel') : $t('admin.staffPage.newStaff') }}
       </button>
     </AdminPageHeader>
 
@@ -80,31 +83,31 @@ async function handleDelete(id: string) {
       <form class="space-y-4" @submit.prevent="handleCreate">
         <div class="grid grid-cols-2 gap-4">
           <div class="form__field">
-            <label class="form__label">Email</label>
+            <label class="form__label">{{ $t('admin.staffPage.email') }}</label>
             <input v-model="form.email" required type="email" class="form__input" />
           </div>
           <div class="form__field">
-            <label class="form__label">Password</label>
+            <label class="form__label">{{ $t('admin.staffPage.password') }}</label>
             <input v-model="form.password" required type="password" class="form__input" />
           </div>
           <div class="form__field">
-            <label class="form__label">First Name</label>
+            <label class="form__label">{{ $t('admin.staffPage.firstName') }}</label>
             <input v-model="form.firstName" type="text" class="form__input" />
           </div>
           <div class="form__field">
-            <label class="form__label">Last Name</label>
+            <label class="form__label">{{ $t('admin.staffPage.lastName') }}</label>
             <input v-model="form.lastName" type="text" class="form__input" />
           </div>
         </div>
         <div class="form__field">
-          <label class="form__label">Role</label>
+          <label class="form__label">{{ $t('admin.staffPage.role') }}</label>
           <select v-model="form.role" required class="form__input">
-            <option value="staff">Staff</option>
-            <option value="admin">Admin</option>
+            <option value="staff">{{ $t('admin.staffPage.staff') }}</option>
+            <option value="admin">{{ $t('admin.staffPage.admin') }}</option>
           </select>
         </div>
         <div class="flex justify-end">
-          <button type="submit" class="admin-btn">Create Staff</button>
+          <button type="submit" class="admin-btn">{{ $t('admin.staffPage.createStaff') }}</button>
         </div>
       </form>
     </AdminFormPanel>
@@ -113,10 +116,10 @@ async function handleDelete(id: string) {
       <template #header>
         <thead class="bg-surface-container">
           <tr>
-            <th class="table-th">Name</th>
-            <th class="table-th">Email</th>
-            <th class="table-th">Role</th>
-            <th class="table-th">Actions</th>
+            <th class="table-th">{{ $t('admin.staffPage.name') }}</th>
+            <th class="table-th">{{ $t('admin.staffPage.email') }}</th>
+            <th class="table-th">{{ $t('admin.staffPage.role') }}</th>
+            <th class="table-th">{{ $t('admin.staffPage.actions') }}</th>
           </tr>
         </thead>
       </template>
@@ -136,7 +139,9 @@ async function handleDelete(id: string) {
 
       <template #empty>
         <tr>
-          <td colspan="4" class="px-6 py-12 text-center text-secondary text-sm">No staff found</td>
+          <td colspan="4" class="px-6 py-12 text-center text-secondary text-sm">
+            {{ $t('admin.staffPage.noStaff') }}
+          </td>
         </tr>
       </template>
     </AdminDataTable>

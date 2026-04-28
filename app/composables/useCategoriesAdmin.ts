@@ -1,5 +1,4 @@
 import type { Category } from '~/types/api'
-import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
 import { getAccessToken } from '~/utils/token'
 
 interface CategoryForm {
@@ -18,6 +17,8 @@ function authH(): Record<string, string> {
 }
 
 export function useCategoriesAdmin() {
+  const { t } = useI18n()
+  const { showError, showSuccess } = useToasts()
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
@@ -35,10 +36,10 @@ export function useCategoriesAdmin() {
         body: dto,
         headers: authH(),
       })
-      showSuccessToast('Category created.')
+      showSuccess(t('admin.categoriesPage.created'))
       return { data, error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { data: null, error: err }
     }
   }
@@ -50,10 +51,10 @@ export function useCategoriesAdmin() {
         body: dto,
         headers: authH(),
       })
-      showSuccessToast('Category updated.')
+      showSuccess(t('admin.categoriesPage.updated'))
       return { data, error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { data: null, error: err }
     }
   }
@@ -61,10 +62,10 @@ export function useCategoriesAdmin() {
   async function deleteCategory(id: string) {
     try {
       await $fetch(`${baseURL}/categories/${id}`, { method: 'DELETE', headers: authH() })
-      showSuccessToast('Category deleted.')
+      showSuccess(t('admin.categoriesPage.deleted'))
       return { error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { error: err }
     }
   }

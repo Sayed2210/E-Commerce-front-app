@@ -15,8 +15,10 @@ const emit = defineEmits<{
 
 const { getStatusClass } = useStatusColors()
 
+const { locale } = useI18n()
+
 function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
+  return new Date(dateString).toLocaleDateString(locale.value, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -64,11 +66,11 @@ function handleStatusChange(event: Event) {
         :value="order.status"
         :class="getStatusClass(order.status)"
         class="text-xs font-bold uppercase rounded-full px-3 py-1 border-none outline-none cursor-pointer"
-        :aria-label="`Order ${getOrderId(order.id)} status`"
+        :aria-label="`${$t('admin.ordersPage.orderId')} ${getOrderId(order.id)} ${$t('admin.ordersPage.status')}`"
         @change="handleStatusChange"
       >
         <option v-for="s in statuses" :key="s" :value="s" class="capitalize">
-          {{ s }}
+          {{ $t(`admin.orderStatus.${s}`) }}
         </option>
       </select>
     </td>
@@ -77,7 +79,7 @@ function handleStatusChange(event: Event) {
         :to="`/admin/orders/${order.id}`"
         class="text-primary hover:underline text-xs font-semibold"
       >
-        View
+        {{ $t('admin.ordersPage.view') }}
       </NuxtLink>
     </td>
   </tr>

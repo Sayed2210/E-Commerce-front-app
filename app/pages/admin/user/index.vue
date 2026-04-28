@@ -1,6 +1,8 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin' })
-useSeoMeta({ title: 'Customers — Admin' })
+
+const { t } = useI18n()
+useSeoMeta({ title: `${t('admin.customers')} — ${t('admin.panel')}` })
 </script>
 
 <template>

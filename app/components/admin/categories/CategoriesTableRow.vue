@@ -69,7 +69,7 @@ function cancelEdit() {
       </td>
       <td class="table-td">
         <select v-model="editForm.parentId" class="form__input">
-          <option value="">None</option>
+          <option value="">{{ $t('admin.categoriesPage.none') }}</option>
           <option
             v-for="option in allCategories.filter((item) => item.id !== category.id)"
             :key="option.id"
@@ -81,9 +81,11 @@ function cancelEdit() {
       </td>
       <AdminTableActions>
         <button type="button" class="table-action" :disabled="processing" @click="handleSave">
-          Save
+          {{ $t('admin.categoriesPage.save') }}
         </button>
-        <button type="button" class="table-action" @click="cancelEdit">Cancel</button>
+        <button type="button" class="table-action" @click="cancelEdit">
+          {{ $t('admin.categoriesPage.cancel') }}
+        </button>
       </AdminTableActions>
     </template>
     <template v-else>
@@ -91,14 +93,16 @@ function cancelEdit() {
       <td class="table-td text-secondary">{{ category.slug }}</td>
       <td class="table-td text-secondary">{{ parentCategory }}</td>
       <AdminTableActions>
-        <button type="button" class="table-action" @click="startEdit">Edit</button>
+        <button type="button" class="table-action" @click="startEdit">
+          {{ $t('admin.categoriesPage.edit') }}
+        </button>
         <button
           type="button"
           class="table-action table-action--danger"
           :disabled="processing"
           @click="emit('delete')"
         >
-          Delete
+          {{ $t('admin.categoriesPage.delete') }}
         </button>
       </AdminTableActions>
     </template>

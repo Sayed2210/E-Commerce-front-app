@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useNotificationsStore } from '~/stores/notifications'
-import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
+
+const { t } = useI18n()
+const { showError, showSuccess } = useToasts()
 
 definePageMeta({ middleware: 'auth' })
-useSeoMeta({ title: 'Notifications — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({ title: () => t('notifications.title'), robots: 'noindex, nofollow' })
 
 const notificationsStore = useNotificationsStore()
 const { listNotifications, markAsRead, markAllAsRead, deleteNotification } = useNotifications()
@@ -27,14 +29,14 @@ async function handleMarkRead(id: string) {
 async function handleMarkAllRead() {
   notificationsStore.markAllRead()
   const { error } = await markAllAsRead()
-  if (error) showErrorToast(error)
-  else showSuccessToast('All notifications marked as read')
+  if (error) showError(error)
+  else showSuccess(t('notifications.allMarkedAsRead'))
 }
 
 async function handleDelete(id: string) {
   const { error } = await deleteNotification(id)
   if (error) {
-    showErrorToast(error)
+    showError(error)
     return
   }
   notificationsStore.remove(id)
@@ -43,11 +45,11 @@ async function handleDelete(id: string) {
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
   const m = Math.floor(diff / 60000)
-  if (m < 1) return 'just now'
-  if (m < 60) return `${m}m ago`
+  if (m < 1) return t('notifications.justNow')
+  if (m < 60) return t('notifications.minutesAgo', { m })
   const h = Math.floor(m / 60)
-  if (h < 24) return `${h}h ago`
-  return `${Math.floor(h / 24)}d ago`
+  if (h < 24) return t('notifications.hoursAgo', { h })
+  return t('notifications.daysAgo', { d: Math.floor(h / 24) })
 }
 
 const typeIcon: Record<string, string> = {
@@ -62,9 +64,9 @@ const typeIcon: Record<string, string> = {
   <div class="notif-page">
     <div class="notif-page__header">
       <div class="notif-page__title-row">
-        <h1 class="notif-page__title">Notifications</h1>
+        <h1 class="notif-page__title">{{ $t('notifications.notifications') }}</h1>
         <span v-if="notificationsStore.unreadCount > 0" class="notif-page__badge">
-          {{ notificationsStore.unreadCount }} unread
+          {{ $t('notifications.unreadCount', { count: notificationsStore.unreadCount }) }}
         </span>
       </div>
       <button
@@ -74,7 +76,7 @@ const typeIcon: Record<string, string> = {
         @click="handleMarkAllRead"
       >
         <span class="material-symbols-outlined" aria-hidden="true">done_all</span>
-        Mark all as read
+        {{ $t('notifications.markAllAsRead') }}
       </button>
     </div>
 
@@ -84,8 +86,8 @@ const typeIcon: Record<string, string> = {
 
     <div v-else-if="!notificationsStore.items.length" class="notif-page__empty">
       <span class="material-symbols-outlined" aria-hidden="true">notifications_none</span>
-      <p>You're all caught up!</p>
-      <span class="notif-page__empty-sub">No notifications yet</span>
+      <p>{{ $t('notifications.allCaughtUp') }}</p>
+      <span class="notif-page__empty-sub">{{ $t('notifications.noNotificationsYet') }}</span>
     </div>
 
     <ul v-else class="notif-page__list" role="list">
@@ -109,11 +111,15 @@ const typeIcon: Record<string, string> = {
           <p class="notif-page__item-msg">{{ n.message }}</p>
         </div>
         <div class="notif-page__item-actions">
-          <span v-if="!n.isRead" class="notif-page__unread-dot" aria-label="Unread" />
+          <span
+            v-if="!n.isRead"
+            class="notif-page__unread-dot"
+            :aria-label="$t('notifications.unreadCount', { count: 1 })"
+          />
           <button
             type="button"
             class="notif-page__delete-btn"
-            aria-label="Delete notification"
+            :aria-label="$t('notifications.deleteNotification')"
             @click.stop="handleDelete(n.id)"
           >
             <span class="material-symbols-outlined" aria-hidden="true">close</span>

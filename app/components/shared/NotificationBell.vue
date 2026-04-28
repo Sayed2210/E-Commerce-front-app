@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { useNotificationsStore } from '~/stores/notifications'
-import { showErrorToast } from '~/utils/errorHandler'
 
 const notificationsStore = useNotificationsStore()
-const { listNotifications, markAsRead, markAllAsRead } = useNotifications()
+const { listNotifications, markAsRead, markAllAsRead, formatTimeAgo } = useNotifications()
 
 const open = ref(false)
 const bell = ref<HTMLElement | null>(null)
 
 const unreadCount = computed(() => notificationsStore.unreadCount)
 const recent = computed(() => notificationsStore.recent)
+
+const { t } = useI18n()
 
 onMounted(async () => {
   if (!notificationsStore.loaded) {
@@ -30,17 +31,10 @@ async function handleMarkRead(id: string) {
 async function handleMarkAllRead() {
   notificationsStore.markAllRead()
   const { error } = await markAllAsRead()
-  if (error) showErrorToast(error)
-}
-
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const m = Math.floor(diff / 60000)
-  if (m < 1) return 'just now'
-  if (m < 60) return `${m}m ago`
-  const h = Math.floor(m / 60)
-  if (h < 24) return `${h}h ago`
-  return `${Math.floor(h / 24)}d ago`
+  if (error) {
+    const { showError } = useToasts()
+    showError(error)
+  }
 }
 </script>
 
@@ -49,7 +43,11 @@ function timeAgo(dateStr: string) {
     <button
       type="button"
       class="notif-bell__btn"
-      :aria-label="`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`"
+      :aria-label="
+        unreadCount > 0
+          ? t('notifications.ariaLabelWithCount', { count: unreadCount })
+          : t('notifications.title')
+      "
       :aria-expanded="open"
       aria-haspopup="true"
       @click="toggle"
@@ -61,16 +59,21 @@ function timeAgo(dateStr: string) {
     </button>
 
     <Transition name="notif-drop">
-      <div v-if="open" class="notif-bell__dropdown" role="dialog" aria-label="Notifications">
+      <div
+        v-if="open"
+        class="notif-bell__dropdown"
+        role="dialog"
+        :aria-label="$t('notifications.title')"
+      >
         <div class="notif-bell__drop-head">
-          <span class="notif-bell__drop-title">Notifications</span>
+          <span class="notif-bell__drop-title">{{ $t('notifications.title') }}</span>
           <button
             v-if="unreadCount > 0"
             type="button"
             class="notif-bell__mark-all"
             @click="handleMarkAllRead"
           >
-            Mark all read
+            {{ $t('notifications.markAllRead') }}
           </button>
         </div>
 
@@ -98,7 +101,7 @@ function timeAgo(dateStr: string) {
             <span class="notif-bell__item-body">
               <span class="notif-bell__item-title">{{ n.title }}</span>
               <span class="notif-bell__item-msg">{{ n.message }}</span>
-              <span class="notif-bell__item-time">{{ timeAgo(n.createdAt) }}</span>
+              <span class="notif-bell__item-time">{{ formatTimeAgo(n.createdAt) }}</span>
             </span>
             <span v-if="!n.isRead" class="notif-bell__unread-dot" aria-hidden="true" />
           </li>
@@ -106,11 +109,11 @@ function timeAgo(dateStr: string) {
 
         <div v-else class="notif-bell__empty">
           <span class="material-symbols-outlined" aria-hidden="true">notifications_none</span>
-          <span>No notifications yet</span>
+          <span>{{ $t('notifications.empty') }}</span>
         </div>
 
         <NuxtLink to="/notifications" class="notif-bell__see-all" @click="open = false">
-          See all notifications
+          {{ $t('notifications.seeAll') }}
           <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
         </NuxtLink>
       </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { email, sent, submit } = useNewsletter()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -8,34 +9,42 @@ const { email, sent, submit } = useNewsletter()
       <div class="newsletter__glow" aria-hidden="true" />
 
       <div class="newsletter__text">
-        <h2 id="newsletter-heading" class="newsletter__title">Join the Inner Circle</h2>
+        <h2 id="newsletter-heading" class="newsletter__title">{{ $t('newsletter.title') }}</h2>
         <p class="newsletter__sub">
-          Receive exclusive drops, editorial picks, and early access deals.
+          {{ $t('newsletter.subtitle') }}
         </p>
       </div>
 
       <div class="newsletter__form-wrap">
         <template v-if="!sent">
-          <form class="newsletter__form" aria-label="Newsletter sign up" @submit.prevent="submit">
-            <label for="newsletter-email" class="sr-only">Email address</label>
+          <form
+            class="newsletter__form"
+            :aria-label="t('newsletter.subscribeAria')"
+            @submit.prevent="submit"
+          >
+            <label for="newsletter-email" class="sr-only">{{ $t('newsletter.emailLabel') }}</label>
             <input
               id="newsletter-email"
               v-model="email"
               type="email"
               class="newsletter__input"
-              placeholder="Enter your email address"
+              :placeholder="t('newsletter.emailPlaceholder')"
               autocomplete="email"
               required
             />
-            <button type="submit" class="newsletter__btn" aria-label="Subscribe to newsletter">
-              Subscribe
+            <button
+              type="submit"
+              class="newsletter__btn"
+              :aria-label="t('newsletter.subscribeAria')"
+            >
+              {{ $t('newsletter.subscribe') }}
               <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
             </button>
           </form>
         </template>
         <div v-else class="newsletter__thanks" role="status" aria-live="polite">
           <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-          You're on the list — thank you!
+          {{ $t('newsletter.thanks') }}
         </div>
       </div>
     </div>

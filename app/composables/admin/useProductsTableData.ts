@@ -1,6 +1,7 @@
 import type { Product } from '~/types/api'
 
 export async function useProductsTableData() {
+  const { t } = useI18n()
   const { listProducts, deleteProduct: apiDelete } = useProducts()
 
   // State
@@ -44,7 +45,7 @@ export async function useProductsTableData() {
 
   // Delete product with confirmation
   async function deleteProduct(id: string): Promise<void> {
-    if (!confirm('Are you sure you want to delete this product?')) return
+    if (!confirm(t('admin.productsPage.deleteConfirm'))) return
     await apiDelete(id)
     await refresh()
   }

@@ -37,10 +37,10 @@ async function handleDelete(id: string) {
 
 <template>
   <div class="space-y-6">
-    <AdminPageHeader title="Tags">
+    <AdminPageHeader :title="$t('admin.tagsPage.title')">
       <button type="button" class="admin-btn" @click="showCreate = !showCreate">
         <span class="material-symbols-outlined text-sm">{{ showCreate ? 'close' : 'add' }}</span>
-        {{ showCreate ? 'Cancel' : 'New Tag' }}
+        {{ showCreate ? $t('admin.tagsPage.cancel') : $t('admin.tagsPage.newTag') }}
       </button>
     </AdminPageHeader>
 
@@ -48,7 +48,7 @@ async function handleDelete(id: string) {
       <form class="space-y-4" @submit.prevent="handleCreate">
         <div class="grid grid-cols-2 gap-4">
           <div class="form__field">
-            <label class="form__label">Tag Name</label>
+            <label class="form__label">{{ $t('admin.tagsPage.tagName') }}</label>
             <input
               v-model="form.name"
               type="text"
@@ -58,7 +58,7 @@ async function handleDelete(id: string) {
             />
           </div>
           <div class="form__field">
-            <label class="form__label">Slug (optional)</label>
+            <label class="form__label">{{ $t('admin.tagsPage.slugOptional') }}</label>
             <input
               v-model="form.slug"
               type="text"
@@ -68,7 +68,7 @@ async function handleDelete(id: string) {
           </div>
         </div>
         <div class="flex justify-end">
-          <button type="submit" class="admin-btn">Create Tag</button>
+          <button type="submit" class="admin-btn">{{ $t('admin.tagsPage.createTag') }}</button>
         </div>
       </form>
     </AdminFormPanel>
@@ -77,9 +77,9 @@ async function handleDelete(id: string) {
       <template #header>
         <thead class="bg-surface-container">
           <tr>
-            <th class="table-th">Name</th>
-            <th class="table-th">Slug</th>
-            <th class="table-th">Actions</th>
+            <th class="table-th">{{ $t('admin.tagsPage.name') }}</th>
+            <th class="table-th">{{ $t('admin.tagsPage.slug') }}</th>
+            <th class="table-th">{{ $t('admin.tagsPage.actions') }}</th>
           </tr>
         </thead>
       </template>
@@ -100,7 +100,11 @@ async function handleDelete(id: string) {
       </tr>
 
       <template #empty>
-        <AppEmptyState icon="sell" title="No tags yet" body="Create your first tag above." />
+        <AppEmptyState
+          icon="sell"
+          :title="$t('admin.tagsPage.noTags')"
+          :body="$t('admin.tagsPage.noTagsBody')"
+        />
       </template>
     </AdminDataTable>
   </div>

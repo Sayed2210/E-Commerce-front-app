@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import type { Brand, Product, CategorySearchResult } from '~/types/api'
 
+const { t } = useI18n()
+
 definePageMeta({ layout: 'default' })
 useSeoMeta({
-  title: 'Products',
-  description:
-    'Browse our full catalog of precision architectural tools, materials, and equipment. Filter by category, price, and more.',
-  ogTitle: 'Products — ArchitectMarket',
-  ogDescription: 'Browse our full catalog of precision architectural tools and materials.',
+  title: () => t('products.title'),
+  description: () => t('products.metaDescription'),
+  ogTitle: () => t('products.ogTitle'),
+  ogDescription: () => t('products.ogDescription'),
   ogType: 'website',
   ogImage: '/og-products.jpg',
   twitterCard: 'summary_large_image',
@@ -87,7 +88,7 @@ watch([currentPage, selectedCategory, selectedBrand, selectedSort, selectedPrice
 })
 
 const breadcrumbs = computed(() => {
-  const items = [{ label: 'Home', to: '/' }, { label: 'Products' }]
+  const items = [{ label: t('common.home'), to: '/' }, { label: t('products.title') }]
   if (route.query.q) items.push({ label: `"${route.query.q}"` })
   return items
 })
@@ -130,7 +131,7 @@ function onBrandChange(val: string) {
         @clear="clearFilters"
       />
 
-      <main class="products-page__main" aria-label="Products listing">
+      <main class="products-page__main" :aria-label="$t('products.listing')">
         <ProductsResultsBar
           :total="total"
           :query="route.query.q as string"
@@ -146,7 +147,7 @@ function onBrandChange(val: string) {
           v-if="pending"
           :class="viewMode === 'grid' ? 'products-page__grid' : 'products-page__list'"
           role="list"
-          aria-label="Loading products"
+          :aria-label="$t('products.loading')"
           aria-busy="true"
         >
           <li v-for="i in 12" :key="i"><ProductSkeleton :variant="viewMode" /></li>
@@ -156,7 +157,7 @@ function onBrandChange(val: string) {
           v-else-if="products.length > 0"
           :class="viewMode === 'grid' ? 'products-page__grid' : 'products-page__list'"
           role="list"
-          :aria-label="`${products.length} products`"
+          :aria-label="$t('products.count', { count: products.length })"
         >
           <li v-for="product in products" :key="product.id">
             <ProductCard
@@ -172,12 +173,12 @@ function onBrandChange(val: string) {
         <AppEmptyState
           v-else
           icon="search_off"
-          title="No products found"
-          body="Try adjusting your filters or search query."
+          :title="$t('products.noProductsFound')"
+          :body="$t('products.adjustFilters')"
         >
           <template #cta>
             <button type="button" class="products-page__empty-reset" @click="clearFilters">
-              Clear all filters
+              {{ $t('products.clearAllFilters') }}
             </button>
           </template>
         </AppEmptyState>

@@ -1,5 +1,4 @@
 import type { Tag, CreateTagDto } from '~/types/api'
-import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
 import { getAccessToken } from '~/utils/token'
 
 function authH(): Record<string, string> {
@@ -10,6 +9,8 @@ function authH(): Record<string, string> {
 }
 
 export function useTags() {
+  const { t } = useI18n()
+  const { showError, showSuccess } = useToasts()
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
@@ -27,10 +28,10 @@ export function useTags() {
         body: form,
         headers: authH(),
       })
-      showSuccessToast('Tag created.')
+      showSuccess(t('admin.tagsPage.created'))
       return { data, error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { data: null, error: err }
     }
   }
@@ -38,10 +39,10 @@ export function useTags() {
   async function deleteTag(id: string) {
     try {
       await $fetch(`${baseURL}/tags/${id}`, { method: 'DELETE', headers: authH() })
-      showSuccessToast('Tag deleted.')
+      showSuccess(t('admin.tagsPage.deleted'))
       return { error: null }
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
       return { error: err }
     }
   }

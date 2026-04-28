@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Brand, CategorySearchResult } from '~/types/api'
-import { PRICE_RANGES } from '~/composables/useProductFilters'
+import { useProductFilters } from '~/composables/useProductFilters'
 
 defineProps<{
   categories: CategorySearchResult
@@ -19,6 +19,9 @@ const emit = defineEmits<{
   'update:filterOpen': [value: boolean]
   clear: []
 }>()
+
+const { t } = useI18n()
+const { priceRanges } = useProductFilters()
 </script>
 
 <template>
@@ -26,19 +29,19 @@ const emit = defineEmits<{
     id="product-filters"
     class="filters"
     :class="{ 'filters--open': filterOpen }"
-    aria-label="Product filters"
+    :aria-label="t('products.filtersAriaLabel')"
   >
     <button
       type="button"
       class="filters__close"
-      aria-label="Close filters"
+      :aria-label="t('products.closeFilters')"
       @click="emit('update:filterOpen', false)"
     >
       <span class="material-symbols-outlined" aria-hidden="true">close</span>
     </button>
 
     <div class="filter-group">
-      <h3 id="dept-heading" class="filter-group__heading">Department</h3>
+      <h3 id="dept-heading" class="filter-group__heading">{{ $t('products.department') }}</h3>
       <ul class="filter-group__list" role="list" aria-labelledby="dept-heading">
         <li v-for="cat in categories.categories" :key="cat.id">
           <button
@@ -55,7 +58,7 @@ const emit = defineEmits<{
     </div>
 
     <div class="filter-group">
-      <h3 id="brand-heading" class="filter-group__heading">Brand</h3>
+      <h3 id="brand-heading" class="filter-group__heading">{{ $t('products.brand') }}</h3>
       <ul class="filter-group__list" role="list" aria-labelledby="brand-heading">
         <li v-for="brand in brands" :key="brand.id">
           <button
@@ -72,10 +75,10 @@ const emit = defineEmits<{
     </div>
 
     <div class="filter-group">
-      <h3 id="price-heading" class="filter-group__heading">Price Range</h3>
+      <h3 id="price-heading" class="filter-group__heading">{{ $t('products.priceRange') }}</h3>
       <fieldset class="filter-group__list" aria-labelledby="price-heading">
-        <legend class="sr-only">Select price range</legend>
-        <label v-for="range in PRICE_RANGES" :key="range.value" class="filter-radio">
+        <legend class="sr-only">{{ $t('products.selectPriceRange') }}</legend>
+        <label v-for="range in priceRanges" :key="range.value" class="filter-radio">
           <input
             :checked="selectedPrice === range.value"
             type="radio"
@@ -91,7 +94,7 @@ const emit = defineEmits<{
 
     <button v-if="activeFiltersCount > 0" type="button" class="filter-clear" @click="emit('clear')">
       <span class="material-symbols-outlined" aria-hidden="true">filter_alt_off</span>
-      Clear all ({{ activeFiltersCount }})
+      {{ $t('common.clearAll') }} ({{ activeFiltersCount }})
     </button>
   </aside>
 

@@ -9,6 +9,8 @@ const emit = defineEmits<{
   'save-for-later': [id: string]
 }>()
 
+const { t } = useI18n()
+
 function productName(p: Product | undefined) {
   if (!p) return ''
   return typeof p.name === 'string' ? p.name : (p.name?.en ?? '')
@@ -38,7 +40,7 @@ function variantName(v: ProductVariant) {
         <div>
           <h3 class="cart-item__name">{{ productName(item.product) }}</h3>
           <p v-if="item.variant" class="cart-item__variant">
-            Variant: {{ variantName(item.variant) }}
+            {{ $t('cart.variantLabel', { variant: variantName(item.variant) }) }}
           </p>
         </div>
         <p class="cart-item__price">${{ item.totalPrice.toFixed(2) }}</p>
@@ -51,22 +53,22 @@ function variantName(v: ProductVariant) {
             item.product?.inventoryQuantity > 0 ? 'cart-item__badge--in' : 'cart-item__badge--out'
           "
         >
-          {{ item.product?.inventoryQuantity > 0 ? 'In Stock' : 'Out of Stock' }}
+          {{ item.product?.inventoryQuantity > 0 ? $t('common.inStock') : $t('common.outOfStock') }}
         </span>
       </div>
 
       <div class="cart-item__foot">
         <div class="cart-item__qty">
-          <span class="cart-item__qty-label">Qty:</span>
+          <span class="cart-item__qty-label">{{ $t('common.qty') }}:</span>
           <div
             class="cart-item__stepper"
             role="group"
-            :aria-label="`Quantity for ${productName(item.product)}`"
+            :aria-label="t('cart.quantityFor', { name: productName(item.product) })"
           >
             <button
               type="button"
               class="cart-item__stepper-btn"
-              aria-label="Decrease quantity"
+              :aria-label="$t('cart.decreaseQty')"
               @click="emit('change-qty', item.id, item.quantity - 1)"
             >
               <span class="material-symbols-outlined" aria-hidden="true">remove</span>
@@ -75,7 +77,7 @@ function variantName(v: ProductVariant) {
             <button
               type="button"
               class="cart-item__stepper-btn"
-              aria-label="Increase quantity"
+              :aria-label="$t('cart.increaseQty')"
               @click="emit('change-qty', item.id, item.quantity + 1)"
             >
               <span class="material-symbols-outlined" aria-hidden="true">add</span>
@@ -91,14 +93,14 @@ function variantName(v: ProductVariant) {
             class="cart-item__action cart-item__action--remove"
             @click="emit('remove', item.id)"
           >
-            Remove
+            {{ $t('cart.remove') }}
           </button>
           <button
             type="button"
             class="cart-item__action cart-item__action--save"
             @click="emit('save-for-later', item.id)"
           >
-            Save for later
+            {{ $t('cart.saveForLater') }}
           </button>
         </div>
       </div>

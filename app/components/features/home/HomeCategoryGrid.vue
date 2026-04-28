@@ -4,10 +4,11 @@ import type { Category } from '~/types/api'
 defineProps<{ categories: Category[] }>()
 
 const { categoryIcon } = useCategories()
+const { t } = useI18n()
 </script>
 
 <template>
-  <ul class="cats-grid" role="list" aria-label="Product categories">
+  <ul class="cats-grid" role="list" :aria-label="t('home.categoryGridAriaLabel')">
     <li v-for="cat in categories" :key="cat.slug">
       <NuxtLink :to="`/products?category=${cat.slug}`" class="cat-card">
         <span class="cat-card__icon material-symbols-outlined" aria-hidden="true">

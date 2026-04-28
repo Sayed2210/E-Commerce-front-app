@@ -27,7 +27,7 @@ const sizeClasses = computed(() => {
   <span
     :class="`${config.bg} ${config.text} ${sizeClasses} font-bold uppercase tracking-wide rounded-full`"
   >
-    {{ status }}
+    {{ $t(`admin.orderStatus.${status}`) || status }}
   </span>
 </template>
 

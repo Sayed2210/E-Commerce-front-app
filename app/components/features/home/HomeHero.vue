@@ -1,24 +1,25 @@
 <script setup lang="ts">
-// Static presentational component — no logic required
+const { t } = useI18n()
 </script>
 
 <template>
-  <section class="hero" aria-label="Hero banner">
+  <section class="hero" :aria-label="t('home.heroAriaLabel')">
     <div class="hero__bg" aria-hidden="true" />
 
     <div class="hero__content">
-      <span class="hero__eyebrow">Seasonal Event</span>
-      <h1 class="hero__title">Curated for<br />the Discerning</h1>
+      <span class="hero__eyebrow">{{ $t('home.heroEyebrow') }}</span>
+      <h1 class="hero__title">{{ $t('home.heroTitle') }}</h1>
       <p class="hero__body">
-        Precision-engineered essentials for the modern lifestyle. Save up to 40% on select items
-        this season.
+        {{ $t('home.heroBody') }}
       </p>
       <div class="hero__ctas">
         <NuxtLink to="/products" class="hero__btn-primary">
-          Shop Now
+          {{ $t('home.shopNow') }}
           <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
         </NuxtLink>
-        <NuxtLink to="/products?deals=1" class="hero__btn-secondary">See Deals</NuxtLink>
+        <NuxtLink to="/products?deals=1" class="hero__btn-secondary">{{
+          $t('home.seeDeals')
+        }}</NuxtLink>
       </div>
     </div>
 

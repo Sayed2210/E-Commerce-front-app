@@ -1,15 +1,16 @@
 import type { Coupon, CreateCouponDto } from '~/types/api'
-import { showSuccessToast, showErrorToast } from '~/utils/errorHandler'
 import { getAccessToken } from '~/utils/token'
 
 export function useCoupons() {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
+  const { t } = useI18n()
+  const { showError, showSuccess } = useToasts()
 
   function authH(): Record<string, string> {
-    const t = getAccessToken()
+    const token = getAccessToken()
     const h: Record<string, string> = {}
-    if (t) h['Authorization'] = `Bearer ${t}`
+    if (token) h['Authorization'] = `Bearer ${token}`
     return h
   }
 
@@ -20,7 +21,7 @@ export function useCoupons() {
         body: { ...form },
         headers: authH(),
       })
-      showSuccessToast('Coupon created.')
+      showSuccess(t('toast.couponCreated'))
       const initialForm = {
         code: '',
         type: 'percentage',
@@ -32,7 +33,7 @@ export function useCoupons() {
       Object.assign(form, initialForm)
       await refresh()
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
     }
   }
 
@@ -48,10 +49,10 @@ export function useCoupons() {
         body: { isActive: !coupon.isActive },
         headers: authH(),
       })
-      showSuccessToast(coupon.isActive ? 'Coupon deactivated.' : 'Coupon activated.')
+      showSuccess(coupon.isActive ? t('toast.couponDeactivated') : t('toast.couponActivated'))
       await refresh()
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
     } finally {
       processingId.value = null
     }
@@ -65,10 +66,10 @@ export function useCoupons() {
     processingId.value = id
     try {
       await $fetch(`${baseURL}/coupons/${id}`, { method: 'DELETE', headers: authH() })
-      showSuccessToast('Coupon deleted.')
+      showSuccess(t('toast.couponDeleted'))
       await refresh()
     } catch (err) {
-      showErrorToast(err)
+      showError(err)
     } finally {
       processingId.value = null
     }

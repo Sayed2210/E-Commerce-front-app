@@ -13,8 +13,10 @@ withDefaults(defineProps<Props>(), {
 
 // const { getStatusClass } = useStatusColors()
 
+const { locale } = useI18n()
+
 function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
+  return new Date(dateString).toLocaleDateString(locale.value, {
     month: 'short',
     day: 'numeric',
   })
@@ -28,12 +30,15 @@ function getOrderId(orderId: string): string {
 <template>
   <div class="lg:col-span-2 bg-surface-container-lowest rounded shadow-sm">
     <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/10">
-      <h3 class="font-bold text-on-surface font-headline">Recent Orders</h3>
+      <h3 class="font-bold text-on-surface font-headline">
+        {{ $t('admin.dashboardPage.recentOrders') }}
+      </h3>
       <NuxtLink
         to="/admin/orders"
         class="text-primary text-xs font-semibold hover:underline flex items-center gap-1"
       >
-        View all <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        {{ $t('admin.dashboardPage.viewAll') }}
+        <span class="material-symbols-outlined text-sm">arrow_forward</span>
       </NuxtLink>
     </div>
 
@@ -58,7 +63,7 @@ function getOrderId(orderId: string): string {
         <AdminSharedStatusBadge :status="order.status" size="sm" />
       </div>
       <div v-if="!orders.length" class="px-6 py-8 text-center text-secondary text-sm">
-        No recent orders
+        {{ $t('admin.dashboardPage.noRecentOrders') }}
       </div>
     </div>
   </div>

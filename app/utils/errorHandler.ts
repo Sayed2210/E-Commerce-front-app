@@ -1,7 +1,7 @@
 /**
  * Parse API error response
  */
-export function parseApiError(error: unknown): string {
+export function parseApiError(error: unknown): string | undefined {
   // Type guard: check if error is an object
   if (typeof error === 'object' && error !== null) {
     // Handle Nuxt/Fetch errors with data property
@@ -28,16 +28,16 @@ export function parseApiError(error: unknown): string {
     }
   }
 
-  // Default error message
-  return 'An unexpected error occurred. Please try again.'
+  return undefined
 }
 
 /**
  * Display error toast notification
+ * @deprecated Use useToasts() composable for translated toasts
  */
 export function showErrorToast(error: unknown) {
   const toast = useToast()
-  const message = parseApiError(error)
+  const message = parseApiError(error) || 'An unexpected error occurred. Please try again.'
 
   toast.add({
     title: 'Error',
@@ -49,6 +49,7 @@ export function showErrorToast(error: unknown) {
 
 /**
  * Display success toast notification
+ * @deprecated Use useToasts() composable for translated toasts
  */
 export function showSuccessToast(message: string) {
   const toast = useToast()

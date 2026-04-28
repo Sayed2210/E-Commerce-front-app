@@ -5,6 +5,7 @@ export function useResetPassword() {
   const baseURL = config.public.apiBaseUrl as string
   const route = useRoute()
   const router = useRouter()
+  const { t } = useI18n()
 
   const token = computed(() => String(route.query.token ?? ''))
   const invalidToken = computed(() => !token.value)
@@ -37,7 +38,7 @@ export function useResetPassword() {
       setTimeout(() => router.push('/login'), 3000)
     } catch (err: unknown) {
       const e = err as { data?: { message?: string } }
-      serverError.value = e?.data?.message ?? 'This reset link is invalid or has expired.'
+      serverError.value = e?.data?.message ?? t('auth.resetLinkExpired')
     } finally {
       loading.value = false
     }

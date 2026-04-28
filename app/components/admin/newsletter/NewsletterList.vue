@@ -30,65 +30,65 @@ async function handleSend() {
 
 <template>
   <div class="space-y-6">
-    <AdminPageHeader title="Newsletter">
+    <AdminPageHeader :title="$t('admin.newsletterPage.title')">
       <button type="button" class="admin-btn" @click="showSend = !showSend">
         <span class="material-symbols-outlined text-sm">{{ showSend ? 'close' : 'send' }}</span>
-        {{ showSend ? 'Cancel' : 'Send Campaign' }}
+        {{ showSend ? $t('admin.newsletterPage.cancel') : $t('admin.newsletterPage.sendCampaign') }}
       </button>
     </AdminPageHeader>
 
     <AdminFormPanel v-if="showSend">
       <form class="space-y-4" @submit.prevent="handleSend">
         <div class="form__field">
-          <label class="form__label">Subject</label>
+          <label class="form__label">{{ $t('admin.newsletterPage.subject') }}</label>
           <input
             v-model="form.subject"
             type="text"
             class="form__input"
-            placeholder="Email subject line"
+            :placeholder="$t('admin.newsletterPage.subjectPlaceholder')"
             required
           />
         </div>
         <div class="form__field">
-          <label class="form__label">Recipients</label>
+          <label class="form__label">{{ $t('admin.newsletterPage.recipients') }}</label>
           <select v-model="form.recipientFilter" class="form__input">
-            <option value="all">All subscribers</option>
-            <option value="active">Active subscribers only</option>
-            <option value="inactive">Inactive subscribers</option>
+            <option value="all">{{ $t('admin.newsletterPage.allSubscribers') }}</option>
+            <option value="active">{{ $t('admin.newsletterPage.activeSubscribers') }}</option>
+            <option value="inactive">{{ $t('admin.newsletterPage.inactiveSubscribers') }}</option>
           </select>
         </div>
         <div class="form__field">
-          <label class="form__label">Content (HTML)</label>
+          <label class="form__label">{{ $t('admin.newsletterPage.contentHtml') }}</label>
           <textarea
             v-model="form.content"
             class="form__textarea"
             rows="6"
-            placeholder="<p>Your email content...</p>"
+            :placeholder="$t('admin.newsletterPage.contentPlaceholder')"
             required
           />
         </div>
         <div class="flex justify-end">
           <button type="submit" class="admin-btn" :disabled="sending">
-            {{ sending ? 'Sending...' : 'Send Campaign' }}
+            {{ sending ? $t('admin.newsletterPage.sending') : $t('admin.newsletterPage.send') }}
           </button>
         </div>
       </form>
     </AdminFormPanel>
 
     <div class="newsletter-stats">
-      <h3 class="subtitle">Subscriber Stats</h3>
+      <h3 class="subtitle">{{ $t('admin.newsletterPage.subscriberStats') }}</h3>
       <div class="stats-grid">
         <div class="stat-card">
           <span class="stat-value">{{ stats?.totalSubscribers ?? 0 }}</span>
-          <span class="stat-label">Total</span>
+          <span class="stat-label">{{ $t('admin.newsletterPage.total') }}</span>
         </div>
         <div class="stat-card">
           <span class="stat-value">{{ stats?.activeSubscribers ?? 0 }}</span>
-          <span class="stat-label">Active</span>
+          <span class="stat-label">{{ $t('admin.newsletterPage.active') }}</span>
         </div>
         <div class="stat-card">
           <span class="stat-value">{{ stats?.unsubscribed ?? 0 }}</span>
-          <span class="stat-label">Unsubscribed</span>
+          <span class="stat-label">{{ $t('admin.newsletterPage.unsubscribed') }}</span>
         </div>
       </div>
     </div>

@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { registerSchema } from '~/utils/validation'
+const { t } = useI18n()
+const { registerSchema } = useValidation()
 
 definePageMeta({ layout: false, middleware: 'guest' })
-useSeoMeta({ title: 'Create Account — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({
+  title: () => `${t('auth.createAccount')} — ${t('brand.name')}`,
+  robots: 'noindex, nofollow',
+})
 
 const { register, loading } = useAuth()
 const form = ref({
@@ -21,7 +25,7 @@ async function handleSubmit() {
   errors.value = {}
 
   if (!acceptTerms.value) {
-    serverError.value = 'You must accept the Terms & Conditions to continue.'
+    serverError.value = t('auth.termsRequired')
     return
   }
 
@@ -39,10 +43,10 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <AuthPageShell label="Create account page" card-width="30rem">
+  <AuthPageShell :label="t('auth.createAccount')" card-width="30rem">
     <header class="auth-card__head">
-      <h1 class="auth-card__title">Create your account</h1>
-      <p class="auth-card__sub">Join and start shopping today</p>
+      <h1 class="auth-card__title">{{ t('auth.createAccount') }}</h1>
+      <p class="auth-card__sub">{{ t('auth.joinToday') }}</p>
     </header>
 
     <div v-if="serverError" class="auth-alert" role="alert" aria-live="assertive">
@@ -53,7 +57,7 @@ async function handleSubmit() {
     <form
       class="auth-form"
       novalidate
-      aria-label="Create account form"
+      :aria-label="t('auth.createAccount')"
       @submit.prevent="handleSubmit"
     >
       <RegisterFormFields v-model="form" :errors="errors" />
@@ -66,23 +70,23 @@ async function handleSubmit() {
           aria-required="true"
         />
         <span class="auth-terms__text">
-          I agree to the
-          <a href="#" class="auth-terms__link">Terms &amp; Conditions</a>
-          and
-          <a href="#" class="auth-terms__link">Privacy Policy</a>
+          {{ t('auth.termsPrefix') }}
+          <a href="#" class="auth-terms__link">{{ t('auth.termsAndConditions') }}</a>
+          {{ t('auth.and') }}
+          <a href="#" class="auth-terms__link">{{ t('auth.privacyPolicy') }}</a>
         </span>
       </label>
 
       <AppButton type="submit" :loading="loading" :disabled="!acceptTerms" :block="true" size="lg">
         <span class="material-symbols-outlined" aria-hidden="true">person_add</span>
-        Create Account
+        {{ t('auth.createAccountBtn') }}
       </AppButton>
     </form>
 
     <footer class="auth-card__foot">
       <p>
-        Already have an account?
-        <NuxtLink to="/login" class="auth-card__switch">Sign in</NuxtLink>
+        {{ t('auth.alreadyHaveAccount') }}
+        <NuxtLink to="/login" class="auth-card__switch">{{ t('auth.signIn') }}</NuxtLink>
       </p>
     </footer>
   </AuthPageShell>

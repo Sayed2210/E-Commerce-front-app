@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CategorySearchResult } from '~/types/api'
 
+const { t } = useI18n()
 const { isAuthenticated, logout } = useAuth()
 const cartStore = useCartStore()
 const itemCount = computed(() => cartStore.itemCount)
@@ -11,7 +12,6 @@ const mobileMenuOpen = ref(false)
 const userMenuOpen = ref(false)
 const userMenuRef = ref<HTMLElement | null>(null)
 
-// onClickOutside(userMenuRef, () => { userMenuOpen.value = false })
 function closeUserMenu() {
   userMenuOpen.value = false
 }
@@ -39,33 +39,33 @@ onMounted(async () => {
     <header class="nav" role="banner">
       <div class="nav__inner">
         <!-- Logo -->
-        <NuxtLink to="/" class="nav__logo" aria-label="ArchitectMarket — home">
-          ArchitectMarket
+        <NuxtLink to="/" class="nav__logo" :aria-label="t('brand.name') + ' — home'">
+          {{ t('brand.name') }}
         </NuxtLink>
 
         <!-- Primary nav links -->
-        <nav class="nav__links" aria-label="Primary navigation">
-          <NuxtLink to="/products" class="nav__link">Shop</NuxtLink>
-          <NuxtLink to="/products?deals=1" class="nav__link">Deals</NuxtLink>
-          <NuxtLink to="/wishlist" class="nav__link">Wishlist</NuxtLink>
+        <nav class="nav__links" :aria-label="$t('nav.primaryNavigation')">
+          <NuxtLink to="/products" class="nav__link">{{ t('nav.shop') }}</NuxtLink>
+          <NuxtLink to="/products?deals=1" class="nav__link">{{ t('nav.deals') }}</NuxtLink>
+          <NuxtLink to="/wishlist" class="nav__link">{{ t('nav.wishlist') }}</NuxtLink>
         </nav>
 
         <!-- Search bar -->
         <div class="nav__search" role="search">
-          <label for="nav-search" class="sr-only">Search products</label>
+          <label for="nav-search" class="sr-only">{{ t('nav.searchLabel') }}</label>
           <input
             id="nav-search"
             v-model="searchQuery"
             type="search"
             class="nav__search-input"
-            placeholder="Search precision tools…"
+            :placeholder="t('nav.searchPlaceholder')"
             autocomplete="off"
             @keyup.enter="doSearch"
           />
           <button
             type="button"
             class="nav__search-btn"
-            aria-label="Submit search"
+            :aria-label="t('nav.searchSubmit')"
             @click="doSearch"
           >
             <span class="material-symbols-outlined" aria-hidden="true">search</span>
@@ -74,13 +74,14 @@ onMounted(async () => {
 
         <!-- Actions -->
         <div class="nav__actions">
+          <LangSwitcher />
           <template v-if="isAuthenticated">
             <NotificationBell />
             <div ref="userMenuRef" class="nav__user-menu">
               <button
                 type="button"
                 class="nav__icon-btn"
-                aria-label="User menu"
+                :aria-label="t('nav.userMenu')"
                 :aria-expanded="userMenuOpen"
                 @click="userMenuOpen = !userMenuOpen"
               >
@@ -94,7 +95,7 @@ onMounted(async () => {
                   @click="closeUserMenu"
                 >
                   <span class="material-symbols-outlined" aria-hidden="true">manage_accounts</span>
-                  My Account
+                  {{ t('nav.account') }}
                 </NuxtLink>
                 <button
                   type="button"
@@ -103,22 +104,22 @@ onMounted(async () => {
                   @click="logout"
                 >
                   <span class="material-symbols-outlined" aria-hidden="true">logout</span>
-                  Sign Out
+                  {{ t('nav.signOut') }}
                 </button>
               </div>
             </div>
           </template>
           <template v-else>
-            <NuxtLink to="/login" class="nav__signin">Sign in</NuxtLink>
+            <NuxtLink to="/login" class="nav__signin">{{ t('nav.signIn') }}</NuxtLink>
           </template>
 
           <!-- Cart -->
-          <NuxtLink to="/cart" class="nav__icon-btn nav__cart" aria-label="Shopping cart">
+          <NuxtLink to="/cart" class="nav__icon-btn nav__cart" :aria-label="t('nav.cart')">
             <span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
             <span
               v-if="itemCount > 0"
               class="nav__badge"
-              :aria-label="`${itemCount} items in cart`"
+              :aria-label="t('nav.cartItems', { count: itemCount })"
               >{{ itemCount }}</span
             >
           </NuxtLink>
@@ -129,7 +130,7 @@ onMounted(async () => {
             class="nav__burger"
             :aria-expanded="mobileMenuOpen"
             aria-controls="mobile-nav"
-            aria-label="Toggle navigation menu"
+            :aria-label="t('nav.mobileMenuToggle')"
             @click="mobileMenuOpen = !mobileMenuOpen"
           >
             <span class="material-symbols-outlined" aria-hidden="true">{{
@@ -140,7 +141,7 @@ onMounted(async () => {
       </div>
 
       <!-- Category strip -->
-      <div class="nav__cats" aria-label="Category navigation">
+      <div class="nav__cats" :aria-label="t('nav.categoryNavigation')">
         <div class="nav__cats-inner" role="list">
           <NuxtLink
             v-for="cat in categories.categories"
@@ -158,27 +159,32 @@ onMounted(async () => {
       </div>
 
       <!-- Mobile flyout -->
-      <nav v-if="mobileMenuOpen" id="mobile-nav" class="nav__mobile" aria-label="Mobile navigation">
-        <NuxtLink to="/products" class="nav__mobile-link" @click="mobileMenuOpen = false"
-          >Shop</NuxtLink
-        >
-        <NuxtLink to="/products?deals=1" class="nav__mobile-link" @click="mobileMenuOpen = false"
-          >Deals</NuxtLink
-        >
-        <NuxtLink to="/wishlist" class="nav__mobile-link" @click="mobileMenuOpen = false"
-          >Wishlist</NuxtLink
-        >
+      <nav
+        v-if="mobileMenuOpen"
+        id="mobile-nav"
+        class="nav__mobile"
+        :aria-label="t('nav.mobileNavigation')"
+      >
+        <NuxtLink to="/products" class="nav__mobile-link" @click="mobileMenuOpen = false">{{
+          t('nav.shop')
+        }}</NuxtLink>
+        <NuxtLink to="/products?deals=1" class="nav__mobile-link" @click="mobileMenuOpen = false">{{
+          t('nav.deals')
+        }}</NuxtLink>
+        <NuxtLink to="/wishlist" class="nav__mobile-link" @click="mobileMenuOpen = false">{{
+          t('nav.wishlist')
+        }}</NuxtLink>
         <template v-if="isAuthenticated">
-          <NuxtLink to="/account" class="nav__mobile-link" @click="mobileMenuOpen = false"
-            >My Account</NuxtLink
-          >
+          <NuxtLink to="/account" class="nav__mobile-link" @click="mobileMenuOpen = false">{{
+            t('nav.account')
+          }}</NuxtLink>
           <button type="button" class="nav__mobile-link nav__mobile-link--danger" @click="logout">
-            Sign Out
+            {{ t('nav.signOut') }}
           </button>
         </template>
-        <NuxtLink v-else to="/login" class="nav__mobile-link" @click="mobileMenuOpen = false"
-          >Sign in</NuxtLink
-        >
+        <NuxtLink v-else to="/login" class="nav__mobile-link" @click="mobileMenuOpen = false">{{
+          t('nav.signIn')
+        }}</NuxtLink>
       </nav>
     </header>
 
@@ -188,48 +194,64 @@ onMounted(async () => {
     </main>
 
     <!-- ── Footer ─────────────────────────────────────────────────────── -->
-    <footer class="footer" aria-label="Site footer">
+    <footer class="footer" role="contentinfo">
       <div class="footer__grid">
         <!-- Brand column -->
         <div>
-          <p class="footer__brand">ArchitectMarket</p>
+          <p class="footer__brand">{{ t('brand.name') }}</p>
           <p class="footer__tagline">
-            High-density marketplace for precision tools and technical goods.
+            {{ t('footer.tagline') }}
           </p>
         </div>
 
         <!-- Shop links -->
         <div>
-          <h3 class="footer__heading">Shop</h3>
+          <h3 class="footer__heading">{{ t('footer.shop') }}</h3>
           <ul class="footer__list" role="list">
-            <li><NuxtLink to="/products" class="footer__link">All Products</NuxtLink></li>
-            <li><NuxtLink to="/products?deals=1" class="footer__link">Deals</NuxtLink></li>
+            <li>
+              <NuxtLink to="/products" class="footer__link">{{ t('footer.allProducts') }}</NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/products?deals=1" class="footer__link">{{ t('nav.deals') }}</NuxtLink>
+            </li>
           </ul>
         </div>
 
         <!-- Account links -->
         <div>
-          <h3 class="footer__heading">Account</h3>
+          <h3 class="footer__heading">{{ t('footer.account') }}</h3>
           <ul class="footer__list" role="list">
-            <li><NuxtLink to="/account" class="footer__link">My Profile</NuxtLink></li>
-            <li><NuxtLink to="/orders" class="footer__link">Orders</NuxtLink></li>
-            <li><NuxtLink to="/wishlist" class="footer__link">Wishlist</NuxtLink></li>
+            <li>
+              <NuxtLink to="/account" class="footer__link">{{ t('footer.myProfile') }}</NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/orders" class="footer__link">{{ t('footer.orders') }}</NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/wishlist" class="footer__link">{{ t('nav.wishlist') }}</NuxtLink>
+            </li>
           </ul>
         </div>
 
         <!-- Support links -->
         <div>
-          <h3 class="footer__heading">Support</h3>
+          <h3 class="footer__heading">{{ t('footer.support') }}</h3>
           <ul class="footer__list" role="list">
-            <li><a href="#" class="footer__link">Help Center</a></li>
-            <li><a href="#" class="footer__link">Contact Us</a></li>
-            <li><a href="#" class="footer__link">Privacy Policy</a></li>
+            <li>
+              <a href="#" class="footer__link">{{ t('footer.helpCenter') }}</a>
+            </li>
+            <li>
+              <a href="#" class="footer__link">{{ t('footer.contactUs') }}</a>
+            </li>
+            <li>
+              <a href="#" class="footer__link">{{ t('footer.privacyPolicy') }}</a>
+            </li>
           </ul>
         </div>
       </div>
 
       <div class="footer__bottom">
-        © {{ new Date().getFullYear() }} ArchitectMarket. All rights reserved.
+        {{ t('footer.copyright', { year: new Date().getFullYear() }) }}
       </div>
     </footer>
   </div>

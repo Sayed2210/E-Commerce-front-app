@@ -22,6 +22,7 @@ const stripe = ref<StripeInstance | null>(null)
 const card = ref<StripeCardElement | null>(null)
 const cardError = ref('')
 const ready = ref(false)
+const { t } = useI18n()
 
 onMounted(async () => {
   if (!(window as Window & { Stripe?: (k: string) => StripeInstance }).Stripe) {
@@ -29,7 +30,7 @@ onMounted(async () => {
       const s = document.createElement('script')
       s.src = 'https://js.stripe.com/v3/'
       s.onload = () => resolve()
-      s.onerror = () => reject(new Error('Failed to load Stripe.js'))
+      s.onerror = () => reject(new Error(t('checkout.stripeLoadError')))
       document.head.appendChild(s)
     })
   }
@@ -75,7 +76,7 @@ defineExpose({ confirmCard, ready })
 
 <template>
   <div class="stripe-element">
-    <label class="stripe-element__label">Card Details</label>
+    <label class="stripe-element__label">{{ $t('checkout.cardDetails') }}</label>
     <div v-if="!ready" class="stripe-element__skeleton" aria-busy="true" />
     <div
       ref="cardMount"

@@ -81,7 +81,8 @@ async function handleSubmit() {
       :class="{ 'addr-form__field--error': touched.streetAddress && fieldErrors.streetAddress }"
     >
       <label class="addr-form__label" for="addr-street">
-        Street Address <span class="addr-form__required" aria-hidden="true">*</span>
+        {{ $t('checkout.streetAddress') }}
+        <span class="addr-form__required" aria-hidden="true">*</span>
       </label>
       <input
         id="addr-street"
@@ -109,7 +110,7 @@ async function handleSubmit() {
         :class="{ 'addr-form__field--error': touched.city && fieldErrors.city }"
       >
         <label class="addr-form__label" for="addr-city">
-          City <span class="addr-form__required" aria-hidden="true">*</span>
+          {{ $t('checkout.city') }} <span class="addr-form__required" aria-hidden="true">*</span>
         </label>
         <input
           id="addr-city"
@@ -136,7 +137,7 @@ async function handleSubmit() {
         :class="{ 'addr-form__field--error': touched.country && fieldErrors.country }"
       >
         <label class="addr-form__label" for="addr-country">
-          Country <span class="addr-form__required" aria-hidden="true">*</span>
+          {{ $t('checkout.country') }} <span class="addr-form__required" aria-hidden="true">*</span>
         </label>
         <input
           id="addr-country"
@@ -160,11 +161,11 @@ async function handleSubmit() {
     </div>
 
     <div class="addr-form__field">
-      <label class="addr-form__label" for="addr-label">Address Label</label>
+      <label class="addr-form__label" for="addr-label">{{ $t('checkout.addressLabel') }}</label>
       <select id="addr-label" v-model="form.label" class="addr-form__input">
-        <option value="home">Home</option>
-        <option value="work">Work</option>
-        <option value="other">Other</option>
+        <option value="home">{{ $t('checkout.labelHome') }}</option>
+        <option value="work">{{ $t('checkout.labelWork') }}</option>
+        <option value="other">{{ $t('checkout.labelOther') }}</option>
       </select>
     </div>
 
@@ -174,7 +175,8 @@ async function handleSubmit() {
         :class="{ 'addr-form__field--error': touched.postalCode && fieldErrors.postalCode }"
       >
         <label class="addr-form__label" for="addr-zip">
-          Postal Code <span class="addr-form__required" aria-hidden="true">*</span>
+          {{ $t('checkout.postalCode') }}
+          <span class="addr-form__required" aria-hidden="true">*</span>
         </label>
         <input
           id="addr-zip"
@@ -200,7 +202,7 @@ async function handleSubmit() {
         class="addr-form__field"
         :class="{ 'addr-form__field--error': touched.state && fieldErrors.state }"
       >
-        <label class="addr-form__label" for="addr-state">State / Province</label>
+        <label class="addr-form__label" for="addr-state">{{ $t('checkout.stateProvince') }}</label>
         <input
           id="addr-state"
           v-model="form.state"
@@ -220,7 +222,7 @@ async function handleSubmit() {
       class="addr-form__field"
       :class="{ 'addr-form__field--error': touched.phone && fieldErrors.phone }"
     >
-      <label class="addr-form__label" for="addr-phone">Phone</label>
+      <label class="addr-form__label" for="addr-phone">{{ $t('checkout.phone') }}</label>
       <input
         id="addr-phone"
         v-model="form.phone"
@@ -244,15 +246,15 @@ async function handleSubmit() {
 
     <label class="addr-form__check">
       <input v-model="form.isDefault" type="checkbox" class="addr-form__checkbox" />
-      Set as default address
+      {{ $t('checkout.setAsDefault') }}
     </label>
 
     <div class="addr-form__actions">
       <button type="button" class="addr-form__btn addr-form__btn--ghost" @click="emit('cancel')">
-        Cancel
+        {{ $t('common.cancel') }}
       </button>
       <button type="submit" class="addr-form__btn addr-form__btn--primary" :disabled="loading">
-        {{ loading ? 'Saving…' : 'Save Address' }}
+        {{ loading ? $t('common.saving') : $t('checkout.saveAddress') }}
       </button>
     </div>
   </form>

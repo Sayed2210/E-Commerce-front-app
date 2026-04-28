@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 type FormFields = {
   email: string
   password: string
@@ -21,9 +23,9 @@ function set<K extends keyof FormFields>(key: K, value: string) {
     <AppInput
       id="reg-first"
       :model-value="model.firstName"
-      label="First name"
+      :label="t('auth.firstName')"
       type="text"
-      placeholder="Jane"
+      :placeholder="t('auth.firstNamePlaceholder')"
       autocomplete="given-name"
       :error="errors.firstName"
       @update:model-value="set('firstName', $event)"
@@ -31,9 +33,9 @@ function set<K extends keyof FormFields>(key: K, value: string) {
     <AppInput
       id="reg-last"
       :model-value="model.lastName"
-      label="Last name"
+      :label="t('auth.lastName')"
       type="text"
-      placeholder="Doe"
+      :placeholder="t('auth.lastNamePlaceholder')"
       autocomplete="family-name"
       :error="errors.lastName"
       @update:model-value="set('lastName', $event)"
@@ -43,9 +45,9 @@ function set<K extends keyof FormFields>(key: K, value: string) {
   <AppInput
     id="reg-email"
     :model-value="model.email"
-    label="Email address"
+    :label="t('auth.emailAddress')"
     type="email"
-    placeholder="you@example.com"
+    :placeholder="t('auth.emailPlaceholder')"
     autocomplete="email"
     :required="true"
     :error="errors.email"
@@ -55,9 +57,9 @@ function set<K extends keyof FormFields>(key: K, value: string) {
   <AppInput
     id="reg-password"
     :model-value="model.password"
-    label="Password"
+    :label="t('auth.password')"
     type="password"
-    placeholder="Minimum 6 characters"
+    :placeholder="t('auth.passwordPlaceholder')"
     autocomplete="new-password"
     :required="true"
     :error="errors.password"
@@ -67,9 +69,9 @@ function set<K extends keyof FormFields>(key: K, value: string) {
   <AppInput
     id="reg-confirm"
     :model-value="model.passwordConfirmation"
-    label="Confirm password"
+    :label="t('auth.confirmPassword')"
     type="password"
-    placeholder="Re-enter your password"
+    :placeholder="t('auth.confirmPasswordPlaceholder')"
     autocomplete="new-password"
     :required="true"
     :error="errors.passwordConfirmation"

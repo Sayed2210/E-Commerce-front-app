@@ -16,12 +16,12 @@ function isEllipsis(p: number) {
 </script>
 
 <template>
-  <nav class="pagination" aria-label="Product listing pages">
+  <nav class="pagination" :aria-label="$t('products.paginationAriaLabel')">
     <button
       type="button"
       class="pagination__btn"
       :disabled="modelValue === 1"
-      aria-label="Previous page"
+      :aria-label="$t('products.previousPage')"
       @click="emit('update:modelValue', modelValue - 1)"
     >
       <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
@@ -33,7 +33,7 @@ function isEllipsis(p: number) {
           type="button"
           class="pagination__page"
           :class="{ 'pagination__page--active': modelValue === p }"
-          :aria-label="`Page ${p}`"
+          :aria-label="$t('products.page', { page: p })"
           :aria-current="modelValue === p ? 'page' : undefined"
           @click="emit('update:modelValue', p)"
         >
@@ -47,7 +47,7 @@ function isEllipsis(p: number) {
       type="button"
       class="pagination__btn"
       :disabled="modelValue === totalPages"
-      aria-label="Next page"
+      :aria-label="$t('products.nextPage')"
       @click="emit('update:modelValue', modelValue + 1)"
     >
       <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>

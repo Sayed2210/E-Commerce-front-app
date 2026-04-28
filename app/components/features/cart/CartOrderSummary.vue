@@ -16,24 +16,28 @@ function applyCoupon() {
   couponMessage.value = 'Coupon applied!'
   couponApplied.value = true
 }
+
+const { t } = useI18n()
 </script>
 
 <template>
   <div class="summary__card">
-    <h2 class="summary__title">Order Summary</h2>
+    <h2 class="summary__title">{{ $t('cart.orderSummary') }}</h2>
 
     <div class="summary__coupon">
-      <label class="summary__coupon-label" for="coupon-input">Coupon Code</label>
+      <label class="summary__coupon-label" for="coupon-input">{{ $t('cart.couponCode') }}</label>
       <div class="summary__coupon-row">
         <input
           id="coupon-input"
           v-model="couponCode"
           type="text"
-          placeholder="Enter code"
+          :placeholder="t('cart.enterCodePlaceholder')"
           class="summary__coupon-input"
           autocomplete="off"
         />
-        <AppButton variant="secondary" size="sm" @click="applyCoupon">Apply</AppButton>
+        <AppButton variant="secondary" size="sm" @click="applyCoupon">{{
+          $t('common.apply')
+        }}</AppButton>
       </div>
       <p
         v-if="couponMessage"
@@ -46,39 +50,42 @@ function applyCoupon() {
 
     <dl class="summary__totals">
       <div class="summary__row">
-        <dt class="summary__row-label">Subtotal</dt>
+        <dt class="summary__row-label">{{ $t('cart.subtotal') }}</dt>
         <dd class="summary__row-val">${{ subtotal.toFixed(2) }}</dd>
       </div>
       <div v-if="discount > 0" class="summary__row summary__row--discount">
-        <dt class="summary__row-label">Discount</dt>
+        <dt class="summary__row-label">{{ $t('cart.discount') }}</dt>
         <dd class="summary__row-val">-${{ discount.toFixed(2) }}</dd>
       </div>
       <div class="summary__row">
-        <dt class="summary__row-label">Shipping</dt>
+        <dt class="summary__row-label">{{ $t('cart.shipping') }}</dt>
         <dd class="summary__row-val" :class="{ 'summary__row-val--free': freeShipping }">
-          {{ freeShipping ? 'FREE' : '$9.99' }}
+          {{ freeShipping ? $t('common.free') : '$9.99' }}
         </dd>
       </div>
       <div class="summary__row summary__row--total">
-        <dt class="summary__row-label">Total</dt>
+        <dt class="summary__row-label">{{ $t('cart.total') }}</dt>
         <dd class="summary__row-val">${{ total.toFixed(2) }}</dd>
       </div>
     </dl>
 
     <NuxtLink to="/checkout" class="summary__checkout">
       <span class="material-symbols-outlined" aria-hidden="true">lock</span>
-      Proceed to Checkout
+      {{ $t('cart.proceedToCheckout') }}
     </NuxtLink>
 
-    <div class="summary__trust" aria-label="Accepted payment methods">
+    <div class="summary__trust" :aria-label="t('cart.acceptedPaymentMethods')">
       <span class="summary__trust-item">
-        <span class="material-symbols-outlined" aria-hidden="true">credit_card</span> Stripe
+        <span class="material-symbols-outlined" aria-hidden="true">credit_card</span>
+        {{ $t('cart.paymentStripe') }}
       </span>
       <span class="summary__trust-item">
-        <span class="material-symbols-outlined" aria-hidden="true">account_balance</span> PayPal
+        <span class="material-symbols-outlined" aria-hidden="true">account_balance</span>
+        {{ $t('cart.paymentPayPal') }}
       </span>
       <span class="summary__trust-item">
-        <span class="material-symbols-outlined" aria-hidden="true">payments</span> COD
+        <span class="material-symbols-outlined" aria-hidden="true">payments</span>
+        {{ $t('cart.paymentCod') }}
       </span>
     </div>
   </div>

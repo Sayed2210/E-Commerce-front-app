@@ -8,7 +8,9 @@ const emit = defineEmits<{
   'cancel-order': [orderId: string]
 }>()
 
-const TRACKING_STEPS = ['Confirmed', 'Processing', 'Shipped', 'Delivered']
+const { t, locale } = useI18n()
+
+const TRACKING_STEPS = ['confirmed', 'processing', 'shipped', 'delivered']
 
 const STATUS_CLASSES: Record<string, string> = {
   pending: 'badge--neutral',
@@ -25,7 +27,7 @@ function productName(p: Product) {
 }
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString(locale.value, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -36,6 +38,16 @@ function stepComplete(orderStatus: string, step: string) {
   const order = ['confirmed', 'processing', 'shipped', 'delivered']
   return order.indexOf(orderStatus) >= TRACKING_STEPS.indexOf(step)
 }
+
+function statusLabel(status: string) {
+  const key = 'orders.status' + status.charAt(0).toUpperCase() + status.slice(1)
+  return t(key as any)
+}
+
+function stepLabel(step: string) {
+  const key = 'orders.status' + step.charAt(0).toUpperCase() + step.slice(1)
+  return t(key as any)
+}
 </script>
 
 <template>
@@ -44,27 +56,27 @@ function stepComplete(orderStatus: string, step: string) {
     <div class="order-card__header">
       <div class="order-card__meta">
         <div class="order-card__meta-item">
-          <span class="order-card__label">Order</span>
+          <span class="order-card__label">{{ $t('orders.orderLabel') }}</span>
           <span class="order-card__value order-card__value--mono">
             #{{ order.id.slice(0, 8).toUpperCase() }}
           </span>
         </div>
         <div class="order-card__meta-item">
-          <span class="order-card__label">Placed</span>
+          <span class="order-card__label">{{ $t('orders.placedLabel') }}</span>
           <span class="order-card__value">{{ formatDate(order.createdAt) }}</span>
         </div>
         <div class="order-card__meta-item">
-          <span class="order-card__label">Total</span>
+          <span class="order-card__label">{{ $t('orders.totalLabel') }}</span>
           <span class="order-card__value order-card__value--bold">${{ order.totalAmount }}</span>
         </div>
       </div>
 
       <div class="order-card__actions">
         <span class="order-card__badge" :class="STATUS_CLASSES[order.status] ?? 'badge--neutral'">
-          {{ order.status }}
+          {{ statusLabel(order.status) }}
         </span>
         <NuxtLink :to="`/orders/${order.id}`" class="order-card__details-link">
-          View details
+          {{ $t('orders.viewDetails') }}
           <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
         </NuxtLink>
       </div>
@@ -83,7 +95,7 @@ function stepComplete(orderStatus: string, step: string) {
         />
       </div>
       <span v-if="order.items.length > 4" class="order-card__more">
-        +{{ order.items.length - 4 }} more
+        {{ $t('orders.moreItems', { count: order.items.length - 4 }) }}
       </span>
 
       <div class="order-card__item-actions">
@@ -93,7 +105,7 @@ function stepComplete(orderStatus: string, step: string) {
           class="order-card__btn order-card__btn--outline"
           @click="emit('request-return', order.id)"
         >
-          Request Return
+          {{ $t('orders.requestReturn') }}
         </button>
         <button
           v-if="['pending', 'confirmed'].includes(order.status)"
@@ -101,7 +113,7 @@ function stepComplete(orderStatus: string, step: string) {
           class="order-card__btn order-card__btn--danger"
           @click="emit('cancel-order', order.id)"
         >
-          Cancel Order
+          {{ $t('orders.cancelOrder') }}
         </button>
       </div>
     </div>
@@ -111,7 +123,7 @@ function stepComplete(orderStatus: string, step: string) {
       v-if="!['cancelled', 'refunded'].includes(order.status)"
       class="order-card__tracking"
       role="progressbar"
-      :aria-valuetext="`Order status: ${order.status}`"
+      :aria-valuetext="t('orders.orderStatusAria', { status: statusLabel(order.status) })"
     >
       <div
         v-for="(step, i) in TRACKING_STEPS"
@@ -131,7 +143,7 @@ function stepComplete(orderStatus: string, step: string) {
               >check</span
             >
           </div>
-          <p class="order-card__step-label">{{ step }}</p>
+          <p class="order-card__step-label">{{ stepLabel(step) }}</p>
         </div>
         <div
           v-if="i < TRACKING_STEPS.length - 1"

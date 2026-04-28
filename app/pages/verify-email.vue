@@ -1,6 +1,11 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 definePageMeta({ layout: false })
-useSeoMeta({ title: 'Verify Email — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({
+  title: () => `${t('auth.verifyingEmail')} — ${t('brand.name')}`,
+  robots: 'noindex, nofollow',
+})
 
 const { state, errorMessage } = useVerifyEmail()
 const { resendVerification } = useAuth()
@@ -16,26 +21,26 @@ async function handleResend() {
 </script>
 
 <template>
-  <AuthPageShell label="Email verification page">
+  <AuthPageShell :label="t('auth.verifyingEmail')">
     <div v-if="state === 'loading'" class="ve-state" aria-live="polite" aria-busy="true">
       <div class="ve-spinner" aria-hidden="true">
         <span class="material-symbols-outlined ve-spinner__icon">autorenew</span>
       </div>
-      <h1 class="auth-card__title">Verifying your email&hellip;</h1>
-      <p class="auth-card__sub">Please wait while we confirm your address.</p>
+      <h1 class="auth-card__title">{{ t('auth.verifyingEmail') }}</h1>
+      <p class="auth-card__sub">{{ t('auth.verifyWait') }}</p>
     </div>
 
     <div v-else-if="state === 'success'" class="ve-state" aria-live="polite">
       <div class="ve-icon-wrap ve-icon-wrap--success" aria-hidden="true">
         <span class="material-symbols-outlined ve-icon">verified</span>
       </div>
-      <h1 class="auth-card__title">Email verified!</h1>
+      <h1 class="auth-card__title">{{ t('auth.emailVerified') }}</h1>
       <p class="auth-card__sub">
-        Your email has been confirmed. You can now sign in to your account.
+        {{ t('auth.emailVerifiedSubtitle') }}
       </p>
       <NuxtLink to="/login" class="auth-btn-link">
         <span class="material-symbols-outlined" aria-hidden="true">login</span>
-        Sign In
+        {{ t('auth.signIn') }}
       </NuxtLink>
     </div>
 
@@ -43,13 +48,13 @@ async function handleResend() {
       <div class="ve-icon-wrap ve-icon-wrap--error" aria-hidden="true">
         <span class="material-symbols-outlined ve-icon">error</span>
       </div>
-      <h1 class="auth-card__title">Verification failed</h1>
+      <h1 class="auth-card__title">{{ t('auth.verificationFailed') }}</h1>
       <p class="auth-card__sub">{{ errorMessage }}</p>
       <div class="ve-actions">
         <NuxtLink to="/register" class="auth-btn-link auth-btn-link--secondary">
-          Create new account
+          {{ t('auth.createNewAccount') }}
         </NuxtLink>
-        <NuxtLink to="/login" class="auth-btn-link">Sign In</NuxtLink>
+        <NuxtLink to="/login" class="auth-btn-link">{{ t('auth.signIn') }}</NuxtLink>
       </div>
     </div>
 
@@ -57,20 +62,20 @@ async function handleResend() {
       <div class="ve-icon-wrap ve-icon-wrap--pending" aria-hidden="true">
         <span class="material-symbols-outlined ve-icon">mark_email_unread</span>
       </div>
-      <h1 class="auth-card__title">Check your email</h1>
+      <h1 class="auth-card__title">{{ t('auth.checkYourEmail') }}</h1>
       <p class="auth-card__sub">
-        We sent a verification link to your email address. Click the link to activate your account.
+        {{ t('auth.verificationSent') }}
       </p>
-      <p v-if="resent" class="ve-resent-msg">Email resent! Check your inbox.</p>
+      <p v-if="resent" class="ve-resent-msg">{{ t('auth.emailResent') }}</p>
       <button
         class="auth-btn-link auth-btn-link--secondary"
         :disabled="resending || resent"
         type="button"
-        aria-label="Resend verification email"
+        :aria-label="t('auth.resendEmail')"
         @click="handleResend"
       >
         <span class="material-symbols-outlined" aria-hidden="true">send</span>
-        {{ resending ? 'Sending…' : resent ? 'Sent!' : 'Resend email' }}
+        {{ resending ? t('auth.sending') : resent ? t('auth.sent') : t('auth.resendEmail') }}
       </button>
     </div>
 
@@ -78,11 +83,11 @@ async function handleResend() {
       <div class="ve-icon-wrap ve-icon-wrap--error" aria-hidden="true">
         <span class="material-symbols-outlined ve-icon">link_off</span>
       </div>
-      <h1 class="auth-card__title">Invalid link</h1>
+      <h1 class="auth-card__title">{{ t('auth.invalidLink') }}</h1>
       <p class="auth-card__sub">
-        This verification link is missing a token. Please use the link sent to your email.
+        {{ t('auth.missingToken') }}
       </p>
-      <NuxtLink to="/register" class="auth-btn-link">Register again</NuxtLink>
+      <NuxtLink to="/register" class="auth-btn-link">{{ t('auth.registerAgain') }}</NuxtLink>
     </div>
   </AuthPageShell>
 </template>

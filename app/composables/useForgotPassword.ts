@@ -3,6 +3,7 @@ import { forgotPasswordSchema } from '~/utils/validation'
 export function useForgotPassword() {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
+  const { t } = useI18n()
 
   const form = ref({ email: '' })
   const errors = ref<Record<string, string>>({})
@@ -31,7 +32,7 @@ export function useForgotPassword() {
       submitted.value = true
     } catch (err: unknown) {
       const e = err as { data?: { message?: string } }
-      serverError.value = e?.data?.message ?? 'Something went wrong. Please try again.'
+      serverError.value = e?.data?.message ?? t('error.unexpected')
     } finally {
       loading.value = false
     }

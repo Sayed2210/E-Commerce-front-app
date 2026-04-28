@@ -10,9 +10,9 @@ const { kpis, recentOrders, orderStatuses, pending } = await useDashboardStats()
     <div class="flex justify-between items-end">
       <div>
         <h2 class="text-2xl font-bold font-headline tracking-tight text-on-surface">
-          Dashboard Overview
+          {{ $t('admin.dashboardPage.overview') }}
         </h2>
-        <p class="text-secondary text-sm">Real-time performance metrics for ArchitectMarket</p>
+        <p class="text-secondary text-sm">{{ $t('admin.dashboardPage.subtitle') }}</p>
       </div>
     </div>
 

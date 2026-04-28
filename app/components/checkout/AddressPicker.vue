@@ -26,7 +26,7 @@ async function handleAdd(dto: CreateAddressDto) {
 
 <template>
   <section class="addr-picker">
-    <h2 class="addr-picker__title">Shipping Address</h2>
+    <h2 class="addr-picker__title">{{ $t('checkout.shippingAddress') }}</h2>
 
     <div v-if="addresses.length" class="addr-picker__list">
       <label
@@ -48,7 +48,7 @@ async function handleAdd(dto: CreateAddressDto) {
             {{ [addr.firstName, addr.lastName].filter(Boolean).join(' ') }}
           </span>
           <span class="addr-picker__line">{{ addressLabel(addr) }}</span>
-          <span v-if="addr.isDefault" class="addr-picker__default">Default</span>
+          <span v-if="addr.isDefault" class="addr-picker__default">{{ $t('common.default') }}</span>
         </span>
       </label>
     </div>
@@ -56,8 +56,8 @@ async function handleAdd(dto: CreateAddressDto) {
     <AppEmptyState
       v-else-if="!showForm"
       icon="location_on"
-      title="No saved addresses"
-      body="Add your first shipping address below."
+      :title="$t('checkout.noSavedAddresses')"
+      :body="$t('checkout.addFirstAddress')"
     />
 
     <AddressForm
@@ -69,7 +69,7 @@ async function handleAdd(dto: CreateAddressDto) {
 
     <button v-if="!showForm" type="button" class="addr-picker__add" @click="showForm = true">
       <span class="material-symbols-outlined" aria-hidden="true">add</span>
-      Add New Address
+      {{ $t('checkout.addNewAddress') }}
     </button>
   </section>
 </template>

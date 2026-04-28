@@ -2,10 +2,12 @@
 import { useAddresses } from '~/composables/useAddresses'
 import { useCheckout } from '~/composables/useCheckout'
 import type { PaymentMethod, ApplyCouponResponse, ValidateCheckoutResponse } from '~/types/api'
-import { showErrorToast, showSuccessToast } from '~/utils/errorHandler'
+
+const { t } = useI18n()
+const { showError, showSuccess } = useToasts()
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
-useSeoMeta({ title: 'Checkout — ArchitectMarket', robots: 'noindex, nofollow' })
+useSeoMeta({ title: () => t('checkout.title'), robots: 'noindex, nofollow' })
 
 const config = useRuntimeConfig()
 const router = useRouter()
@@ -78,7 +80,7 @@ const displayTotal = computed(() =>
 
 async function handlePlaceOrder() {
   if (!selectedAddressId.value) {
-    showErrorToast({ message: 'Please select a shipping address.' })
+    showError(null, t('checkout.selectShippingAddress'))
     return
   }
 
@@ -89,7 +91,7 @@ async function handlePlaceOrder() {
       // couponCode: couponCode.value || undefined,
     })
     if (error) {
-      showErrorToast(error)
+      showError(error)
       return
     }
     validatedTotals.value = data
@@ -125,7 +127,7 @@ async function handleCodOrder() {
 async function handleStripeOrder() {
   const stripeCard = stripeCardRef.value
   if (!stripeCard?.ready) {
-    showErrorToast({ message: 'Card element is not ready. Please wait a moment and try again.' })
+    showError(null, t('checkout.cardNotReady'))
     return
   }
 
@@ -142,7 +144,7 @@ async function handleStripeOrder() {
 
   const paymentIntentId = data?.paymentIntentId ?? data?.order?.paymentIntentId
   if (!paymentIntentId) {
-    showErrorToast({ message: 'No payment intent returned. Please try again.' })
+    showError(null, t('checkout.noPaymentIntent'))
     return
   }
 
@@ -151,7 +153,7 @@ async function handleStripeOrder() {
     cartStore.clearCart()
     router.push(`/orders/${data!.order.id}`)
   } catch (err) {
-    showErrorToast({ message: (err as Error).message ?? 'Payment failed. Please try again.' })
+    showError(err, t('checkout.paymentFailed'))
   }
 }
 
@@ -161,9 +163,9 @@ function handleOrderError(error: unknown) {
     (error as { statusCode?: number })?.statusCode
   if (status === 403) {
     emailNotVerified.value = true
-    showErrorToast({ message: 'Please verify your email before placing an order.' })
+    showError(null, t('checkout.verifyEmailBeforeOrder'))
   } else {
-    showErrorToast(error)
+    showError(error)
   }
 }
 
@@ -172,16 +174,16 @@ async function handleResendVerification() {
   const ok = await resendVerification()
   resendingVerification.value = false
   if (ok) {
-    showSuccessToast('Verification email sent — check your inbox.')
+    showSuccess(t('checkout.verificationEmailSent'))
   } else {
-    showErrorToast({ message: 'Could not send verification email. Try again later.' })
+    showError(null, t('checkout.resendVerificationFailed'))
   }
 }
 
 async function handleAddAddress(dto: Parameters<typeof createAddress>[0]) {
   const { error } = await createAddress(dto)
   if (error) {
-    showErrorToast(error)
+    showError(error)
     return
   }
   await refreshAddresses()
@@ -191,9 +193,9 @@ async function handleAddAddress(dto: Parameters<typeof createAddress>[0]) {
 }
 
 const breadcrumbs = [
-  { label: 'Marketplace', to: '/' },
-  { label: 'Cart', to: '/cart' },
-  { label: 'Checkout' },
+  { label: t('checkout.marketplace'), to: '/' },
+  { label: t('checkout.cart'), to: '/cart' },
+  { label: t('checkout.checkout') },
 ]
 </script>
 
@@ -206,14 +208,16 @@ const breadcrumbs = [
     <div v-if="emailNotVerified" class="checkout-page__verify-banner" role="alert">
       <span class="material-symbols-outlined" aria-hidden="true">mail</span>
       <span class="checkout-page__verify-text">
-        Your email is not verified. Please check your inbox or
+        {{ $t('checkout.emailNotVerified') }}
         <button
           type="button"
           class="checkout-page__verify-resend"
           :disabled="resendingVerification"
           @click="handleResendVerification"
         >
-          {{ resendingVerification ? 'Sending…' : 'resend the verification email' }}</button
+          {{
+            resendingVerification ? $t('checkout.sending') : $t('checkout.resendVerificationEmail')
+          }}</button
         >.
       </span>
     </div>
@@ -239,7 +243,7 @@ const breadcrumbs = [
         </div>
 
         <div class="checkout-page__section">
-          <h2 class="checkout-page__section-title">Coupon</h2>
+          <h2 class="checkout-page__section-title">{{ $t('checkout.coupon') }}</h2>
           <CouponInput @applied="handleCouponApplied" />
         </div>
 
@@ -250,7 +254,7 @@ const breadcrumbs = [
           @click="runValidate"
         >
           <span class="material-symbols-outlined" aria-hidden="true">calculate</span>
-          Calculate Final Totals
+          {{ $t('checkout.calculateFinalTotals') }}
         </button>
       </section>
 

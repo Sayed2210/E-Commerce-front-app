@@ -29,7 +29,7 @@ function productName(item: CartItem) {
 
 <template>
   <aside class="review-panel">
-    <h2 class="review-panel__title">Order Summary</h2>
+    <h2 class="review-panel__title">{{ $t('checkout.orderSummary') }}</h2>
 
     <ul class="review-panel__items" role="list">
       <li v-for="item in items" :key="item.id" class="review-panel__item">
@@ -41,36 +41,36 @@ function productName(item: CartItem) {
 
     <dl class="review-panel__totals">
       <div class="review-panel__row">
-        <dt>Subtotal</dt>
+        <dt>{{ $t('checkout.subtotal') }}</dt>
         <dd>${{ subtotal.toFixed(2) }}</dd>
       </div>
       <div v-if="discount > 0" class="review-panel__row review-panel__row--positive">
-        <dt>Cart Discount</dt>
+        <dt>{{ $t('checkout.cartDiscount') }}</dt>
         <dd>-${{ discount.toFixed(2) }}</dd>
       </div>
       <div v-if="couponDiscount > 0" class="review-panel__row review-panel__row--positive">
-        <dt>Coupon</dt>
+        <dt>{{ $t('checkout.coupon') }}</dt>
         <dd>-${{ couponDiscount.toFixed(2) }}</dd>
       </div>
       <div class="review-panel__row">
-        <dt>Shipping</dt>
+        <dt>{{ $t('checkout.shipping') }}</dt>
         <dd :class="{ 'review-panel__val--free': shippingFee === 0 }">
-          {{ shippingFee === 0 ? 'FREE' : `$${shippingFee.toFixed(2)}` }}
+          {{ shippingFee === 0 ? $t('common.free') : `$${shippingFee.toFixed(2)}` }}
         </dd>
       </div>
       <div v-if="tax != null && tax > 0" class="review-panel__row">
-        <dt>Tax</dt>
+        <dt>{{ $t('checkout.tax') }}</dt>
         <dd>${{ tax.toFixed(2) }}</dd>
       </div>
       <div class="review-panel__row review-panel__row--total">
-        <dt>Total</dt>
+        <dt>{{ $t('checkout.total') }}</dt>
         <dd>${{ total.toFixed(2) }}</dd>
       </div>
     </dl>
 
     <div v-if="emailNotVerified" class="review-panel__warning" role="alert">
       <span class="material-symbols-outlined" aria-hidden="true">mail</span>
-      <span>Please verify your email before placing an order. Check your inbox.</span>
+      <span>{{ $t('checkout.verifyEmailWarning') }}</span>
     </div>
 
     <button
@@ -80,7 +80,7 @@ function productName(item: CartItem) {
       @click="emit('place-order')"
     >
       <span class="material-symbols-outlined" aria-hidden="true">lock</span>
-      {{ loading ? 'Placing Order…' : 'Place Order' }}
+      {{ loading ? $t('checkout.placingOrder') : $t('checkout.placeOrder') }}
     </button>
   </aside>
 </template>
