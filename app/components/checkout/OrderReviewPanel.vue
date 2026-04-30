@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CartItem } from '~/types/api'
 
+const { format } = useCurrency()
+
 const props = defineProps<{
   items: CartItem[]
   subtotal: number
@@ -35,36 +37,36 @@ function productName(item: CartItem) {
       <li v-for="item in items" :key="item.id" class="review-panel__item">
         <span class="review-panel__item-name">{{ productName(item) }}</span>
         <span class="review-panel__item-qty">× {{ item.quantity }}</span>
-        <span class="review-panel__item-price">${{ item.totalPrice.toFixed(2) }}</span>
+        <span class="review-panel__item-price">{{ format(item.totalPrice) }}</span>
       </li>
     </ul>
 
     <dl class="review-panel__totals">
       <div class="review-panel__row">
         <dt>{{ $t('checkout.subtotal') }}</dt>
-        <dd>${{ subtotal.toFixed(2) }}</dd>
+        <dd>{{ format(subtotal) }}</dd>
       </div>
       <div v-if="discount > 0" class="review-panel__row review-panel__row--positive">
         <dt>{{ $t('checkout.cartDiscount') }}</dt>
-        <dd>-${{ discount.toFixed(2) }}</dd>
+        <dd>-{{ format(discount) }}</dd>
       </div>
       <div v-if="couponDiscount > 0" class="review-panel__row review-panel__row--positive">
         <dt>{{ $t('checkout.coupon') }}</dt>
-        <dd>-${{ couponDiscount.toFixed(2) }}</dd>
+        <dd>-{{ format(couponDiscount) }}</dd>
       </div>
       <div class="review-panel__row">
         <dt>{{ $t('checkout.shipping') }}</dt>
         <dd :class="{ 'review-panel__val--free': shippingFee === 0 }">
-          {{ shippingFee === 0 ? $t('common.free') : `$${shippingFee.toFixed(2)}` }}
+          {{ shippingFee === 0 ? $t('common.free') : format(shippingFee) }}
         </dd>
       </div>
       <div v-if="tax != null && tax > 0" class="review-panel__row">
         <dt>{{ $t('checkout.tax') }}</dt>
-        <dd>${{ tax.toFixed(2) }}</dd>
+        <dd>{{ format(tax) }}</dd>
       </div>
       <div class="review-panel__row review-panel__row--total">
         <dt>{{ $t('checkout.total') }}</dt>
-        <dd>${{ total.toFixed(2) }}</dd>
+        <dd>{{ format(total) }}</dd>
       </div>
     </dl>
 

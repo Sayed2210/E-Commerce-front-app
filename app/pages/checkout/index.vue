@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { useAddresses } from '~/composables/useAddresses'
 import { useCheckout } from '~/composables/useCheckout'
-import type { PaymentMethod, ApplyCouponResponse, ValidateCheckoutResponse } from '~/types/api'
+import { useCurrency } from '~/composables/useCurrency'
+import { useShipping } from '~/composables/useShipping'
+import type {
+  PaymentMethod,
+  ApplyCouponResponse,
+  ValidateCheckoutResponse,
+  RedeemPointsDto,
+} from '~/types/api'
 
 const { t } = useI18n()
 const { showError, showSuccess } = useToasts()
@@ -16,6 +23,8 @@ const cartStore = useCartStore()
 const { getAddresses, createAddress } = useAddresses()
 const { validateCheckout, createOrder } = useCheckout()
 const { resendVerification } = useAuth()
+const { currentCurrency } = useCurrency()
+const { calculateShipping } = useShipping()
 
 const { data: addressData, refresh: refreshAddresses } = await getAddresses()
 const addresses = computed(() => addressData.value ?? [])
@@ -31,6 +40,9 @@ const placingOrder = ref(false)
 const emailNotVerified = ref(false)
 const resendingVerification = ref(false)
 const validatedTotals = ref<ValidateCheckoutResponse | null>(null)
+const redeemPointsDto = ref<RedeemPointsDto | null>(null)
+const calculatedShipping = ref<number | null>(null)
+const shippingLoading = ref(false)
 
 const stripeCardRef = useTemplateRef<InstanceType<typeof StripeCardElement>>('stripeCard')
 const stripePublishableKey = config.public.stripePublishableKey as string
@@ -60,13 +72,23 @@ async function runValidate() {
   if (data) validatedTotals.value = data
 }
 
-watch(selectedAddressId, () => {
+watch(selectedAddressId, async (newId) => {
   validatedTotals.value = null
+  calculatedShipping.value = null
+  if (newId) {
+    shippingLoading.value = true
+    const { data } = await calculateShipping(newId, 1, cartStore.subtotal)
+    if (data) {
+      calculatedShipping.value = data.freeShipping ? 0 : data.cost
+    }
+    shippingLoading.value = false
+  }
 })
 
 const displayShipping = computed(() => {
   if (freeShipping.value) return 0
   if (validatedTotals.value) return validatedTotals.value.shippingAmount
+  if (calculatedShipping.value !== null) return calculatedShipping.value
   return null
 })
 const displayDiscount = computed(() => {
@@ -113,6 +135,9 @@ async function handleCodOrder() {
     shippingAddressId: selectedAddressId.value!,
     paymentMethod: 'cod',
     couponCode: couponCode.value || undefined,
+    currencyCode: currentCurrency.value.code,
+    redeemPoints: redeemPointsDto.value?.points,
+    redemptionType: redeemPointsDto.value?.redemptionType,
   })
   if (error) {
     handleOrderError(error)
@@ -135,6 +160,9 @@ async function handleStripeOrder() {
     shippingAddressId: selectedAddressId.value!,
     paymentMethod: 'stripe',
     couponCode: couponCode.value || undefined,
+    currencyCode: currentCurrency.value.code,
+    redeemPoints: redeemPointsDto.value?.points,
+    redemptionType: redeemPointsDto.value?.redemptionType,
   })
 
   if (error) {
@@ -245,6 +273,13 @@ const breadcrumbs = [
         <div class="checkout-page__section">
           <h2 class="checkout-page__section-title">{{ $t('checkout.coupon') }}</h2>
           <CouponInput @applied="handleCouponApplied" />
+        </div>
+
+        <div class="checkout-page__section">
+          <PointsRedemption
+            :cart-total="cartStore.subtotal"
+            @update:redeem="redeemPointsDto = $event"
+          />
         </div>
 
         <button

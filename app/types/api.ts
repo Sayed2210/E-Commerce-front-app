@@ -299,6 +299,7 @@ export interface CreateOrderDto {
   paymentMethod: PaymentMethod
   couponCode?: string
   paymentToken?: string
+  currencyCode?: string
 }
 
 export interface UpdateOrderStatusDto {
@@ -504,4 +505,137 @@ export interface NewsletterStats {
 
 export interface UnsubscribeDto {
   email: string
+}
+
+// ── Currency ──────────────────────────────────────────────────────────────
+
+export interface Currency {
+  code: string
+  name: string
+  symbol: string
+  exchangeRate: number
+  isActive: boolean
+  isDefault: boolean
+}
+
+export interface CreateCurrencyDto {
+  code: string
+  name: string
+  symbol: string
+  exchangeRate: number
+  isActive?: boolean
+}
+
+export type UpdateCurrencyDto = Partial<CreateCurrencyDto>
+
+// ── Points ────────────────────────────────────────────────────────────────
+
+export interface PointRule {
+  id: string
+  pointsPerCurrencySpent: number
+  fixedPointsPerOrder: number
+  expiryDays: number
+  isActive: boolean
+  createdAt: string
+}
+
+export interface CreatePointRuleDto {
+  pointsPerCurrencySpent: number
+  fixedPointsPerOrder: number
+  expiryDays: number
+  isActive?: boolean
+}
+
+export type UpdatePointRuleDto = Partial<CreatePointRuleDto>
+
+export interface PointTransaction {
+  id: string
+  userId: string
+  orderId?: string
+  type: 'earn' | 'redeem'
+  amount: number
+  balanceAfter: number
+  expiresAt?: string
+  reason?: string
+  createdAt: string
+}
+
+export interface PointRedemption {
+  id: string
+  type: 'discount' | 'free_order' | 'free_shipping'
+  pointsRequired: number
+  value: number
+  isActive: boolean
+}
+
+export interface CreatePointRedemptionDto {
+  type: 'discount' | 'free_order' | 'free_shipping'
+  pointsRequired: number
+  value: number
+  isActive?: boolean
+}
+
+export type UpdatePointRedemptionDto = Partial<CreatePointRedemptionDto>
+
+export interface RedeemPointsDto {
+  points: number
+  redemptionType: 'discount' | 'free_order' | 'free_shipping'
+}
+
+export interface RedeemPointsPreview {
+  discountValue: number
+  newTotal: number
+}
+
+// ── Invoice ───────────────────────────────────────────────────────────────
+
+export interface Invoice {
+  id: string
+  orderId: string
+  invoiceNumber: string
+  pdfUrl: string
+  createdAt: string
+}
+
+// ── Shipping ──────────────────────────────────────────────────────────────
+
+export interface ShippingZone {
+  id: string
+  name: string
+  countries: string[]
+  isActive: boolean
+}
+
+export interface ShippingRate {
+  id: string
+  shippingZoneId: string
+  minWeight: number
+  maxWeight: number
+  baseCost: number
+  perKgCost: number
+  freeShippingThreshold: number
+}
+
+export interface CreateShippingZoneDto {
+  name: string
+  countries: string[]
+  isActive?: boolean
+}
+
+export type UpdateShippingZoneDto = Partial<CreateShippingZoneDto>
+
+export interface CreateShippingRateDto {
+  shippingZoneId: string
+  minWeight: number
+  maxWeight: number
+  baseCost: number
+  perKgCost: number
+  freeShippingThreshold?: number
+}
+
+export type UpdateShippingRateDto = Partial<CreateShippingRateDto>
+
+export interface ShippingCalculation {
+  cost: number
+  freeShipping: boolean
 }

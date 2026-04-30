@@ -9,6 +9,7 @@ const emit = defineEmits<{
 }>()
 
 const { t, locale } = useI18n()
+const { format } = useCurrency()
 
 const TRACKING_STEPS = ['confirmed', 'processing', 'shipped', 'delivered']
 
@@ -67,7 +68,9 @@ function stepLabel(step: string) {
         </div>
         <div class="order-card__meta-item">
           <span class="order-card__label">{{ $t('orders.totalLabel') }}</span>
-          <span class="order-card__value order-card__value--bold">${{ order.totalAmount }}</span>
+          <span class="order-card__value order-card__value--bold">{{
+            format(order.totalAmount)
+          }}</span>
         </div>
       </div>
 

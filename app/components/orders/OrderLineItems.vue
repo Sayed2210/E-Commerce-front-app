@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { OrderItem } from '~/types/api'
 
+const { format } = useCurrency()
+
 defineProps<{ items: OrderItem[]; canReturn?: boolean }>()
 const emit = defineEmits<{ 'request-return': [itemId: string] }>()
 
@@ -39,7 +41,7 @@ function variantLabel(item: OrderItem) {
           <p class="line-items__qty">{{ $t('orders.qty', { qty: item.quantity }) }}</p>
         </div>
         <div class="line-items__right">
-          <p class="line-items__price">${{ item.totalPrice }}</p>
+          <p class="line-items__price">{{ format(item.totalPrice) }}</p>
           <button
             v-if="canReturn"
             type="button"

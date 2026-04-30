@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Order } from '~/types/api'
 
+const { format } = useCurrency()
+
 defineProps<{ order: Order }>()
 </script>
 
@@ -10,25 +12,25 @@ defineProps<{ order: Order }>()
     <dl class="order-totals__list">
       <div class="order-totals__row">
         <dt>{{ $t('orders.subtotal') }}</dt>
-        <dd>${{ order.subtotal }}</dd>
+        <dd>{{ format(order.subtotal) }}</dd>
       </div>
       <div v-if="order.discountAmount > 0" class="order-totals__row order-totals__row--positive">
         <dt>{{ $t('orders.discount') }}</dt>
-        <dd>-${{ order.discountAmount }}</dd>
+        <dd>-{{ format(order.discountAmount) }}</dd>
       </div>
       <div class="order-totals__row">
         <dt>{{ $t('orders.shipping') }}</dt>
         <dd :class="{ 'order-totals__val--free': order.shippingAmount === 0 }">
-          {{ order.shippingAmount === 0 ? $t('common.free') : `$${order.shippingAmount}` }}
+          {{ order.shippingAmount === 0 ? $t('common.free') : format(order.shippingAmount) }}
         </dd>
       </div>
       <div v-if="order.taxAmount > 0" class="order-totals__row">
         <dt>{{ $t('orders.tax') }}</dt>
-        <dd>${{ order.taxAmount }}</dd>
+        <dd>{{ format(order.taxAmount) }}</dd>
       </div>
       <div class="order-totals__row order-totals__row--total">
         <dt>{{ $t('orders.total') }}</dt>
-        <dd>${{ order.totalAmount }}</dd>
+        <dd>{{ format(order.totalAmount) }}</dd>
       </div>
     </dl>
     <div class="order-totals__method">

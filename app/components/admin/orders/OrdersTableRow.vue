@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Order } from '~/types/api'
 import { useStatusColors } from '~/composables/admin/useStatusColors'
+import { useInvoices } from '~/composables/useInvoices'
 
 interface Props {
   order: Order
@@ -14,6 +15,7 @@ const emit = defineEmits<{
 }>()
 
 const { getStatusClass } = useStatusColors()
+const { resendInvoice } = useInvoices()
 
 const { locale } = useI18n()
 
@@ -75,12 +77,22 @@ function handleStatusChange(event: Event) {
       </select>
     </td>
     <td class="px-6 py-4">
-      <NuxtLink
-        :to="`/admin/orders/${order.id}`"
-        class="text-primary hover:underline text-xs font-semibold"
-      >
-        {{ $t('admin.ordersPage.view') }}
-      </NuxtLink>
+      <div class="flex items-center gap-3">
+        <NuxtLink
+          :to="`/admin/orders/${order.id}`"
+          class="text-primary hover:underline text-xs font-semibold"
+        >
+          {{ $t('admin.ordersPage.view') }}
+        </NuxtLink>
+        <button
+          v-if="order.paymentStatus === 'paid' || order.status === 'delivered'"
+          type="button"
+          class="text-secondary hover:text-primary text-xs font-semibold transition-colors"
+          @click="resendInvoice(order.id)"
+        >
+          {{ $t('invoice.resend') }}
+        </button>
+      </div>
     </td>
   </tr>
 </template>

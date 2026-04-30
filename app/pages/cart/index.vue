@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from '~/utils/constants'
-
 const { t } = useI18n()
 
 definePageMeta({ layout: 'default', middleware: 'auth' })
@@ -18,8 +16,7 @@ const subtotal = computed(() => cartStore.subtotal)
 const discount = computed(() => cartStore.discount)
 
 const cartTotal = computed(() => {
-  const shipping = subtotal.value >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE
-  return Math.max(0, subtotal.value - discount.value + shipping)
+  return Math.max(0, subtotal.value - discount.value)
 })
 
 onMounted(async () => {

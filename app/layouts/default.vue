@@ -75,6 +75,7 @@ onMounted(async () => {
         <!-- Actions -->
         <div class="nav__actions">
           <LangSwitcher />
+          <CurrencySwitcher />
           <template v-if="isAuthenticated">
             <NotificationBell />
             <div ref="userMenuRef" class="nav__user-menu">

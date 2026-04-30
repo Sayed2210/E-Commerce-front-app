@@ -18,6 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { format } = useCurrency()
 
 const isGrid = computed(() => props.variant === 'grid')
 
@@ -37,7 +38,7 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
     :to="`/products/${product.id}`"
     class="card"
     :class="isGrid ? 'card--grid' : 'card--list'"
-    :aria-label="`${name}, $${product.basePrice}`"
+    :aria-label="`${name}, ${format(product.basePrice)}`"
   >
     <div class="card__img-wrap" :class="isGrid ? 'card__img-wrap--grid' : 'card__img-wrap--list'">
       <span
@@ -94,7 +95,7 @@ const isOutOfStock = computed(() => props.product.inventoryQuantity === 0)
 
       <div class="card__foot">
         <span class="card__price" :class="isGrid ? 'card__price--grid' : 'card__price--list'">
-          ${{ product.basePrice }}
+          {{ format(product.basePrice) }}
         </span>
 
         <button

@@ -12,6 +12,7 @@ const id = route.params.id as string
 
 const { getOrder } = useOrders()
 const { createReturn } = useReturns()
+const { downloadInvoice } = useInvoices()
 
 const { data: orderData, pending } = await getOrder(id)
 const order = computed<Order | null>(() => orderData.value ?? null)
@@ -118,6 +119,19 @@ const breadcrumbs = computed(() => [
         <aside class="order-detail__sidebar">
           <div class="order-detail__card">
             <OrderTotals :order="order" />
+          </div>
+          <div
+            v-if="order.paymentStatus === 'paid' || order.status === 'delivered'"
+            class="order-detail__card"
+          >
+            <button
+              type="button"
+              class="order-detail__invoice-btn"
+              @click="downloadInvoice(order.id)"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">download</span>
+              {{ $t('invoice.downloadInvoice') }}
+            </button>
           </div>
         </aside>
       </div>
@@ -412,5 +426,32 @@ const breadcrumbs = computed(() => [
 
 .return-modal__btn--ghost:hover {
   background: var(--color-surface-container-low);
+}
+
+.order-detail__invoice-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-surface-container);
+  border: 1px solid color-mix(in srgb, var(--color-outline-variant) 20%, transparent);
+  border-radius: var(--radius-DEFAULT);
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.order-detail__invoice-btn:hover {
+  background: var(--color-surface-container-low);
+}
+
+.order-detail__invoice-btn .material-symbols-outlined {
+  font-size: 1.125rem;
+  color: var(--color-primary);
 }
 </style>

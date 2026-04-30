@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   subtotal: number
   discount: number
   total: number
@@ -9,14 +9,13 @@ const couponCode = ref('')
 const couponMessage = ref('')
 const couponApplied = ref(false)
 
-const freeShipping = computed(() => props.subtotal >= 99)
-
 function applyCoupon() {
   if (!couponCode.value.trim()) return
   couponMessage.value = 'Coupon applied!'
   couponApplied.value = true
 }
 
+const { format } = useCurrency()
 const { t } = useI18n()
 </script>
 
@@ -51,21 +50,21 @@ const { t } = useI18n()
     <dl class="summary__totals">
       <div class="summary__row">
         <dt class="summary__row-label">{{ $t('cart.subtotal') }}</dt>
-        <dd class="summary__row-val">${{ subtotal.toFixed(2) }}</dd>
+        <dd class="summary__row-val">{{ format(subtotal) }}</dd>
       </div>
       <div v-if="discount > 0" class="summary__row summary__row--discount">
         <dt class="summary__row-label">{{ $t('cart.discount') }}</dt>
-        <dd class="summary__row-val">-${{ discount.toFixed(2) }}</dd>
+        <dd class="summary__row-val">-{{ format(discount) }}</dd>
       </div>
       <div class="summary__row">
         <dt class="summary__row-label">{{ $t('cart.shipping') }}</dt>
-        <dd class="summary__row-val" :class="{ 'summary__row-val--free': freeShipping }">
-          {{ freeShipping ? $t('common.free') : '$9.99' }}
+        <dd class="summary__row-val">
+          {{ $t('cart.calculatedAtCheckout') }}
         </dd>
       </div>
       <div class="summary__row summary__row--total">
         <dt class="summary__row-label">{{ $t('cart.total') }}</dt>
-        <dd class="summary__row-val">${{ total.toFixed(2) }}</dd>
+        <dd class="summary__row-val">{{ format(total) }}</dd>
       </div>
     </dl>
 

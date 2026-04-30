@@ -10,6 +10,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { format } = useCurrency()
 
 function productName(p: Product | undefined) {
   if (!p) return ''
@@ -43,7 +44,7 @@ function variantName(v: ProductVariant) {
             {{ $t('cart.variantLabel', { variant: variantName(item.variant) }) }}
           </p>
         </div>
-        <p class="cart-item__price">${{ item.totalPrice.toFixed(2) }}</p>
+        <p class="cart-item__price">{{ format(item.totalPrice) }}</p>
       </div>
 
       <div class="cart-item__stock">

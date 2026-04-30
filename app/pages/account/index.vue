@@ -55,7 +55,7 @@ const accountLinks = computed(() => [
   { to: '/cart', icon: 'shopping_cart', label: t('account.cart') },
 ])
 
-const activeTab = ref<'profile' | 'addresses'>('profile')
+const activeTab = ref<'profile' | 'addresses' | 'points'>('profile')
 
 async function saveProfile() {
   saving.value = true
@@ -169,10 +169,27 @@ async function changePassword() {
           >
             {{ $t('account.addresses') }}
           </button>
+          <button
+            type="button"
+            class="px-5 py-2 rounded text-sm font-bold font-label transition-colors"
+            :class="
+              activeTab === 'points'
+                ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                : 'text-secondary hover:text-on-surface'
+            "
+            @click="activeTab = 'points'"
+          >
+            {{ $t('account.points') }}
+          </button>
         </div>
         <!-- Addresses tab -->
         <div v-if="activeTab === 'addresses'" class="bg-surface-container-lowest rounded p-8">
           <AddressesTab />
+        </div>
+
+        <!-- Points tab -->
+        <div v-if="activeTab === 'points'" class="bg-surface-container-lowest rounded p-8">
+          <PointsHistoryTab />
         </div>
 
         <!-- Personal info -->
