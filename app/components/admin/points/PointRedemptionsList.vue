@@ -5,8 +5,17 @@ import { usePointRedemptions } from '~/composables/admin/usePointRedemptions'
 const { t } = useI18n()
 const { listPointRedemptions, createPointRedemption, deletePointRedemption } = usePointRedemptions()
 
-const { data, pending, refresh } = await listPointRedemptions()
-const redemptions = computed<PointRedemption[]>(() => data.value ?? [])
+const redemptions = ref<PointRedemption[]>([])
+const pending = ref(true)
+
+async function fetchRedemptions() {
+  pending.value = true
+  const { data, error } = await listPointRedemptions()
+  if (!error && data) redemptions.value = data
+  pending.value = false
+}
+
+await fetchRedemptions()
 
 const showCreate = ref(false)
 const processingId = ref<string | null>(null)
@@ -28,14 +37,14 @@ async function handleCreate() {
       value: 5,
       isActive: true,
     })
-    await refresh()
+    await fetchRedemptions()
   }
 }
 
 async function handleDelete(id: string) {
   processingId.value = id
   const ok = await deletePointRedemption(id)
-  if (ok) await refresh()
+  if (ok) await fetchRedemptions()
   processingId.value = null
 }
 

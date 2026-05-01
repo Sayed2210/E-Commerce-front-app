@@ -5,11 +5,21 @@ import { usePoints } from '~/composables/usePoints'
 const { t } = useI18n()
 const { getBalance, getHistory } = usePoints()
 
-const { data: balanceData } = await getBalance()
-const balance = computed(() => balanceData.value?.balance ?? 0)
+const balance = ref(0)
+const transactions = ref<PointTransaction[]>([])
+const pending = ref(true)
 
-const { data: historyData, pending } = await getHistory()
-const transactions = computed<PointTransaction[]>(() => historyData.value ?? [])
+async function fetchData() {
+  pending.value = true
+  const { data: balanceData } = await getBalance()
+  if (balanceData) balance.value = balanceData.balance
+
+  const { data: historyData } = await getHistory()
+  if (historyData) transactions.value = historyData
+  pending.value = false
+}
+
+await fetchData()
 
 function typeClass(type: string) {
   return type === 'earn' ? 'transaction--earn' : 'transaction--redeem'

@@ -4,8 +4,17 @@ import { useShippingZones } from '~/composables/admin/useShippingZones'
 
 const { listShippingZones, createShippingZone, deleteShippingZone } = useShippingZones()
 
-const { data, pending, refresh } = await listShippingZones()
-const zones = computed<ShippingZone[]>(() => data.value ?? [])
+const zones = ref<ShippingZone[]>([])
+const pending = ref(true)
+
+async function fetchZones() {
+  pending.value = true
+  const { data, error } = await listShippingZones()
+  if (!error && data) zones.value = data
+  pending.value = false
+}
+
+await fetchZones()
 
 const showCreate = ref(false)
 const processingId = ref<string | null>(null)
@@ -35,14 +44,14 @@ async function handleCreate() {
   if (ok) {
     showCreate.value = false
     Object.assign(form, { name: '', countries: [], isActive: true })
-    await refresh()
+    await fetchZones()
   }
 }
 
 async function handleDelete(id: string) {
   processingId.value = id
   const ok = await deleteShippingZone(id)
-  if (ok) await refresh()
+  if (ok) await fetchZones()
   processingId.value = null
 }
 </script>
